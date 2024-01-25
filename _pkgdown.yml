@@ -1,5 +1,4 @@
-url: https://kuan-liu-lab.github.io/bayesmsm/
+url: ~
 template:
   bootstrap: 5
-  bslib:
-    pkgdown-nav-height: 100px
+
