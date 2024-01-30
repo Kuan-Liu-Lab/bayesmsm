@@ -9,7 +9,7 @@ bayesm_bootstrap(
   testdata,
   wmean = rep(1, 1000),
   nboot = 1000,
-  inits1 = c(0.1, 0.1, 0.1, 4),
+  inits1 = c(rep(0.1, length(treatment_vars) + 1), 4),
   optim_control = list(fnscale = -1),
   optim_method = "BFGS",
   optim_hessian = FALSE
@@ -24,7 +24,7 @@ bayesm_bootstrap(
 
 \item{nboot}{The number of bootstrap iterations (default is 1000).}
 
-\item{inits1}{Initial values for the optimization algorithm (default is c(0.1,0.1,0.1,4)).}
+\item{inits1}{Initial values for the optimization algorithm (default is c(rep(0.1, length(treatment_vars)+1),4).}
 
 \item{optim_control}{List of control parameters to pass to the optim() function (default is list(fnscale = -1)).}
 

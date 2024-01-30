@@ -7,7 +7,7 @@
 #' @param testdata A data frame containing the outcome variable 'y' and treatment variables 'a_1', 'a_2', etc.
 #' @param wmean A vector of weights to be used in the bootstrap procedure.
 #' @param nboot The number of bootstrap iterations (default is 1000).
-#' @param inits1 Initial values for the optimization algorithm (default is c(0.1,0.1,0.1,4)).
+#' @param inits1 Initial values for the optimization algorithm (default is c(rep(0.1, length(treatment_vars)+1),4).
 #' @param optim_control List of control parameters to pass to the optim() function (default is list(fnscale = -1)).
 #' @param optim_method The optimization method to be used in the optim() function (default is 'BFGS').
 #' @param optim_hessian Logical; argument of optim() function (default is FALSE).
@@ -16,7 +16,7 @@
 #' @export
 #'
 bayesm_bootstrap <- function(wloglik_function, testdata, wmean = rep(1, 1000), nboot = 1000,
-                             inits1 = c(0.1,0.1,0.1,4), optim_control = list(fnscale = -1),
+                             inits1 = c(rep(0.1, length(treatment_vars)+1),4), optim_control = list(fnscale = -1),
                              optim_method = 'BFGS', optim_hessian = FALSE) {
   bootest <- numeric(nboot)
   treatment_vars <- names(testdata)[grepl("^a_", names(testdata))]
