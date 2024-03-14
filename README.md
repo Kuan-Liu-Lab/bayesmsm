@@ -6,7 +6,6 @@ Reference paper on Bayesian marginal structural models:
 
 -  Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020). Estimation of causal effects with repeatedly measured outcomes in a Bayesian framework. Statistical methods in medical research, 29(9), 2507-2519.
     
-$ About
 
 # Installation
 install using `devtools` package
@@ -17,6 +16,7 @@ library(bayesmsm)
 ```
 
 # Dependency
+
 
 
 

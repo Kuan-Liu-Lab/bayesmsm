@@ -2,8 +2,8 @@ Package: bayesmsm
 Type: Package
 Title: Bayesian Marginal Structural Models
 Version: 0.1.0
-Author: Kuan Liu, Xiao Yan, Larry Dong
-Maintainer: Kuan Liu
+Author: Kuan Liu, Xiao Yan
+Maintainer: Kuan Liu, Xiao Yan
 Imports: 
 	coda (>= 0.19-4)
 License: MIT License
