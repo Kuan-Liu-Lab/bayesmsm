@@ -13,7 +13,7 @@ test_that("bayesmsm works with no errors", {
                       wmean = rep(1, 1000),
                       nboot = 1000,
                       optim_method = "BFGS",
-                      parallel = FALSE,
+                      parallel = TRUE,
                       ncore = 6)
   })
 })

@@ -32,7 +32,7 @@
 #'
 #' @export
 #'
-#' @examples Using the testdata in the data folder:
+#' @examples
 #'
 #' # Continuous outcome
 #' testdata <- readr::read_csv("inst/extdata/continuous_outcome_data.csv")
