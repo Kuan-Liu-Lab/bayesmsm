@@ -58,7 +58,6 @@ effects in Bayesian marginal structural models.It supports both continuous
 (gaussian) and binary (binomial) outcome variables.
 }
 \examples{
-Using the testdata in the data folder:
 
 # Continuous outcome
 testdata <- readr::read_csv("inst/extdata/continuous_outcome_data.csv")

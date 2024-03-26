@@ -70,5 +70,5 @@ plot_APO <- function(input, effect_type, ...) {
 
   legend("topright", legend = legend_text,
          col = c(colors[effect_type], "purple", "darkgreen"),
-         lwd = 2, lty = c(1, 3, 4, 2))
+         lwd = 2, lty = c(1, 3, 2))
 }
