@@ -10,6 +10,19 @@
 #' @export
 #'
 #' @examples
+#' testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+#' model <- bayesmsm(ymodel = y ~ a_1+a_2,
+#'                            nvisit = 2,
+#'                            reference = c(rep(0,2)),
+#'                            comparator = c(rep(1,2)),
+#'                            family = "gaussian",
+#'                            data = testdata,
+#'                            wmean = rep(1, 1000),
+#'                            nboot = 1000,
+#'                            optim_method = "BFGS",
+#'                            estimand = "RD",
+#'                            parallel = FALSE,
+#'                            ncore = 6)
 #' plot_APO(model$bootdata, effect_type = "effect_comparator")
 #' plot_APO(model, effect_type = "effect_reference")
 #'
@@ -22,15 +35,12 @@ plot_APO <- function(input, effect_type, ...) {
   } else {
     stop("Input must be a data frame or a model object containing a 'bootdata' data frame.")
   }
-
   if (!is.data.frame(bootdata) || !("effect_comparator" %in% names(bootdata)) || !("effect_reference" %in% names(bootdata))) {
     stop("bootdata must be a data frame containing 'effect_comparator' and 'effect_reference' columns.")
   }
-
   if (!is.character(effect_type) || length(effect_type) != 1) {
     stop("effect_type must be a single character string specifying the effect to plot.")
   }
-
   if (!effect_type %in% c("effect_comparator", "effect_reference")) {
     stop("effect_type must be either 'effect_comparator' or 'effect_reference'.")
   }
@@ -70,5 +80,5 @@ plot_APO <- function(input, effect_type, ...) {
 
   legend("topright", legend = legend_text,
          col = c(colors[effect_type], "purple", "darkgreen"),
-         lwd = 2, lty = c(1, 3, 2))
+         lwd = 2, lty = c(1, 3, 12))
 }

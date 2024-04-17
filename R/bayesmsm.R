@@ -13,6 +13,7 @@
 #' @param wmean Vector of treatment assignment weights. Default is rep(1, 1000).
 #' @param nboot Number of bootstrap iterations.
 #' @param optim_method Optimization method to be used. Default is 'BFGS'.
+#' @param estimand Causal estimand to calculate; 'RD' (Risk Difference), 'RR' (Relative Risk) or 'OR' (Odds Ratio). Default is 'RD'.
 #' @param parallel Whether parallel computation should be used. Default is TRUE.
 #' @param ncore Number of cores to use for parallel computation. Default is 4.
 #'
@@ -35,7 +36,7 @@
 #' @examples
 #'
 #' # Continuous outcome
-#' testdata <- readr::read_csv("inst/extdata/continuous_outcome_data.csv")
+#' testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
 #' model <- bayesmsm(ymodel = y ~ a_1+a_2,
 #'                            nvisit = 2,
 #'                            reference = c(rep(0,2)),
@@ -45,6 +46,7 @@
 #'                            wmean = rep(1, 1000),
 #'                            nboot = 1000,
 #'                            optim_method = "BFGS",
+#'                            estimand = "RD",
 #'                            parallel = FALSE,
 #'                            ncore = 6)
 #'
@@ -59,8 +61,23 @@ bayesmsm <- function(ymodel,
                      wmean = rep(1, 1000),
                      nboot = 1000,
                      optim_method = 'BFGS',
-                     parallel = TRUE,
-                     ncore = 4){
+                     estimand = 'RD',
+                     parallel = FALSE,
+                     ncore = 6){
+
+  # load all the required R packages;
+  if (!require(foreach)){
+    install.packages("foreach",repos="http://cran.r-project.org")
+    library(foreach)
+  }
+  if (!require(doParallel)){
+    install.packages("doParallel",repos="http://cran.r-project.org")
+    library(doParallel)
+  }
+  if (!require(MCMCpack)){
+    install.packages("MCMCpack",repos="http://cran.r-project.org")
+    library(MCMCpack)
+  }
 
   # return error message if the input weight vector has different length comparing to the outcome Y;
   if (length(wmean) != nrow(data)) {
@@ -131,11 +148,12 @@ bayesmsm <- function(ymodel,
     beta <- param[1:dim(A)[2]] # causal parameters on the log-odds scale (no sigma for binomial?)
     mmat <- as.matrix(A)
     eta<-mmat %*% beta # linear predictor
-    p <- 1 / (1 + exp(-eta))
     logl <- Y * log(p + 0.0001) + (1 - Y) * log(1 - p + 0.0001)
     wlogl<-sum(weight*logl)
     return(wlogl)
   }
+
+  expit <- function(x){exp(x) / (1+exp(x))}
 
   if (family == "gaussian"){
     wfn = wloglik_normal
@@ -153,7 +171,9 @@ bayesmsm <- function(ymodel,
     numCores <- ncore
     registerDoParallel(cores = numCores)
 
-    results <- foreach(i=1:nboot, .combine = 'rbind') %dopar% {
+    results <- foreach(i=1:nboot,
+                       .combine = 'rbind',
+                       .packages = 'MCMCpack') %dopar% {
 
       results.it <- matrix(NA, 1, 3) #result matrix, three columns for bootest, effect_ref, and effect_comp;
 
@@ -173,8 +193,22 @@ bayesmsm <- function(ymodel,
       # Calculate the effects
       results.it[1,1] <- calculate_effect(reference, variables, param_estimates=maxim$par)
       results.it[1,2] <- calculate_effect(comparator, variables, param_estimates=maxim$par)
+
       # Calculate the ATE
-      results.it[1,3] <- results.it[1,1] - results.it[1,2]
+      if (family == "binomial") { # binary outcomes
+        if (estimand == "RD") { # Risk Difference
+          results.it[1,3] <- expit(results.it[1,2]) - expit(results.it[1,1])
+        } else if (estimand == "RR") { # Relative Risk
+          results.it[1,3] <- expit(results.it[1,2]) / expit(results.it[1,1])
+        } else if (estimand == "OR") { # Odds Ratio
+          results.it[1,3] <- (expit(results.it[1,2]) / (1 - expit(results.it[1,2]))) /
+            (expit(results.it[1,1]) / (1 - expit(results.it[1,1])))
+        }
+      } else if (family == "gaussian"){ # continuous outcomes
+        if (estimand == "RD") { # Risk Difference
+          results.it[1,3] <- results.it[1,2] - results.it[1,1]
+        }
+      }
 
       # combining parallel results;
       cbind(i,results.it) #end of parallel;
@@ -217,7 +251,23 @@ bayesmsm <- function(ymodel,
       effect_comparator[j] <- calculate_effect(comparator, variables, param_estimates=maxim$par)
 
       # Calculate the ATE
-      bootest[j] <- effect_comparator[j] - effect_reference[j]
+      if (family == "binomial") { # binary outcomes
+        if (estimand == "RD") { # Risk Difference
+          bootest[j] <- expit(effect_comparator[j]) - expit(effect_reference[j])
+        } else if (estimand == "RR") { # Relative Risk
+          bootest[j] <- expit(effect_comparator[j]) / expit(effect_reference[j])
+        } else if (estimand == "OR") { # Odds Ratio
+          bootest[j] <- (expit(effect_comparator[j]) / (1 - expit(effect_comparator[j]))) /
+            (expit(effect_reference[j]) / (1 - expit(effect_reference[j])))
+        }
+      } else if (family == "gaussian"){ # continuous outcomes
+        if (estimand == "RD") { # Risk Difference
+          bootest[j] <- effect_comparator[j] - effect_reference[j]
+        } else if (estimand %in% c("RR","OR")) {
+          # print a warning message that say for continuous outcome, RR and OR specification are ignored. RD is the causal estimate;
+          warning("For continuous outcomes, RR and OR specifications are ignored. RD is the only applicable causal estimate.")
+        }
+      }
 
     }
 

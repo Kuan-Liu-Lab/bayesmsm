@@ -18,6 +18,19 @@ An error bar plot of the mean effects and their 95\% confidence intervals for co
 Error bar plots for treatment effects
 }
 \examples{
+testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+model <- bayesmsm(ymodel = y ~ a_1+a_2,
+                           nvisit = 2,
+                           reference = c(rep(0,2)),
+                           comparator = c(rep(1,2)),
+                           family = "gaussian",
+                           data = testdata,
+                           wmean = rep(1, 1000),
+                           nboot = 1000,
+                           optim_method = "BFGS",
+                           estimand = "RD",
+                           parallel = FALSE,
+                           ncore = 6)
 plot_est_box(model$bootdata) # without reference & comparator information below labels
 plot_est_box(model) # with reference & comparator information below labels
 

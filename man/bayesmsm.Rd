@@ -14,8 +14,9 @@ bayesmsm(
   wmean = rep(1, 1000),
   nboot = 1000,
   optim_method = "BFGS",
-  parallel = TRUE,
-  ncore = 4
+  estimand = "RD",
+  parallel = FALSE,
+  ncore = 6
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ bayesmsm(
 \item{nboot}{Number of bootstrap iterations.}
 
 \item{optim_method}{Optimization method to be used. Default is 'BFGS'.}
+
+\item{estimand}{Causal estimand to calculate; 'RD' (Risk Difference), 'RR' (Relative Risk) or 'OR' (Odds Ratio). Default is 'RD'.}
 
 \item{parallel}{Whether parallel computation should be used. Default is TRUE.}
 
@@ -60,7 +63,7 @@ effects in Bayesian marginal structural models.It supports both continuous
 \examples{
 
 # Continuous outcome
-testdata <- readr::read_csv("inst/extdata/continuous_outcome_data.csv")
+testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            nvisit = 2,
                            reference = c(rep(0,2)),
@@ -70,6 +73,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            wmean = rep(1, 1000),
                            nboot = 1000,
                            optim_method = "BFGS",
+                           estimand = "RD",
                            parallel = FALSE,
                            ncore = 6)
 

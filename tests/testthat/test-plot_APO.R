@@ -12,6 +12,7 @@ test_that("plot_APO works with no errors", {
                     wmean = rep(1, 1000),
                     nboot = 1000,
                     optim_method = "BFGS",
+                    estimand = 'RD',
                     parallel = FALSE,
                     ncore = 6)
 

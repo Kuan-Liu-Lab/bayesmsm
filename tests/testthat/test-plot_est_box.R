@@ -12,10 +12,11 @@ test_that("plot_est_box works with no error", {
                     wmean = rep(1, 1000),
                     nboot = 1000,
                     optim_method = "BFGS",
+                    estimand = 'RD',
                     parallel = FALSE,
                     ncore = 6)
 
-  expect_silent(model$bootdata)
+  expect_silent(plot_est_box(model$bootdata))
 
-  expect_silent(model)
+  expect_silent(plot_est_box(model))
 })
