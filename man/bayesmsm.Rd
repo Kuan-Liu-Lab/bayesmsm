@@ -15,7 +15,7 @@ bayesmsm(
   nboot = 1000,
   optim_method = "BFGS",
   estimand = "RD",
-  parallel = FALSE,
+  parallel = TRUE,
   ncore = 6
 )
 }
@@ -74,7 +74,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            nboot = 1000,
                            optim_method = "BFGS",
                            estimand = "RD",
-                           parallel = FALSE,
+                           parallel = TRUE,
                            ncore = 6)
 
 

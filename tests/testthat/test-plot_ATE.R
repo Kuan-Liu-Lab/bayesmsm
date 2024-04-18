@@ -1,4 +1,4 @@
-test_that("plot_APO works with no errors", {
+test_that("plot_ATE works with no errors", {
   # system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm")
   testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
   # testdata <- data.frame(y = rnorm(1000), a_1 = rbinom(1000, 1, 0.45), a_2 = rbinom(1000, 1, 0.55))
@@ -15,7 +15,9 @@ test_that("plot_APO works with no errors", {
                     parallel = TRUE,
                     ncore = 2)
 
-  expect_silent(plot_APO(model, "effect_comparator"))
+  expect_silent(plot_ATE(model))
 
-  expect_silent(plot_APO(model$bootdata, "effect_reference"))
+  expect_silent(plot_ATE(model$bootdata))
+
+  expect_silent(plot_ATE(model$bootdata$ATE))
 })

@@ -2,6 +2,7 @@
 
 export(bayesmsm)
 export(plot_APO)
+export(plot_ATE)
 export(plot_est_box)
 import(MCMCpack)
 import(doParallel)

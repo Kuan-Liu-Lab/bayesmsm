@@ -47,8 +47,8 @@
 #'                            nboot = 1000,
 #'                            optim_method = "BFGS",
 #'                            estimand = "RD",
-#'                            parallel = FALSE,
-#'                            ncore = 6)
+#'                            parallel = TRUE,
+#'                            ncore = 2)
 #'
 #'
 #'
@@ -62,7 +62,7 @@ bayesmsm <- function(ymodel,
                      nboot = 1000,
                      optim_method = 'BFGS',
                      estimand = 'RD',
-                     parallel = FALSE,
+                     parallel = TRUE,
                      ncore = 6){
 
   # load all the required R packages;
@@ -148,7 +148,7 @@ bayesmsm <- function(ymodel,
     beta <- param[1:dim(A)[2]] # causal parameters on the log-odds scale (no sigma for binomial?)
     mmat <- as.matrix(A)
     eta<-mmat %*% beta # linear predictor
-    logl <- Y * log(p + 0.0001) + (1 - Y) * log(1 - p + 0.0001)
+    logl <- Y*eta - log(1+exp(eta))
     wlogl<-sum(weight*logl)
     return(wlogl)
   }
@@ -166,7 +166,7 @@ bayesmsm <- function(ymodel,
   }
 
 
-  #parallel computing only for this bootstrap step;
+  # Parallel computing for bootstrapping
   if (parallel == TRUE){
     numCores <- ncore
     registerDoParallel(cores = numCores)
@@ -174,6 +174,30 @@ bayesmsm <- function(ymodel,
     results <- foreach(i=1:nboot,
                        .combine = 'rbind',
                        .packages = 'MCMCpack') %dopar% {
+
+      calculate_effect <- function(intervention_levels, variables, param_estimates) {
+        # Start with the intercept term
+        effect<-effect_intercept<-param_estimates[1]
+
+        # Go through each predictor and add its contribution
+        for (i in 1:length(variables$predictors)) {
+          term <- variables$predictors[i]
+          term_variables <- unlist(strsplit(term, ":"))
+          term_index <- which(names(param_estimates) == term)
+
+          # Calculate the product of intervention levels for the interaction term
+          term_contribution <- param_estimates[term_index]
+          for (term_variable in term_variables) {
+            var_index <- which(variables$predictors == term_variable)
+            term_contribution <- term_contribution * intervention_levels[var_index]
+          }
+
+          # Add the term contribution to the effect
+          effect <- effect + term_contribution
+        }
+
+        return(effect)
+      }
 
       results.it <- matrix(NA, 1, 3) #result matrix, three columns for bootest, effect_ref, and effect_comp;
 
@@ -219,7 +243,9 @@ bayesmsm <- function(ymodel,
       mean = mean(results[,4]),
       sd = sqrt(var(results[,4])),
       quantile = quantile(results[,4], probs = c(0.025, 0.975)),
-      bootdata <- data.frame(results[,-1]),
+      bootdata = data.frame(effect_reference = results[,2],
+                             effect_comparator = results[,3],
+                             ATE = results[,4]),
       reference = reference,
       comparator = comparator
     ))
