@@ -58,7 +58,7 @@ bayesmsm <- function(ymodel,
                      comparator = c(rep(1,nvisit)),
                      family = "gaussian", # "gaussian" or "binomial"
                      data,
-                     wmean = rep(1, 1000),
+                     wmean = rep(1, nrow(data)),
                      nboot = 1000,
                      optim_method = 'BFGS',
                      estimand = 'RD',
@@ -145,7 +145,7 @@ bayesmsm <- function(ymodel,
                                weight){
     # number of observations;
     n <- length(Y)
-    beta <- param[1:dim(A)[2]] # causal parameters on the log-odds scale (no sigma for binomial?)
+    beta <- param[1:dim(A)[2]] # causal parameters on the log-odds scale
     mmat <- as.matrix(A)
     eta<-mmat %*% beta # linear predictor
     logl <- Y*eta - log(1+exp(eta))
