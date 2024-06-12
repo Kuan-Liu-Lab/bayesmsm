@@ -1,3 +1,5 @@
+edit May 29
+
 # R package bayesmsm
 
 Reference paper on Bayesian marginal structural models:
