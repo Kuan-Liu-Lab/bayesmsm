@@ -201,6 +201,7 @@ bayesmsm <- function(ymodel,
 
       results.it <- matrix(NA, 1, 3) #result matrix, three columns for bootest, effect_ref, and effect_comp;
 
+      set.seed(seed+i) #define seed;
       alpha <- as.numeric(rdirichlet(1, rep(1.0, length(Y))))
 
       maxim <- optim(inits1,
