@@ -118,9 +118,10 @@ $$
 
 **3. Bayesian treatment effect weight estimation using `bayesweight`**
 
-- The following code calls the function `bayesweight` to run 
-  - Non-parallel computing requires that n.chains = 1.
-
+- The following code calls the function `bayesweight` to run JAGS and calculate the weights.
+  - Non-parallel computing requires that `n.chains = 1`. Parallel MCMC requires at least 2 chains because computing is running on 1 core per chain, and we recommend using at most 2 chains less than the number of available cores on your computer.
+  - Running this function automatically saves a JAGS model file in the working directory, which the user can check to review the model specifications.
+  
 ```{r}
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                              a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
@@ -134,3 +135,61 @@ weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
 str(weights)
 ```
 
+**4. Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`**
+
+The function `bayesmsm` estimates causal effect of time-varying treatments. It uses subject-specific treatment assignmennt weights *weights* calculated using `bayesweight`, and performs Bayesian non-parametric bootstrap to estimate the causal parameters.
+
+```{r}
+model <- bayesmsm(ymodel = y ~ a_1+a_2,
+                           nvisit = 2,
+                           reference = c(rep(0,2)),
+                           comparator = c(rep(1,2)),
+                           family = "gaussian",
+                           data = testdata,
+                           wmean = rep(1, 1000),
+                           nboot = 1000,
+                           optim_method = "BFGS",
+                           estimand = "RD",
+                           parallel = TRUE,
+                           seed = 890123,
+                           ncore = 2)
+model
+```
+
+- It returns a model object which contains:
+  - `mean`, `sd`, `quantile`: the mean, standard deviation and 95% credible interval of the estimated causal effect (ATE). From the above results, the mean of ATE is approximately -3.161, which indicates that the expected outcome for always treated patients is, on average, 3.161 units less than that for never treated patients. 
+  - `bootdata`: a data frame containing the bootstrap samples for the reference effect, comparator effect, and average treatment effect (ATE).
+  - `reference`, `comparator`: the reference level and comparator level the user chooses to compare. Here the reference level is never treated (0,0), and the comparator level is always treated (1,1).
+
+**5. Visualization functions: `plot_ATE`, `plot_APO`, `plot_est_box`**
+
+The `bayesmsm` package also provides several other functions for visualizing the above results: `plot_ATE`, `plot_APO`, and `plot_est_box`. These functions help the user better interpret the estimated causal effects.
+
+- Plotting the Average Treatment Effect (ATE)
+  - The `plot_ATE` function generates a plot of the estimated ATE with its 95% credible interval.
+  
+```{r}
+plot_ATE(model)
+```
+
+- Plotting the Average Potential Outcome (APO)
+  - Similarly, the `plot_APO` function plots the estimated APO for both the reference and comparator level effects.
+
+```{r}
+plot_APO(model, "effect_reference")
+plot_APO(model, "effect_comparator")
+```
+
+- Plotting the Distribution of Estimated Treatment Effects
+  - The `plot_est_box` function generates an error bar plot of the estimated treatment effects (APO and ATE) from the bootstrap samples.
+
+```{r}
+plot_est_box(model)
+```
+
+**Reference**
+
+- Liu, K. (2021). Bayesian causal inference with longitudinal data. Tspace.library.utoronto.ca. https://tspace.library.utoronto.ca/handle/1807/109330
+- Saarela, O., Stephens, D. A., Moodie, E. E. M., & Klein, M. B. (2015). On Bayesian estimation of marginal structural models. Biometrics, 71(2), 279–288. https://doi.org/10.1111/biom.12269
+- Robins, J. M., Hernán, M. A., & Brumback, B. (2000). Marginal structural models and causal inference in epidemiology. Epidemiology, 11(5), 550–560. https://doi.org/10.1097/00001648-200009000-00011
+- Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020). Estimation of causal effects with repeatedly measured outcomes in a Bayesian framework. Statistical Methods in Medical Research, 29(9), 2507–2519. https://doi.org/10.1177/0962280219900362

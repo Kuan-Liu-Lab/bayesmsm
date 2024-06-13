@@ -15,6 +15,7 @@ test_that("bayesmsm works with no errors", {
                       nboot = 1000,
                       optim_method = "BFGS",
                       estimand = 'RD',
+                      seed = 890123,
                       parallel = TRUE,
                       ncore = 2)
 
@@ -50,6 +51,7 @@ test_that("bayesmsm works with no errors", {
                     nboot = 1000,
                     optim_method = "BFGS",
                     estimand = 'OR',
+                    seed = 890123,
                     parallel = TRUE,
                     ncore = 2)
 

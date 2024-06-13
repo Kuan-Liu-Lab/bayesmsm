@@ -15,6 +15,7 @@ bayesmsm(
   nboot = 1000,
   optim_method = "BFGS",
   estimand = "RD",
+  seed = 890123,
   parallel = TRUE,
   ncore = 6
 )
@@ -39,6 +40,8 @@ bayesmsm(
 \item{optim_method}{Optimization method to be used. Default is 'BFGS'.}
 
 \item{estimand}{Causal estimand to calculate; 'RD' (Risk Difference), 'RR' (Relative Risk) or 'OR' (Odds Ratio). Default is 'RD'.}
+
+\item{seed}{A seed to ensure reproducibility.}
 
 \item{parallel}{Whether parallel computation should be used. Default is TRUE.}
 
@@ -74,6 +77,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            nboot = 1000,
                            optim_method = "BFGS",
                            estimand = "RD",
+                           seed = 890123,
                            parallel = TRUE,
                            ncore = 2)
 

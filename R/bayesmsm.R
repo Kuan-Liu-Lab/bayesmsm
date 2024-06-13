@@ -14,6 +14,7 @@
 #' @param nboot Number of bootstrap iterations.
 #' @param optim_method Optimization method to be used. Default is 'BFGS'.
 #' @param estimand Causal estimand to calculate; 'RD' (Risk Difference), 'RR' (Relative Risk) or 'OR' (Odds Ratio). Default is 'RD'.
+#' @param seed A seed to ensure reproducibility.
 #' @param parallel Whether parallel computation should be used. Default is TRUE.
 #' @param ncore Number of cores to use for parallel computation. Default is 4.
 #'
@@ -47,6 +48,7 @@
 #'                            nboot = 1000,
 #'                            optim_method = "BFGS",
 #'                            estimand = "RD",
+#'                            seed = 890123,
 #'                            parallel = TRUE,
 #'                            ncore = 2)
 #'
@@ -62,6 +64,7 @@ bayesmsm <- function(ymodel,
                      nboot = 1000,
                      optim_method = 'BFGS',
                      estimand = 'RD',
+                     seed = 890123,
                      parallel = TRUE,
                      ncore = 6){
 
