@@ -11,7 +11,7 @@ bayesmsm(
   comparator = c(rep(1, nvisit)),
   family = "gaussian",
   data,
-  wmean = rep(1, 1000),
+  wmean = rep(1, nrow(data)),
   nboot = 1000,
   optim_method = "BFGS",
   estimand = "RD",
@@ -75,7 +75,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            optim_method = "BFGS",
                            estimand = "RD",
                            parallel = TRUE,
-                           ncore = 6)
+                           ncore = 2)
 
 
 

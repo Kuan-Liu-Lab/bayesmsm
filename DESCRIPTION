@@ -14,6 +14,9 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Description: This package provides tools for estimating causal effects using Bayesian Marginal Structural Models. It includes functions for Bayesian non-parametric bootstrap to calculate causal effects and for plotting the average potential outcome (APO). The package aims to facilitate the analysis of observational data with time-varying treatments, providing a user-friendly software to Bayesian causal inference methods.
+VignetteBuilder: knitr

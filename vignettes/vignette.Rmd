@@ -1,0 +1,136 @@
+---
+title: "Vignette for package `bayesmsm`"
+author: "Kuan Liu, Xiao Yan"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette for package `bayesmsm`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(tidyverse)
+```
+
+**1. Introduction**
+
+- The `bayesmsm` package enables easy implementation of the Bayesian marginal structural models (BMSMs) for longitudinal data. The methodology of BMSMs can be divided into 2 estimation steps:
+
+  - Step 1. Bayesian treatment effect weight estimation
+  - Step 2. Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect
+  
+- For Step 1, we estimate treatment weights $w_{ij}$ using posterior samples of the $\alpha$ and $\beta$ via fitting a series of logistic regressions in a Bayesian framework. The package incorporates both Inverse Probability of Treatment Weighting (IPTW) and Inverse Probability of Censoring Weighting (IPCW) to handle longitudinal data without and with right-censoring. For Step 2, $P_n(v_{ij})$ is estimated via non-parametric Bayesian bootstrap with $Dir(1,...,1)$ sampling weights.
+
+- The main functions in this package include:
+
+  - `bayesweight`: Calculates Bayesian weights for subject-specific treatment effects.
+  - `bayesmsm`: Estimates marginal structural models using the calculated Bayesian weights.
+  - `plot_ATE`: Plots the estimated Average Treatment Effect (ATE).
+  - `plot_APO`: Plots the estimated Average Potential Outcome (APO).
+  - `plot_est_box`: Plots the distribution of estimated treatment effects.
+
+- Installation
+
+  - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub:
+
+```{r, echo=FALSE, force=TRUE}
+devtools::install_github("Kuan-Liu-Lab/bayesmsm")
+library(bayesmsm)
+```
+
+**2. Simulated observational data with a time-dependent treatment**
+
+- The simulated dataset (continuous outcome)
+  - 1000 patients and 3 visits (2 of which patients were assigned a treatment)
+  - y, an end-of-study continuous outcome
+  - z, a binary treatment
+  - w1 and w2 are two baseline covariates (one continuous and one binary, mimicking age and sex)
+  - L1 and L2 are two time-dependent covariates (also one continuous and one binary)
+  - no missing data
+- The simulated DAG
+
+```{r}
+library(DiagrammeR)
+grViz("
+    digraph causal {
+    # Nodes
+    node [shape=plaintext]
+    W [label = 'w1, w2']
+    L1 [label = 'L11, L21']
+    Z1 [label = 'Z1']
+    L2 [label = 'L12, L22']
+    Z2 [label = 'Z2']
+    Y [label = 'Y']
+    
+    # Edges
+    edge [color=black, arrowhead=vee]
+    rankdir = LR
+    W->L1
+    W->Z1
+    W->L2
+    W->Z2
+    W->Y
+    L1->Z1
+    L1->L2
+    L1->Z2
+    L1->Y
+    Z1->L2
+    Z1->Z2
+    Z1->Y
+    L2->Z2
+    L2->Y
+    Z2->Y
+    
+    # Graph
+    graph [overlap=true, fontsize=14]
+    }")
+```
+
+```{r}
+library(DT)
+options(scipen = 999)
+
+testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+
+# look at the data;
+datatable(testdata,
+          rownames = FALSE,
+          options = list(dom = 't')) %>%
+  formatRound(columns=c('w2', 'L2_1', 'L2_2', 'y'), digits=2)
+```
+
+- Frequency Counts by Treatment Combinations
+
+```{r}
+# frequency counts by treatment combinations;
+table(testdata$a_1, testdata$a_2)
+```
+
+- Suppose the causal parameter of interest is the average treatment effect between always treated and never treated,
+
+$$
+ATE = E(Y \mid Z_1 = 1, Z_2 = 1) - E(Y \mid Z_1 = 0, Z_2 = 0)
+$$
+
+**3. Bayesian treatment effect weight estimation using `bayesweight`**
+
+- The following code calls the function `bayesweight` to run 
+  - Non-parallel computing requires that n.chains = 1.
+
+```{r}
+weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
+                                             a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
+                        data = testdata,
+                        n.iter = 25000,
+                        n.burnin = 15000,
+                        n.thin = 5,
+                        n.chains = 1,
+                        seed = 890123,
+                        parallel = FALSE)
+str(weights)
+```
+

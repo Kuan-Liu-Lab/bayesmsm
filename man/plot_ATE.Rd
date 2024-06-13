@@ -51,7 +51,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            optim_method = "BFGS",
                            estimand = "RD",
                            parallel = FALSE,
-                           ncore = 6)
+                           ncore = 2)
 plot_ATE(model)
 plot_ATE(model$bootdata)
 plot_ATE(model$bootdata$ATE)

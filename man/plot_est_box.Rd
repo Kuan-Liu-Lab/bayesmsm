@@ -30,7 +30,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            optim_method = "BFGS",
                            estimand = "RD",
                            parallel = FALSE,
-                           ncore = 6)
+                           ncore = 2)
 plot_est_box(model$bootdata) # without reference & comparator information below labels
 plot_est_box(model) # with reference & comparator information below labels
 
