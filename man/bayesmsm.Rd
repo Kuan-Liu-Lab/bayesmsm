@@ -14,7 +14,6 @@ bayesmsm(
   wmean = rep(1, nrow(data)),
   nboot = 1000,
   optim_method = "BFGS",
-  estimand = "RD",
   seed = 890123,
   parallel = TRUE,
   ncore = 6
@@ -38,8 +37,6 @@ bayesmsm(
 \item{nboot}{Number of bootstrap iterations.}
 
 \item{optim_method}{Optimization method to be used. Default is 'BFGS'.}
-
-\item{estimand}{Causal estimand to calculate; 'RD' (Risk Difference), 'RR' (Relative Risk) or 'OR' (Odds Ratio). Default is 'RD'.}
 
 \item{seed}{A seed to ensure reproducibility.}
 
@@ -76,7 +73,6 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            wmean = rep(1, 1000),
                            nboot = 1000,
                            optim_method = "BFGS",
-                           estimand = "RD",
                            seed = 890123,
                            parallel = TRUE,
                            ncore = 2)

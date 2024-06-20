@@ -11,7 +11,10 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.align = 'center',
+  fig.width = 8,
+  fig.height = 6
 )
 library(tidyverse)
 ```
@@ -37,7 +40,7 @@ library(tidyverse)
 
   - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub:
 
-```{r, echo=FALSE, force=TRUE}
+```{r, results=FALSE, force=TRUE}
 devtools::install_github("Kuan-Liu-Lab/bayesmsm")
 library(bayesmsm)
 ```
@@ -121,7 +124,17 @@ $$
 - The following code calls the function `bayesweight` to run JAGS and calculate the weights.
   - Non-parallel computing requires that `n.chains = 1`. Parallel MCMC requires at least 2 chains because computing is running on 1 core per chain, and we recommend using at most 2 chains less than the number of available cores on your computer.
   - Running this function automatically saves a JAGS model file in the working directory, which the user can check to review the model specifications.
-  
+
+- Parameters Description:
+  - `trtmodel.list`: A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. Interactions and functions of covariates are allowed.
+  - `data`: The dataset containing all the variables specified in trtmodel.list.
+  - `n.iter`: Total number of iterations for each chain (including burn-in).
+  - `n.burnin`: Number of iterations to discard at the beginning of the simulation (burn-in).
+  - `n.thin`: Thinning rate for the MCMC sampler.
+  - `n.chains`: Number of MCMC chains to run. For non-parallel execution, this should be set to 1. For parallel execution, it requires at least 2 chains.
+  - `seed`: Seed to ensure reproducibility.
+  - `parallel`: Logical flag indicating whether to run the MCMC chains in parallel. Default is TRUE.
+
 ```{r}
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                              a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
@@ -129,15 +142,29 @@ weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                         n.iter = 25000,
                         n.burnin = 15000,
                         n.thin = 5,
-                        n.chains = 1,
+                        n.chains = 2,
                         seed = 890123,
-                        parallel = FALSE)
+                        parallel = TRUE)
 str(weights)
 ```
 
 **4. Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`**
 
 The function `bayesmsm` estimates causal effect of time-varying treatments. It uses subject-specific treatment assignmennt weights *weights* calculated using `bayesweight`, and performs Bayesian non-parametric bootstrap to estimate the causal parameters.
+
+- Parameters Description:
+  - `ymodel`: A formula representing the outcome model, which can include interactions and functions of covariates.
+  - `nvisit`: Specifies the number of visits or time points considered in the model.
+  - `reference`: The baseline or reference intervention across all visits, typically represented by a vector of zeros indicating no treatment (default is a vector of all zeros).
+  - `comparator`: The comparison intervention across all visits, typically represented by a vector of ones indicating full treatment (default is a vector of all ones).
+  - `family`: Specifies the outcome distribution family; use "gaussian" for continuous outcomes or "binomial" for binary outcomes (default is "gaussian").
+  - `data`: The dataset containing all variables required for the model.
+  - `wmean`: A vector of treatment assignment weights. Default is a vector of ones, implying equal weighting.
+  - `nboot`: The number of bootstrap iterations to perform for estimating the uncertainty around the causal estimates.
+  - `optim_method`: The optimization method used to find the best parameters in the model (default is 'BFGS').
+  - `seed`: A seed value to ensure reproducibility of results.
+  - `parallel`: A logical flag indicating whether to perform computations in parallel (default is TRUE).
+  - `ncore`: The number of cores to use for parallel computation (default is 4).
 
 ```{r}
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
@@ -149,11 +176,10 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            wmean = rep(1, 1000),
                            nboot = 1000,
                            optim_method = "BFGS",
-                           estimand = "RD",
                            parallel = TRUE,
                            seed = 890123,
                            ncore = 2)
-model
+str(model)
 ```
 
 - It returns a model object which contains:
@@ -168,7 +194,7 @@ The `bayesmsm` package also provides several other functions for visualizing the
 - Plotting the Average Treatment Effect (ATE)
   - The `plot_ATE` function generates a plot of the estimated ATE with its 95% credible interval.
   
-```{r}
+```{r fig.align='center', fig.height=..., fig.width=...}
 plot_ATE(model)
 ```
 
