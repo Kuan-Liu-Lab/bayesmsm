@@ -214,7 +214,7 @@ plot_APO(model, "effect_comparator")
   - The `plot_est_box` function generates an error bar plot of the estimated treatment effects (APO and ATE) from the bootstrap samples.
 
 ```{r}
-#plot_est_box(model)
+plot_est_box(model)
 ```
 
 **Reference**
