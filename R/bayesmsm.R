@@ -50,6 +50,20 @@
 #'                            parallel = TRUE,
 #'                            ncore = 2)
 #'
+#' # Binary outcome
+#' testdata <- read.csv(system.file("extdata", "binary_outcome_data.csv", package = "bayesmsm"))
+#' model <- bayesmsm(ymodel = y ~ a_1+a_2,
+#'                            nvisit = 2,
+#'                            reference = c(rep(0,2)),
+#'                            comparator = c(rep(1,2)),
+#'                            family = "binomial",
+#'                            data = testdata,
+#'                            wmean = rep(1, 1000),
+#'                            nboot = 1000,
+#'                            optim_method = "BFGS",
+#'                            seed = 890123,
+#'                            parallel = TRUE,
+#'                            ncore = 2)
 #'
 #'
 bayesmsm <- function(ymodel,
@@ -165,15 +179,40 @@ bayesmsm <- function(ymodel,
     stop("Current version only handles continuous (gaussian) and binary (binomial) outcomes.")
   }
 
+  calculate_effect <- function(intervention_levels, variables, param_estimates) {
+    # Start with the intercept term
+    effect<-effect_intercept<-param_estimates[1]
+
+    # Go through each predictor and add its contribution
+    for (i in 1:length(variables$predictors)) {
+      term <- variables$predictors[i]
+      term_variables <- unlist(strsplit(term, ":"))
+      term_index <- which(names(param_estimates) == term)
+
+      # Calculate the product of intervention levels for the interaction term
+      term_contribution <- param_estimates[term_index]
+      for (term_variable in term_variables) {
+        var_index <- which(variables$predictors == term_variable)
+        term_contribution <- term_contribution * intervention_levels[var_index]
+      }
+
+      # Add the term contribution to the effect
+      effect <- effect + term_contribution
+    }
+
+    return(effect)
+  }
 
   # Parallel computing for bootstrapping
   if (parallel == TRUE){
-    numCores <- ncore
-    registerDoParallel(cores = numCores)
 
-    results <- foreach(i=1:nboot,
-                       .combine = 'rbind',
-                       .packages = 'MCMCpack') %dopar% {
+    cl <- makeCluster(ncore)
+    registerDoParallel(cl)
+
+    results <- foreach(i=1:nboot, .combine = 'rbind',
+                       .packages = 'MCMCpack'
+                       # , .export = 'calculate_effect'
+    ) %dopar% {
 
       calculate_effect <- function(intervention_levels, variables, param_estimates) {
         # Start with the intercept term
@@ -239,6 +278,8 @@ bayesmsm <- function(ymodel,
       cbind(i,results.it) #end of parallel;
     }
 
+    stopCluster(cl)
+
     #saving output for the parallel setting;
     if (family == "binomial") {
       return(list(
@@ -286,6 +327,7 @@ bayesmsm <- function(ymodel,
     effect_comparator <- numeric(nboot)
 
     for (j in 1:nboot) {
+
       alpha <- as.numeric(rdirichlet(1, rep(1.0, length(Y))))
 
       maxim <- optim(inits1,
@@ -315,7 +357,7 @@ bayesmsm <- function(ymodel,
 
     }
 
-    #saving output for the non-parallel setting;
+    # saving output for the non-parallel setting;
     if (family == "binomial") {
       return(list(
         RD_mean = mean(bootest_RD),

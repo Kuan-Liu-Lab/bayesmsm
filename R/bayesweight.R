@@ -27,10 +27,10 @@
 #' weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
 #'                                             a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
 #'                        data = testdata,
-#'                        n.iter = 25000,
-#'                        n.burnin = 15000,
+#'                        n.iter = 250,
+#'                        n.burnin = 150,
 #'                        n.thin = 5,
-#'                        n.chains = 1,
+#'                        n.chains = 2,
 #'                        seed = 890123,
 #'                        parallel = TRUE)
 #'
@@ -289,11 +289,23 @@ bayesweight <- function(trtmodel.list,
                                            n.thin = n.thin,
                                            jags.seed = seed+i)
                            # Combine MCMC output from multiple chains
+
                            out.mcmc <- as.mcmc(jagsfit)
+
                            return(do.call(rbind, lapply(out.mcmc, as.matrix)))
                          }
 
     stopCluster(cl)
+
+
+
+    diagnostics <- coda::geweke.diag(posterior)
+
+    # Check diagnostics for convergence issues
+    significant_indices <- which(abs(diagnostics$z[-(length(diagnostics$z))]) > 1.96)
+    if (length(significant_indices) > 0) {
+      warning("Some parameters have not converged with Geweke index > 1.96. More iterations may be needed.")
+    }
 
   } else if (parallel == FALSE) {
 
@@ -314,16 +326,18 @@ bayesweight <- function(trtmodel.list,
     # Extract MCMC output
     out.mcmc <- as.mcmc(jagsfit)
     posterior <- as.matrix(out.mcmc[[1]])
+
+    diagnostics <- coda::geweke.diag(out.mcmc)
+
+    # Check diagnostics for convergence issues
+    significant_indices <- which(abs(diagnostics[[1]]$z[-(length(diagnostics[[1]]$z))]) > 1.96)
+    if (length(significant_indices) > 0) {
+      warning("Some parameters have not converged with Geweke index > 1.96. More iterations may be needed.")
+    }
   }
 
 
-  diagnostics <- coda::geweke.diag(out.mcmc)
 
-  # Check diagnostics for convergence issues
-  significant_indices <- which(abs(diagnostics[[1]]$z) > 1.96)
-  if (length(significant_indices) > 0) {
-    warning("Some parameters have not converged with Geweke index > 1.96. More iterations may be needed.")
-  }
 
   # number of parameters for this model is 5 and design matrix is 1 variables
   # looping throught each treatment model 1 visit at a time;

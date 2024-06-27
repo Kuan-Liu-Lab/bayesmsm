@@ -139,8 +139,8 @@ $$
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                              a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
                         data = testdata,
-                        n.iter = 25000,
-                        n.burnin = 15000,
+                        n.iter = 250,
+                        n.burnin = 150,
                         n.thin = 5,
                         n.chains = 2,
                         seed = 890123,
@@ -173,7 +173,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            comparator = c(rep(1,2)),
                            family = "gaussian",
                            data = testdata,
-                           wmean = rep(1, 1000),
+                           wmean = weights,
                            nboot = 1000,
                            optim_method = "BFGS",
                            parallel = TRUE,
@@ -194,7 +194,7 @@ The `bayesmsm` package also provides several other functions for visualizing the
 - Plotting the Average Treatment Effect (ATE)
   - The `plot_ATE` function generates a plot of the estimated ATE with its 95% credible interval.
   
-```{r fig.align='center', fig.height=..., fig.width=...}
+```{r}
 plot_ATE(model)
 ```
 
@@ -210,7 +210,7 @@ plot_APO(model, "effect_comparator")
   - The `plot_est_box` function generates an error bar plot of the estimated treatment effects (APO and ATE) from the bootstrap samples.
 
 ```{r}
-plot_est_box(model)
+#plot_est_box(model)
 ```
 
 **Reference**
