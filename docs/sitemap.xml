@@ -4,15 +4,48 @@
     <loc>https://kuan-liu-lab.github.io/bayesmsm/404.html</loc>
   </url>
   <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/articles/vignette.html</loc>
+  </url>
+  <url>
     <loc>https://kuan-liu-lab.github.io/bayesmsm/authors.html</loc>
   </url>
   <url>
     <loc>https://kuan-liu-lab.github.io/bayesmsm/index.html</loc>
   </url>
   <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/bayesmsm.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/bayesweight.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/calculate_effect.html</loc>
+  </url>
+  <url>
     <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/hello.html</loc>
   </url>
   <url>
     <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/plot_APO.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/plot_ATE.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/plot_est_box.html</loc>
+  </url>
+  <url>
+    <loc>https://kuan-liu-lab.github.io/bayesmsm/reference/summary.bayesmsm.html</loc>
   </url>
 </urlset>
