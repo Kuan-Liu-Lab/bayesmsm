@@ -1,15 +1,23 @@
+pkgdown:
+  title: bayesmsm
+  destination: docs
+
 template:
   bootstrap: 5
-url: https://kuan-liu-lab.github.io/bayesmsm/
+  bootswatch: flatly
 
-pandoc: 3.1.11
-pkgdown: 2.0.9
-pkgdown_sha: ~
-vignette:
-  estimating-effects: estimating-effects.html
-  installing-packages: installing-packages.html
-  WeightIt: WeightIt.html
-last_built: 2024-06-09T23:34Z
-urls:
-  reference: https://ngreifer.github.io/WeightIt/reference
-  article: https://ngreifer.github.io/WeightIt/articles
+navbar:
+  structure:
+    left:
+    - home
+    - reference
+    - articles
+  left:
+  - text: "Home"
+    href: index.html
+  - text: "Reference"
+    href: reference/index.html
+  - text: "Articles"
+    href: articles/index.html
+
+url: https://Kuan-Liu-Lab.github.io/bayesmsm/
