@@ -26,13 +26,10 @@ jobs:
         sudo apt-get install -y libgit2-dev
 
     - name: Install R package dependencies
-      run: |
-        install.packages("remotes")
-        remotes::install_deps(dependencies = TRUE)
-        install.packages(c("tidyverse", "devtools"))
+      run: Rscript -e 'install.packages("remotes"); remotes::install_deps(dependencies = TRUE); install.packages(c("tidyverse", "devtools"))'
 
     - name: Install pkgdown
-      run: install.packages('pkgdown')
+      run: Rscript -e 'install.packages("pkgdown")'
 
     - name: Build pkgdown site
       run: Rscript -e 'pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)'
