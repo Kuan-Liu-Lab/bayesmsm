@@ -23,12 +23,9 @@
 #'                            wmean = rep(1, 1000),
 #'                            nboot = 1000,
 #'                            optim_method = "BFGS",
-#'                            estimand = "RD",
-#'                            parallel = FALSE,
+#'                            parallel = TRUE,
 #'                            ncore = 2)
 #' plot_ATE(model)
-#' plot_ATE(model$bootdata)
-#' plot_ATE(model$bootdata$ATE)
 #'
 plot_ATE <- function(model,
                      estimand = c("RD", "RR", "OR"),

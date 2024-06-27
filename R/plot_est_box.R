@@ -1,6 +1,6 @@
 #' Error bar plots for treatment effects
 #'
-#' @param input A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'ATE' columns.
+#' @param input A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'RD' columns.
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @return An error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
@@ -34,9 +34,9 @@ plot_est_box <- function(input, ...) {
   }
 
   # Validate bootdata
-  required_columns <- c("effect_comparator", "effect_reference", "ATE")
+  required_columns <- c("effect_comparator", "effect_reference", "RD")
   if (!all(required_columns %in% names(bootdata))) {
-    stop("bootdata must contain 'effect_comparator', 'effect_reference', and 'ATE' columns.")
+    stop("bootdata must contain 'effect_comparator', 'effect_reference', and 'RD' columns.")
   }
 
   # Adjust margins if necessary
@@ -58,7 +58,7 @@ plot_est_box <- function(input, ...) {
   # Plotting
   plot(position, means, ylim = range(lowerbd - text_offset, upperbd + text_offset), pch = 19, xaxt = "n", # round down vs round up;
        xlab = "Treatment Level", ylab = "Effect", main = "Treatment Effect Estimates", ...)
-  axis(1, at = position, labels = c("Comparator Level", "Reference Level", "ATE"))
+  axis(1, at = position, labels = c("Comparator Level", "Reference Level", "ATE (RD)"))
 
   # Error bars
   arrows(position, lowerbd, position, upperbd, angle = 90, code = 3, length = 0.1, ...)

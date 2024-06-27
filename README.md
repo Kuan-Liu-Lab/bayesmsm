@@ -1,6 +1,10 @@
-edit May 29
-
 # R package bayesmsm
+
+[![pkgdown](https://img.shields.io/badge/pkgdown--blue)](https://Kuan-Liu-Lab.github.io/bayesmsm/)
+
+The `bayesmsm` package is an R package for implementing Bayesian marginal structural models.
+
+# Reference
 
 Reference paper on Bayesian marginal structural models:
 
