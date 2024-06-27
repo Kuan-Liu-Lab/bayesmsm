@@ -16,7 +16,11 @@ knitr::opts_chunk$set(
   fig.width = 8,
   fig.height = 6
 )
-library(tidyverse)
+
+if (!require(tidyverse)){
+  install.packages("tidyverse",repos="http://cran.r-project.org")
+  library(tidyverse)
+}
 ```
 
 **1. Introduction**

@@ -3,8 +3,8 @@ pkgdown: 2.0.8
 pkgdown_sha: ~
 articles:
   vignette: vignette.html
-last_built: 2024-06-27T06:32Z
+last_built: 2024-06-27T08:46Z
 urls:
-  reference: https://Kuan-Liu-Lab.github.io/bayesmsm/reference
-  article: https://Kuan-Liu-Lab.github.io/bayesmsm/articles
+  reference: https://kuan-liu-lab.github.io/bayesmsm/reference
+  article: https://kuan-liu-lab.github.io/bayesmsm/articles
 
