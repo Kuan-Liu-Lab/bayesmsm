@@ -2,27 +2,42 @@
 % Please edit documentation in R/bayesweight.R
 \name{bayesweight}
 \alias{bayesweight}
-\title{Bayesian Treatment Effect Weight Estimation}
+\title{Bayesian Treatment Effect Weight Estimation Using JAGS}
 \usage{
 bayesweight(
-  trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1, a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 +
-    L2_2 + a_1),
-  data = causaldata,
-  n.chains = 1,
+  trtmodel.list,
+  data,
+  n.chains = 2,
   n.iter = 25000,
   n.burnin = 15000,
   n.thin = 5,
   seed = 890123,
-  parallel = FALSE
+  parallel = TRUE
 )
 }
 \arguments{
-\item{trtmodel.list}{a list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point (i.e., treatments and covariates featured in early formulas should appear in later ones). Interactions and functions of covariates are allowed.}
+\item{trtmodel.list}{A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. Interactions and functions of covariates are allowed.}
 
-\item{parallel}{}
+\item{data}{A dataframe containing the variables mentioned in the `trtmodel.list`.}
+
+\item{n.chains}{The number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains.}
+
+\item{n.iter}{The total number of iterations for each chain (including burn-in).}
+
+\item{n.burnin}{The number of burn-in iterations for each chain.}
+
+\item{n.thin}{Thinning rate for the MCMC sampler.}
+
+\item{seed}{A seed to ensure reproducibility.}
+
+\item{parallel}{Logical. Indicates whether to run the MCMC chains in parallel. Default is TRUE.}
+}
+\value{
+A list of the calculated weights.
 }
 \description{
-Bayesian Treatment Effect Weight Estimation
+This function estimates Bayesian weights for time-varying treatment effects using specified models for each treatment time point.
+It uses JAGS for Bayesian inference and supports parallel computation to speed up the MCMC simulations.
 }
 \examples{
 
@@ -31,12 +46,12 @@ testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", packa
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                             a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
                        data = testdata,
-                       n.iter = 25000,
-                       n.burnin = 15000,
+                       n.iter = 250,
+                       n.burnin = 150,
                        n.thin = 5,
-                       n.chains = 1,
+                       n.chains = 2,
                        seed = 890123,
-                       parallel = FALSE)
+                       parallel = TRUE)
 
 
 

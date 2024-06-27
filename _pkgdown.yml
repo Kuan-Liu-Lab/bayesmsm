@@ -1,11 +1,9 @@
 pkgdown:
   title: bayesmsm
   destination: docs
-
 template:
   bootstrap: 5
   bootswatch: flatly
-
 navbar:
   structure:
     left:
@@ -13,11 +11,11 @@ navbar:
     - reference
     - articles
   left:
-  - text: "Home"
+  - text: Home
     href: index.html
-  - text: "Reference"
+  - text: Reference
     href: reference/index.html
-  - text: "Articles"
+  - text: Articles
     href: articles/index.html
+url: https://kuan-liu-lab.github.io/bayesmsm/
 
-url: https://Kuan-Liu-Lab.github.io/bayesmsm/

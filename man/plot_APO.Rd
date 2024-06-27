@@ -4,14 +4,25 @@
 \alias{plot_APO}
 \title{Plot Average Potential Outcomes (APO)}
 \usage{
-plot_APO(input, effect_type, ...)
+plot_APO(
+  model,
+  effect_type,
+  col_density = "blue",
+  fill_density = "lightblue",
+  main = "Average Potential Outcome (APO)",
+  xlab = "Effect",
+  ylab = "Density",
+  xlim = NULL,
+  ylim = NULL,
+  ...
+)
 }
 \arguments{
-\item{input}{A data frame or model object containing 'bootdata', which include 'effect_comparator' and 'effect_reference' columns.}
-
 \item{effect_type}{A character string specifying which effect to plot: 'effect_comparator' or 'effect_reference'.}
 
 \item{...}{Additional arguments passed to the plotting function.}
+
+\item{input}{A data frame or model object containing 'bootdata', which include 'effect_comparator' and 'effect_reference' columns.}
 }
 \value{
 A density plot showing the distribution of the specified average potential outcome (reference or comparison).
@@ -30,7 +41,6 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            wmean = rep(1, 1000),
                            nboot = 1000,
                            optim_method = "BFGS",
-                           estimand = "RD",
                            parallel = FALSE,
                            ncore = 2)
 plot_APO(model$bootdata, effect_type = "effect_comparator")

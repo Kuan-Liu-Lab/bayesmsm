@@ -9,6 +9,9 @@
 \arguments{
 \item{model}{A model object from bayesmsm}
 }
+\value{
+A summary table of the results from bayesmsm.
+}
 \description{
 Title
 }

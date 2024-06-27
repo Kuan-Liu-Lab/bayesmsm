@@ -7,7 +7,7 @@
 plot_est_box(input, ...)
 }
 \arguments{
-\item{input}{A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'ATE' columns.}
+\item{input}{A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'RD' columns.}
 
 \item{...}{Additional arguments passed to the plotting function.}
 }

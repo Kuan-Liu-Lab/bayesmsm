@@ -5,10 +5,11 @@
 \title{Plot Average Treatment Effect (ATE) Density from Bootstrap Results}
 \usage{
 plot_ATE(
-  input,
+  model,
+  estimand = c("RD", "RR", "OR"),
   col_density = "blue",
   fill_density = "lightblue",
-  main = "Posterior Predictive Distribution of Average Treatment Effect (ATE）",
+  main = "Posterior Predictive Distribution of Average Treatment Effect (ATE)",
   xlab = "ATE",
   ylab = "Posterior Predictive Distribution",
   xlim = NULL,
@@ -17,8 +18,6 @@ plot_ATE(
 )
 }
 \arguments{
-\item{input}{A model object, data frame or vector containing the bootstrap estimates of ATE.}
-
 \item{col_density}{Color for the density plot (default is "blue").}
 
 \item{fill_density}{Fill color for the density plot (default is "lightblue").}
@@ -34,6 +33,8 @@ plot_ATE(
 \item{ylim}{Limits for the y-axis (default is NULL).}
 
 \item{...}{Additional graphical parameters passed to the plot function.}
+
+\item{input}{A model object, data frame or vector containing the bootstrap estimates of ATE.}
 }
 \description{
 Plot Average Treatment Effect (ATE) Density from Bootstrap Results
@@ -49,11 +50,8 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            wmean = rep(1, 1000),
                            nboot = 1000,
                            optim_method = "BFGS",
-                           estimand = "RD",
-                           parallel = FALSE,
+                           parallel = TRUE,
                            ncore = 2)
 plot_ATE(model)
-plot_ATE(model$bootdata)
-plot_ATE(model$bootdata$ATE)
 
 }

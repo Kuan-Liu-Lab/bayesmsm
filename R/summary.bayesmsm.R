@@ -2,7 +2,7 @@
 #'
 #' @param model A model object from bayesmsm
 #'
-#' @return
+#' @return A summary table of the results from bayesmsm.
 #' @export
 #'
 #' @examples
