@@ -1,6 +1,6 @@
 ---
 title: "Vignette for package `bayesmsm`"
-author: "Kuan Liu, Xiao Yan"
+author: "Xiao Yan, Kuan Liu"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette for package `bayesmsm`}
@@ -151,6 +151,9 @@ weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                         parallel = TRUE)
 str(weights)
 ```
+
+- It returns a list containing:
+  - `weights`: The calculated weights for subject-specific treatment effects.
 
 **4. Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`**
 
