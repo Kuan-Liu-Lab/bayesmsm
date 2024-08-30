@@ -27,9 +27,9 @@
 #' * `reference`, the reference intervention level
 #' * `comparator`, the camparison intervention level
 #'
-#' @import foreach
+#' @importFrom foreach "%dopar%"
 #' @import doParallel
-#' @import MCMCpack
+#' @importFrom MCMCpack rdirichlet
 #'
 #' @export
 #'
@@ -80,18 +80,22 @@ bayesmsm <- function(ymodel,
                      ncore = 6){
 
   # load all the required R packages;
-  if (!require(foreach)){
-    install.packages("foreach",repos="http://cran.r-project.org")
-    library(foreach)
-  }
-  if (!require(doParallel)){
-    install.packages("doParallel",repos="http://cran.r-project.org")
-    library(doParallel)
-  }
-  if (!require(MCMCpack)){
-    install.packages("MCMCpack",repos="http://cran.r-project.org")
-    library(MCMCpack)
-  }
+  # if (!require(foreach)){
+  #   install.packages("foreach",repos="http://cran.r-project.org")
+  #   library(foreach)
+  # }
+  # if (!require(doParallel)){
+  #   install.packages("doParallel",repos="http://cran.r-project.org")
+  #   library(doParallel)
+  # }
+  # if (!require(MCMCpack)){
+  #   install.packages("MCMCpack",repos="http://cran.r-project.org")
+  #   library(MCMCpack)
+  # }
+
+  require(foreach)
+  require(doParallel)
+  require(MCMCpack)
 
   # return error message if the input weight vector has different length comparing to the outcome Y;
   if (length(wmean) != nrow(data)) {
