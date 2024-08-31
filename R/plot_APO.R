@@ -18,7 +18,7 @@
 #'                            family = "gaussian",
 #'                            data = testdata,
 #'                            wmean = rep(1, 1000),
-#'                            nboot = 1000,
+#'                            nboot = 100,
 #'                            optim_method = "BFGS",
 #'                            parallel = FALSE,
 #'                            ncore = 2)

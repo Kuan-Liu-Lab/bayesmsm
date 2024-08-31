@@ -306,7 +306,7 @@ bayesmsm <- function(ymodel,
         reference = reference,
         comparator = comparator
       ))
-    } else {
+    } else if (family == "gaussian"){
       return(list(
         RD_mean = mean(results[,2]),
         RD_sd = sqrt(var(results[,2])),
