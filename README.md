@@ -1,7 +1,5 @@
 # R package bayesmsm
 
-[![pkgdown](https://img.shields.io/badge/pkgdown--blue)](https://kuan-liu-lab.github.io/bayesmsm/)
-
 This package provides tools for estimating causal effects using Bayesian Marginal Structural Models. It includes functions for estimating Bayesian weights using JAGS and for Bayesian non-parametric bootstrap to calculate causal effects.
 
 
@@ -79,11 +77,6 @@ summary.bayesmsm(model)
 ```
 
 
-# Documentation
-
-For comprehensive documentation and examples, visit the [pkgdown website](https://Kuan-Liu-Lab.github.io/bayesmsm/).
-
-
 # License
 
 This package is licensed under the MIT License. See the LICENSE file for details.
@@ -97,4 +90,4 @@ If you use the `bayesmsm` package in your research, please cite the reference pa
 # Developers
 
 -  Kuan Liu
--  Xiao Yan (Maintainer)
+-  Xiao Yan
