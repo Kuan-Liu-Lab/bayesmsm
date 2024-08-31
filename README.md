@@ -77,6 +77,11 @@ summary.bayesmsm(model)
 ```
 
 
+# Documentation
+
+For comprehensive documentation and examples, visit the [Vignette](https://Kuan-Liu-Lab.github.io/bayesmsm/).
+
+
 # License
 
 This package is licensed under the MIT License. See the LICENSE file for details.
