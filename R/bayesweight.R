@@ -16,9 +16,15 @@
 #'
 #' @importFrom R2jags jags
 #' @importFrom coda mcmc
+<<<<<<< HEAD
 #' @import parallel
 #' @import doParallel
 #' @import foreach
+=======
+#' @import doParallel
+#' @importFrom foreach "%dopar%"
+#'
+>>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 #' @export
 #'
 #' @examples
@@ -47,12 +53,32 @@ bayesweight <- function(trtmodel.list,
                         parallel = TRUE){
 
   # Load all the required R packages;
+<<<<<<< HEAD
   # require(foreach)
   # require(doParallel)
   # require(MCMCpack)
   # require(parallel)
   # require(R2jags)
   # require(coda)
+=======
+  # if (!require(R2jags)){
+  #   install.packages("R2jags",repos="http://cran.r-project.org")
+  #   library(R2jags)
+  # }
+  # if (!require(coda)){
+  #   install.packages("coda",repos="http://cran.r-project.org")
+  #   library(coda)
+  # }
+  # if (!require(parallel)){
+  #   install.packages("parallel",repos="http://cran.r-project.org")
+  #   library(parallel)
+  # }
+
+  require(R2jags)
+  require(coda)
+  require(doParallel)
+  require(foreach)
+>>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 
   create_marginal_treatment_models <- function(trtmodel.list) {
     # Initialize the list for the marginal treatment models
@@ -266,9 +292,15 @@ bayesweight <- function(trtmodel.list,
     if (n.chains >= available_cores) {
       stop(paste("Parallel MCMC requires 1 core per chain. You have", available_cores, "cores. We recommend using", available_cores - 2, "cores."))
     }
+<<<<<<< HEAD
     # Run JAGS model in parallel
     cl <- parallel::makeCluster(n.chains)
     doParallel::registerDoParallel(cl)
+=======
+    # Run JAGS model in parallel;
+    cl <- makeCluster(n.chains)
+    registerDoParallel(cl)
+>>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
     jags.model.wd <- paste(getwd(), '/treatment_model.txt',sep='')
 
     posterior <- foreach::foreach(i=1:n.chains, .packages=c('R2jags'),

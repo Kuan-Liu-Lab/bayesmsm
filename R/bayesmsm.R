@@ -27,10 +27,14 @@
 #' * `reference`, the reference intervention level
 #' * `comparator`, the camparison intervention level
 #'
-#' @import foreach
+#' @importFrom foreach "%dopar%"
 #' @import doParallel
+<<<<<<< HEAD
 #' @import parallel
 #' @import MCMCpack
+=======
+#' @importFrom MCMCpack rdirichlet
+>>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 #'
 #' @export
 #'
@@ -67,10 +71,29 @@ bayesmsm <- function(ymodel,
                      ncore = 6){
 
   # load all the required R packages;
+<<<<<<< HEAD
   # require(foreach)
   # require(doParallel)
   # require(MCMCpack)
   # require(parallel)
+=======
+  # if (!require(foreach)){
+  #   install.packages("foreach",repos="http://cran.r-project.org")
+  #   library(foreach)
+  # }
+  # if (!require(doParallel)){
+  #   install.packages("doParallel",repos="http://cran.r-project.org")
+  #   library(doParallel)
+  # }
+  # if (!require(MCMCpack)){
+  #   install.packages("MCMCpack",repos="http://cran.r-project.org")
+  #   library(MCMCpack)
+  # }
+
+  require(foreach)
+  require(doParallel)
+  require(MCMCpack)
+>>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 
   # return error message if the input weight vector has different length comparing to the outcome Y;
   if (length(wmean) != nrow(data)) {
@@ -256,7 +279,7 @@ bayesmsm <- function(ymodel,
         reference = reference,
         comparator = comparator
       ))
-    } else {
+    } else if (family == "gaussian"){
       return(list(
         RD_mean = mean(results[,2]),
         RD_sd = sqrt(var(results[,2])),
