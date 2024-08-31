@@ -2,14 +2,14 @@
 % Please edit documentation in R/plot_ATE.R
 \name{plot_ATE}
 \alias{plot_ATE}
-\title{Plot Average Treatment Effect (ATE) Density from Bootstrap Results}
+\title{Plot Average Treatment Effect Density from Bootstrap Results}
 \usage{
 plot_ATE(
-  model,
-  estimand = c("RD", "RR", "OR"),
+  input,
+  ATE = "RD",
   col_density = "blue",
   fill_density = "lightblue",
-  main = "Posterior Predictive Distribution of Average Treatment Effect (ATE)",
+  main = "Posterior Predictive Distribution of Average Treatment Effect",
   xlab = "ATE",
   ylab = "Posterior Predictive Distribution",
   xlim = NULL,
@@ -18,6 +18,10 @@ plot_ATE(
 )
 }
 \arguments{
+\item{input}{A model object, data frame or vector containing the bootstrap estimates of ATE.}
+
+\item{ATE}{define causal estimand of interest from RD, OR, RR.}
+
 \item{col_density}{Color for the density plot (default is "blue").}
 
 \item{fill_density}{Fill color for the density plot (default is "lightblue").}
@@ -33,11 +37,9 @@ plot_ATE(
 \item{ylim}{Limits for the y-axis (default is NULL).}
 
 \item{...}{Additional graphical parameters passed to the plot function.}
-
-\item{input}{A model object, data frame or vector containing the bootstrap estimates of ATE.}
 }
 \description{
-Plot Average Treatment Effect (ATE) Density from Bootstrap Results
+Plot Average Treatment Effect Density from Bootstrap Results
 }
 \examples{
 testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
@@ -48,7 +50,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            family = "gaussian",
                            data = testdata,
                            wmean = rep(1, 1000),
-                           nboot = 1000,
+                           nboot = 100,
                            optim_method = "BFGS",
                            parallel = TRUE,
                            ncore = 2)

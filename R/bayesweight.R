@@ -17,7 +17,8 @@
 #' @importFrom R2jags jags
 #' @importFrom coda mcmc
 #' @import parallel
-#'
+#' @import doParallel
+#' @import foreach
 #' @export
 #'
 #' @examples
@@ -27,8 +28,8 @@
 #' weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
 #'                                             a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
 #'                        data = testdata,
-#'                        n.iter = 250,
-#'                        n.burnin = 150,
+#'                        n.iter = 2500,
+#'                        n.burnin = 1500,
 #'                        n.thin = 5,
 #'                        n.chains = 2,
 #'                        seed = 890123,
@@ -46,18 +47,12 @@ bayesweight <- function(trtmodel.list,
                         parallel = TRUE){
 
   # Load all the required R packages;
-  if (!require(R2jags)){
-    install.packages("R2jags",repos="http://cran.r-project.org")
-    library(R2jags)
-  }
-  if (!require(coda)){
-    install.packages("coda",repos="http://cran.r-project.org")
-    library(coda)
-  }
-  if (!require(parallel)){
-    install.packages("parallel",repos="http://cran.r-project.org")
-    library(parallel)
-  }
+  # require(foreach)
+  # require(doParallel)
+  # require(MCMCpack)
+  # require(parallel)
+  # require(R2jags)
+  # require(coda)
 
   create_marginal_treatment_models <- function(trtmodel.list) {
     # Initialize the list for the marginal treatment models
@@ -272,15 +267,14 @@ bayesweight <- function(trtmodel.list,
       stop(paste("Parallel MCMC requires 1 core per chain. You have", available_cores, "cores. We recommend using", available_cores - 2, "cores."))
     }
     # Run JAGS model in parallel
-    library(doParallel)
-    cl <- makeCluster(n.chains)
-    registerDoParallel(cl)
+    cl <- parallel::makeCluster(n.chains)
+    doParallel::registerDoParallel(cl)
     jags.model.wd <- paste(getwd(), '/treatment_model.txt',sep='')
 
-    posterior <- foreach(i=1:n.chains, .packages=c('R2jags'),
+    posterior <- foreach::foreach(i=1:n.chains, .packages=c('R2jags'),
                          .combine='rbind') %dopar%{
 
-                           jagsfit <- jags(data = jags.data,
+                           jagsfit <- R2jags::jags(data = jags.data,
                                            parameters.to.save = jags.params,
                                            model.file = jags.model.wd,
                                            n.chains = 1,
@@ -289,23 +283,11 @@ bayesweight <- function(trtmodel.list,
                                            n.thin = n.thin,
                                            jags.seed = seed+i)
                            # Combine MCMC output from multiple chains
-
                            out.mcmc <- as.mcmc(jagsfit)
-
                            return(do.call(rbind, lapply(out.mcmc, as.matrix)))
+
                          }
-
-    stopCluster(cl)
-
-
-
-    diagnostics <- coda::geweke.diag(posterior)
-
-    # Check diagnostics for convergence issues
-    significant_indices <- which(abs(diagnostics$z[-(length(diagnostics$z))]) > 1.96)
-    if (length(significant_indices) > 0) {
-      warning("Some parameters have not converged with Geweke index > 1.96. More iterations may be needed.")
-    }
+    parallel::stopCluster(cl)
 
   } else if (parallel == FALSE) {
 
@@ -314,7 +296,7 @@ bayesweight <- function(trtmodel.list,
     }
 
     # Run JAGS model without parallel computing
-    jagsfit <- jags(data = jags.data,
+    jagsfit <- R2jags::jags(data = jags.data,
                     parameters.to.save = jags.params,
                     model.file = "treatment_model.txt",
                     n.chains = 1,
@@ -325,18 +307,17 @@ bayesweight <- function(trtmodel.list,
 
     # Extract MCMC output
     out.mcmc <- as.mcmc(jagsfit)
-    posterior <- as.matrix(out.mcmc[[1]])
-
-    diagnostics <- coda::geweke.diag(out.mcmc)
+    diagnostics <- geweke.diag(out.mcmc)
 
     # Check diagnostics for convergence issues
-    significant_indices <- which(abs(diagnostics[[1]]$z[-(length(diagnostics[[1]]$z))]) > 1.96)
+    significant_indices <- which(abs(diagnostics[[1]]$z) > 1.96)
     if (length(significant_indices) > 0) {
       warning("Some parameters have not converged with Geweke index > 1.96. More iterations may be needed.")
     }
+
+    posterior <- as.matrix(out.mcmc[[1]])
+
   }
-
-
 
 
   # number of parameters for this model is 5 and design matrix is 1 variables

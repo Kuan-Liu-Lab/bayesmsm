@@ -12,10 +12,6 @@ navbar:
     - articles
   left:
   - text: Home
-    href: index.html
-  - text: Reference
-    href: reference/index.html
-  - text: Articles
-    href: articles/index.html
+    href: vignette.html
 url: https://kuan-liu-lab.github.io/bayesmsm/
 

@@ -1,4 +1,4 @@
-#' Title
+#' Summary function to generate result table from bayesmsm
 #'
 #' @param model A model object from bayesmsm
 #'
@@ -15,16 +15,16 @@
 #'                            family = "gaussian",
 #'                            data = testdata,
 #'                            wmean = rep(1, 1000),
-#'                            nboot = 1000,
+#'                            nboot = 100,
 #'                            optim_method = "BFGS",
 #'                            seed = 890123,
 #'                            parallel = TRUE,
 #'                            ncore = 2)
-#' summary.bayesmsm(model)
+#' summary_bayesmsm(model)
 #'
 #'
 #'
-summary.bayesmsm <- function(model) {
+summary_bayesmsm <- function(model) {
   # Extract bootstrapped data
   bootdata <- model$bootdata
 

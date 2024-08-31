@@ -4,6 +4,8 @@ Title: Bayesian Marginal Structural Models
 Version: 0.1.0
 Author: Kuan Liu, Xiao Yan
 Maintainer: Xiao Yan <Clarence.YXA@gmail.com>
+Depends:
+    R (>= 4.2.0)
 Imports:
 	MCMCpack,
 	doParallel,
@@ -14,12 +16,9 @@ Imports:
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Suggests: 
-    knitr,
-    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Description: This package provides tools for estimating causal effects using Bayesian Marginal Structural Models. It includes functions for estimating Bayesian weights using JAGS and for Bayesian non-parametric bootstrap to calculate causal effects.
-VignetteBuilder: knitr
 URL: https://kuan-liu-lab.github.io/bayesmsm/

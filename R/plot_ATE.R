@@ -1,6 +1,7 @@
-#' Plot Average Treatment Effect (ATE) Density from Bootstrap Results
+#' Plot Average Treatment Effect Density from Bootstrap Results
 #'
 #' @param input A model object, data frame or vector containing the bootstrap estimates of ATE.
+#' @param ATE define causal estimand of interest from RD, OR, RR.
 #' @param col_density Color for the density plot (default is "blue").
 #' @param fill_density Fill color for the density plot (default is "lightblue").
 #' @param main Title of the plot (default is "Density of ATE Estimates").
@@ -21,56 +22,44 @@
 #'                            family = "gaussian",
 #'                            data = testdata,
 #'                            wmean = rep(1, 1000),
-#'                            nboot = 1000,
+#'                            nboot = 100,
 #'                            optim_method = "BFGS",
 #'                            parallel = TRUE,
 #'                            ncore = 2)
 #' plot_ATE(model)
 #'
-plot_ATE <- function(model,
-                     estimand = c("RD", "RR", "OR"),
+plot_ATE <- function(input,
+                     ATE = "RD",
                      col_density = "blue",
                      fill_density = "lightblue",
-                     main = "Posterior Predictive Distribution of Average Treatment Effect (ATE)",
+                     main = "Posterior Predictive Distribution of Average Treatment Effect",
                      xlab = "ATE", ylab = "Posterior Predictive Distribution",
                      xlim = NULL, ylim = NULL, ...) {
-
-  estimand <- match.arg(estimand)
-
-  # Check if the input model contains the necessary columns
-  if (!is.list(model) || !"bootdata" %in% names(model)) {
-    stop("input must be a model object containing a 'bootdata' data frame.")
+  # Check if input is either a data frame or part of a model object
+  if (is.list(input) && "bootdata" %in% names(input)) {
+    # If input is a list and has bootdata, check for ATE column within bootdata
+    if (ATE %in% names(input$bootdata)) {
+      ate_values <- unlist(input$bootdata[ATE])
+    } else {
+      stop("bootdata within the model object must have an 'ATE' column.")
+    }
   }
 
-  if (!estimand %in% names(model$bootdata)) {
-    stop(paste("bootdata within the model object must have a '", estimand, "' column.", sep = ""))
-  }
-
-  ate_values <- model$bootdata[[estimand]]
-
-  # Calculate the density of ATE estimates
   ate_density <- density(ate_values)
   ci <- quantile(ate_values, probs = c(0.025, 0.975))
   density_ci <- density(ate_values, from = ci[1], to = ci[2])
 
-  # Set layout to allocate space for legend
-  layout(matrix(c(1, 2), nrow = 1), widths = c(3, 1))
-
-  # Plot the density
-  par(mar = c(5, 4, 4, 0)) # Adjust margins for the plot
-  plot(ate_density, col = col_density, main = paste(main, " (", estimand, ")", sep = ""), xlab = xlab, ylab = ylab, xlim = xlim, ylim = ylim, ...)
+  plot(ate_density, col = col_density, main = main, xlab = xlab, ylab = ylab, xlim = xlim, ylim = ylim, ...)
   polygon(c(density_ci$x, rev(density_ci$x)), c(rep(min(ate_density$y), length(density_ci$x)), rev(density_ci$y)), col = rgb(0, 0, 1, alpha = 0.3))
   abline(v = mean(ate_values), col = "purple", lwd = 2, lty = 3)
   abline(v = ci[1], col = "darkgreen", lty = 2)
   abline(v = ci[2], col = "darkgreen", lty = 2)
 
-  # Plot the legend in a separate plot
-  par(mar = c(5, 0, 4, 0)) # Adjust margins for the legend
-  plot.new()
-  legend("center", legend = c("ATE Density",
-                              paste("Mean:", round(mean(ate_values), 3)),
-                              paste("95% CI: [", round(ci[1], 3), ",", round(ci[2], 3), "]")),
+  legend_text <- c(paste(ATE, "Density",sep = " "),
+                   paste("Mean:", round(mean(ate_values), 3)),
+                   paste("95% CI: [", round(ci[1], 3), ",", round(ci[2], 3), "]"))
+
+  legend("topright", legend = legend_text,
          col = c(col_density, "purple", "darkgreen"),
-         lwd = 2, lty = c(1, 3, 2),
-         bty = "n")
+         lwd = 2, lty = c(1, 3, 2))
 }
