@@ -16,23 +16,22 @@
 #'
 #' @importFrom R2jags jags
 #' @importFrom coda mcmc
-<<<<<<< HEAD
 #' @import parallel
 #' @import doParallel
 #' @import foreach
-=======
-#' @import doParallel
 #' @importFrom foreach "%dopar%"
 #'
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 #' @export
 #'
 #' @examples
 #'
 #' # Continuous outcome
-#' testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+#' testdata <- read.csv(system.file("extdata",
+#'                                  "continuous_outcome_data.csv",
+#'                                  package = "bayesmsm"))
 #' weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
-#'                                             a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
+#'                                             a_2 ~ w1 + w2 + L1_1 + L2_1 +
+#'                                                   L1_2 + L2_2 + a_1),
 #'                        data = testdata,
 #'                        n.iter = 2500,
 #'                        n.burnin = 1500,
@@ -53,14 +52,12 @@ bayesweight <- function(trtmodel.list,
                         parallel = TRUE){
 
   # Load all the required R packages;
-<<<<<<< HEAD
   # require(foreach)
   # require(doParallel)
   # require(MCMCpack)
   # require(parallel)
   # require(R2jags)
   # require(coda)
-=======
   # if (!require(R2jags)){
   #   install.packages("R2jags",repos="http://cran.r-project.org")
   #   library(R2jags)
@@ -78,7 +75,6 @@ bayesweight <- function(trtmodel.list,
   require(coda)
   require(doParallel)
   require(foreach)
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 
   create_marginal_treatment_models <- function(trtmodel.list) {
     # Initialize the list for the marginal treatment models
@@ -292,15 +288,21 @@ bayesweight <- function(trtmodel.list,
     if (n.chains >= available_cores) {
       stop(paste("Parallel MCMC requires 1 core per chain. You have", available_cores, "cores. We recommend using", available_cores - 2, "cores."))
     }
-<<<<<<< HEAD
     # Run JAGS model in parallel
     cl <- parallel::makeCluster(n.chains)
     doParallel::registerDoParallel(cl)
-=======
     # Run JAGS model in parallel;
-    cl <- makeCluster(n.chains)
-    registerDoParallel(cl)
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
+    # cl <- makeCluster(n.chains)
+    # registerDoParallel(cl)
+
+    # Ensure the cluster is stopped when the function exits, even in case of error
+    on.exit({
+      if (!is.null(cl)) {
+        parallel::stopCluster(cl)
+        foreach::registerDoSEQ()  # Reset to sequential processing correctly
+      }
+    }, add = TRUE)
+
     jags.model.wd <- paste(getwd(), '/treatment_model.txt',sep='')
 
     posterior <- foreach::foreach(i=1:n.chains, .packages=c('R2jags'),
@@ -319,7 +321,8 @@ bayesweight <- function(trtmodel.list,
                            return(do.call(rbind, lapply(out.mcmc, as.matrix)))
 
                          }
-    parallel::stopCluster(cl)
+    # parallel::stopCluster(cl)
+    # doParallel::registerDoSEQ()
 
   } else if (parallel == FALSE) {
 

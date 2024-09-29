@@ -94,5 +94,5 @@ If you use the `bayesmsm` package in your research, please cite the reference pa
 
 # Developers
 
--  Kuan Liu
 -  Xiao Yan
+-  Kuan Liu

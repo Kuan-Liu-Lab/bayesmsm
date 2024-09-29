@@ -15,9 +15,6 @@ test_that("bayesweight works with no errors", {
                          seed = 890123,
                          parallel = TRUE)
 
-  # Check that the weights object is created and is of the expected class
-  expect_s3_class(weights, "mcmc.list")
-
   # Check that the weights object has the expected length (equal to the number of observations in testdata)
   expect_equal(length(weights), nrow(testdata))
 

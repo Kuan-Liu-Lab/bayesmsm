@@ -42,7 +42,9 @@ plot_ATE(
 Plot Average Treatment Effect Density from Bootstrap Results
 }
 \examples{
-testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+testdata <- read.csv(system.file("extdata",
+                                 "continuous_outcome_data.csv",
+                                 package = "bayesmsm"))
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            nvisit = 2,
                            reference = c(rep(0,2)),

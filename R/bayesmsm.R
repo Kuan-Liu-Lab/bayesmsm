@@ -29,19 +29,18 @@
 #'
 #' @importFrom foreach "%dopar%"
 #' @import doParallel
-<<<<<<< HEAD
 #' @import parallel
 #' @import MCMCpack
-=======
 #' @importFrom MCMCpack rdirichlet
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 #'
 #' @export
 #'
 #' @examples
 #'
 #' # Continuous outcome
-#' testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+#' testdata <- read.csv(system.file("extdata",
+#'                                  "continuous_outcome_data.csv",
+#'                                  package = "bayesmsm"))
 #' model <- bayesmsm(ymodel = y ~ a_1+a_2,
 #'                            nvisit = 2,
 #'                            reference = c(rep(0,2)),
@@ -71,12 +70,10 @@ bayesmsm <- function(ymodel,
                      ncore = 6){
 
   # load all the required R packages;
-<<<<<<< HEAD
   # require(foreach)
   # require(doParallel)
   # require(MCMCpack)
   # require(parallel)
-=======
   # if (!require(foreach)){
   #   install.packages("foreach",repos="http://cran.r-project.org")
   #   library(foreach)
@@ -93,7 +90,6 @@ bayesmsm <- function(ymodel,
   require(foreach)
   require(doParallel)
   require(MCMCpack)
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 
   # return error message if the input weight vector has different length comparing to the outcome Y;
   if (length(wmean) != nrow(data)) {

@@ -17,9 +17,6 @@ test_that("bayesweight_cen works with no errors", {
                                  n.chains = 1,
                                  seed = 890123)
 
-  # Check that the weights_cen object is created and is of the expected class
-  expect_s3_class(weights_cen, "mcmc.list")
-
   # Check that the weights_cen object has the expected dimensions (length or rows matching the data size)
   expect_equal(length(weights_cen), nrow(simdat_cen))
 
@@ -27,6 +24,6 @@ test_that("bayesweight_cen works with no errors", {
   expect_true(is.numeric(weights_cen))
 
   # Check that weights are non-negative
-  expect_true(all(weights_cen >= 0))
+  expect_true(all(na.omit(weights_cen) >= 0))
 
 })

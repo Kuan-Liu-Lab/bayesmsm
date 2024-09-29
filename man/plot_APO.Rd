@@ -20,7 +20,9 @@ A density plot showing the distribution of the specified average potential outco
 This function plots the density of APO for a specified effect type from bootstrap simulation results.
 }
 \examples{
-testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+testdata <- read.csv(system.file("extdata",
+                                 "continuous_outcome_data.csv",
+                                 package = "bayesmsm"))
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            nvisit = 2,
                            reference = c(rep(0,2)),

@@ -42,9 +42,12 @@ It uses JAGS for Bayesian inference and supports parallel computation to speed u
 \examples{
 
 # Continuous outcome
-testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+testdata <- read.csv(system.file("extdata",
+                                 "continuous_outcome_data.csv",
+                                 package = "bayesmsm"))
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
-                                            a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
+                                            a_2 ~ w1 + w2 + L1_1 + L2_1 +
+                                                  L1_2 + L2_2 + a_1),
                        data = testdata,
                        n.iter = 2500,
                        n.burnin = 1500,

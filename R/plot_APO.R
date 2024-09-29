@@ -10,7 +10,9 @@
 #' @export
 #'
 #' @examples
-#' testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+#' testdata <- read.csv(system.file("extdata",
+#'                                  "continuous_outcome_data.csv",
+#'                                  package = "bayesmsm"))
 #' model <- bayesmsm(ymodel = y ~ a_1+a_2,
 #'                            nvisit = 2,
 #'                            reference = c(rep(0,2)),

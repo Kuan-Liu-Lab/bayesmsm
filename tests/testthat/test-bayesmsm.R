@@ -14,10 +14,7 @@ test_that("bayesmsm works with no errors", {
                       wmean = rep(1, 1000),
                       nboot = 100,
                       optim_method = "BFGS",
-<<<<<<< HEAD
-=======
                       # estimand = 'RD',
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
                       seed = 890123,
                       parallel = TRUE,
                       ncore = 2)
@@ -25,8 +22,6 @@ test_that("bayesmsm works with no errors", {
   # Check if 'model' is a list
   expect_true(is.list(model))
 
-<<<<<<< HEAD
-=======
   # Check if 'model' has 6 elements
   expect_length(model, 6)
 
@@ -43,8 +38,6 @@ test_that("bayesmsm works with no errors", {
   # expect_type(model$reference, "double")
   # expect_type(model$comparator, "double")
 
-
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
   testdata2 <- read.csv(system.file("extdata", "binary_outcome_data.csv", package = "bayesmsm"))
   model2 <- bayesmsm(ymodel = y ~ a_1+a_2,
                     nvisit = 2,
@@ -55,10 +48,7 @@ test_that("bayesmsm works with no errors", {
                     wmean = rep(1, 1000),
                     nboot = 100,
                     optim_method = "BFGS",
-<<<<<<< HEAD
-=======
                     # estimand = 'OR',
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
                     seed = 890123,
                     parallel = TRUE,
                     ncore = 2)
@@ -66,8 +56,6 @@ test_that("bayesmsm works with no errors", {
   # Check if 'model' is a list
   expect_true(is.list(model2))
 
-<<<<<<< HEAD
-=======
   # Check if 'model' has 12 elements
   expect_length(model2, 12)
 
@@ -84,6 +72,5 @@ test_that("bayesmsm works with no errors", {
   # expect_true(is.data.frame(model2$bootdata))
   # expect_type(model2$reference, "double")
   # expect_type(model2$comparator, "double")
->>>>>>> c02a61c92d3be0eeca4a22bb0196a74db590a6ec
 
 })
