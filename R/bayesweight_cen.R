@@ -17,7 +17,6 @@
 #' @importFrom coda mcmc as.mcmc geweke.diag
 #' @import parallel
 #' @import doParallel
-#' @import foreach
 #' @importFrom foreach "%dopar%"
 #' @importFrom stats as.formula terms var
 #'
@@ -64,30 +63,51 @@ bayesweight_cen <- function(trtmodel.list = list(A1 ~ L11 + L21,
 
 
   create_marginal_treatment_models <- function(trtmodel.list) {
-    # Initialize the list for the marginal treatment models
-    trtmodel.list_s <- list()
 
-    # Loop through each model in the original list
-    for (i in seq_along(trtmodel.list)) {
+    # Use lapply to iterate over indices
+    trtmodel.list_s <- lapply(seq_along(trtmodel.list), function(index) {
       # Extract the response variable (treatment variable) from each model
-      response_var <- all.vars(trtmodel.list[[i]])[1]  # assuming the response is the first variable on the LHS
+      response_var <- all.vars(trtmodel.list[[index]])[1]  # assuming the response is the first variable on the LHS
 
       # Create the marginal model formula
-      if (i == 1) {
+      if (index == 1) {
         # The first treatment model does not depend on any previous treatments
         formula_s <- as.formula(paste(response_var, "~ 1"))
       } else {
         # Subsequent treatment models depend on all previous treatments
-        previous_treatments <- sapply(seq_len(i-1), function(j) {
+        previous_treatments <- sapply(seq_len(index - 1), function(j) {
           all.vars(trtmodel.list[[j]])[1]
         })
         formula_s <- as.formula(paste(response_var, "~", paste(previous_treatments, collapse = " + ")))
       }
 
-      # Append the new formula to the list
-      trtmodel.list_s[[i]] <- formula_s
-    }
+      return(formula_s)
+    })
 
+    # # Initialize the list for the marginal treatment models
+    # trtmodel.list_s <- list()
+    #
+    # # Loop through each model in the original list
+    # for (i in seq_along(trtmodel.list)) {
+    #   # Extract the response variable (treatment variable) from each model
+    #   response_var <- all.vars(trtmodel.list[[i]])[1]  # assuming the response is the first variable on the LHS
+    #
+    #   # Create the marginal model formula
+    #   if (i == 1) {
+    #     # The first treatment model does not depend on any previous treatments
+    #     formula_s <- as.formula(paste(response_var, "~ 1"))
+    #   } else {
+    #     # Subsequent treatment models depend on all previous treatments
+    #     previous_treatments <- sapply(seq_len(length(trtmodel.list) - 1), function(j) {
+    #       all.vars(trtmodel.list[[j]])[1]
+    #     })
+    #     formula_s <- as.formula(paste(response_var, "~", paste(previous_treatments, collapse = " + ")))
+    #   }
+    #
+    #   # Append the new formula to the list
+    #   trtmodel.list_s[[i]] <- formula_s
+    # }
+    #
     return(trtmodel.list_s)
   }
 
@@ -283,28 +303,29 @@ bayesweight_cen <- function(trtmodel.list = list(A1 ~ L11 + L21,
       stop(paste("Parallel MCMC requires 1 core per chain. You have", available_cores, "cores. We recommend using", available_cores - 2, "cores."))
     }
     # Run JAGS model in parallel
-    library(doParallel)
-    cl <- makeCluster(n.chains)
-    registerDoParallel(cl)
+    cl <- parallel::makeCluster(n.chains)
+    doParallel::registerDoParallel(cl)
+
     jags.model.wd <- paste(getwd(), '/censoring_model.txt',sep='')
 
-    posterior <- foreach(i=1:n.chains, .packages=c('R2jags'),
+    posterior <- foreach::foreach(chain_idx=1:n.chains, .packages=c('R2jags'),
                          .combine='rbind') %dopar%{
 
+                           set.seed(seed+chain_idx) #define seed;
                            jagsfit <- jags(data = jags.data,
                                            parameters.to.save = jags.params,
                                            model.file = jags.model.wd,
                                            n.chains = 1,
                                            n.iter = n.iter,
                                            n.burnin = n.burnin,
-                                           n.thin = n.thin,
-                                           jags.seed = seed+i)
+                                           n.thin = n.thin)
                            # Combine MCMC output from multiple chains
                            out.mcmc <- as.mcmc(jagsfit)
                            return(do.call(rbind, lapply(out.mcmc, as.matrix)))
                          }
 
-    stopCluster(cl)
+    parallel::stopCluster(cl)
+
   } else if (parallel == FALSE) {
     if (n.chains != 1) {
       stop("Non-parallel MCMC requires exactly 1 chain.")

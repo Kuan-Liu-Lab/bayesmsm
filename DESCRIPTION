@@ -18,7 +18,10 @@ Depends:
     R (>= 4.2.0)
 Suggests: 
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr, 
+	  DiagrammeR, 
+	  DT 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -29,12 +32,10 @@ Imports:
 	  foreach,
 	  parallel,
 	  R2jags,
-	  knitr,
 	  coda (>= 0.19-4),
 	  stats,
 	  grDevices,
-	  graphics,
-	  knitr
+	  graphics
 NeedsCompilation: no
 Config/testthat/edition: 3
 URL: https://kuan-liu-lab.github.io/bayesmsm/

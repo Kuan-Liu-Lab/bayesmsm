@@ -1,9 +1,9 @@
 ---
-title: "Vignette for package `bayesmsm`"
+title: "`bayesmsm` for fitting Bayesian marginal structural model with longitudinal causal data without right-censoring"
 author: "Xiao Yan, Kuan Liu"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette for package `bayesmsm`}
+  %\VignetteIndexEntry{`bayesmsm` for fitting Bayesian marginal structural model with longitudinal causal data without right-censoring}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -41,7 +41,7 @@ knitr::opts_chunk$set(
 
   - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub:
 
-```{r, results=FALSE, force=TRUE}
+```{r, eval = FALSE, results=FALSE, force=TRUE}
 devtools::install_github("Kuan-Liu-Lab/bayesmsm")
 library(bayesmsm)
 ```
@@ -136,7 +136,7 @@ $$
   - `seed`: Seed to ensure reproducibility.
   - `parallel`: Logical flag indicating whether to run the MCMC chains in parallel. Default is TRUE.
 
-```{r}
+```{r eval=FALSE}
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                              a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
                         data = testdata,
@@ -170,7 +170,7 @@ The function `bayesmsm` estimates causal effect of time-varying treatments. It u
   - `parallel`: A logical flag indicating whether to perform computations in parallel (default is TRUE).
   - `ncore`: The number of cores to use for parallel computation (default is 4).
 
-```{r}
+```{r eval=FALSE}
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            nvisit = 2,
                            reference = c(rep(0,2)),
@@ -198,14 +198,14 @@ The `bayesmsm` package also provides several other functions for visualizing the
 - Plotting the Average Treatment Effect (ATE)
   - The `plot_ATE` function generates a plot of the estimated ATE with its 95% credible interval.
   
-```{r}
+```{r eval=FALSE}
 plot_ATE(model)
 ```
 
 - Plotting the Average Potential Outcome (APO)
   - Similarly, the `plot_APO` function plots the estimated APO for both the reference and comparator level effects.
 
-```{r}
+```{r eval=FALSE}
 plot_APO(model, "effect_reference")
 plot_APO(model, "effect_comparator")
 ```
@@ -213,7 +213,7 @@ plot_APO(model, "effect_comparator")
 - Plotting the Distribution of Estimated Treatment Effects
   - The `plot_est_box` function generates an error bar plot of the estimated treatment effects (APO and ATE) from the bootstrap samples.
 
-```{r}
+```{r eval=FALSE}
 plot_est_box(model)
 ```
 
@@ -223,4 +223,3 @@ plot_est_box(model)
 - Saarela, O., Stephens, D. A., Moodie, E. E. M., & Klein, M. B. (2015). On Bayesian estimation of marginal structural models. Biometrics, 71(2), 279–288. https://doi.org/10.1111/biom.12269
 - Robins, J. M., Hernán, M. A., & Brumback, B. (2000). Marginal structural models and causal inference in epidemiology. Epidemiology, 11(5), 550–560. https://doi.org/10.1097/00001648-200009000-00011
 - Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020). Estimation of causal effects with repeatedly measured outcomes in a Bayesian framework. Statistical Methods in Medical Research, 29(9), 2507–2519. https://doi.org/10.1177/0962280219900362
-bayesmsm/vignettes/bayesmsm.Rmd at main · Kuan-Liu-Lab/bayesmsm

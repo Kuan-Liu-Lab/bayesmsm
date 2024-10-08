@@ -30,7 +30,6 @@
 #' @importFrom foreach "%dopar%"
 #' @import doParallel
 #' @import parallel
-#' @import MCMCpack
 #' @importFrom MCMCpack rdirichlet
 #' @importFrom stats as.formula density optim quantile sd terms var
 #'
