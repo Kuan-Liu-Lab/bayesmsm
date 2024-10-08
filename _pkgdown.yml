@@ -1,48 +1,5 @@
 url: https://kuan-liu-lab.github.io/bayesmsm/
-
 template:
-  params:
-    bootswatch: cosmo
+  bootstrap: 5
 
-authors:
-  Kuan Liu:
-    href: http://Kuan-Liu.com/
-  Xiao Yan:
-    href: https://www.linkedin.com/in/xiaoyan1596/
-  Martin Urner:
-    href: https://criticalcaretoronto.com/our-fellows/dr-martin-urner/
 
-development:
-  mode: release
-
-reference:
-- title: All functions
-  contents:
-    - '`bayesmsm`'
-    - '`bayesweight`'
-    - '`bayesweight_cen`'
-    - '`calculate_effect`'
-    - '`plot_APO`'
-    - '`plot_ATE`'
-    - '`plot_est_box`'
-    - '`summary_bayesmsm`'
-
-navbar:
-  structure:
-    left:
-    - home
-    - Vignettes
-    - Reference
-    right: github
-  components:
-    home:
-      icon: fas fa-home fa-lg
-      href: index.html
-    articles:
-      text: Vignettes
-      menu:
-      - text: Bayesian MSMs without censoring
-        href: articles/bayesmsm.html
-    reference:
-      text: Reference
-      href: reference/index.html
