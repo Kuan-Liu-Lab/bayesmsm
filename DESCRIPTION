@@ -2,7 +2,7 @@ Package: bayesmsm
 Type: Package
 Title: Fitting Bayesian Marginal Structural Models for Longitudinal observational Data
 Version: 0.1.0
-Date: 2024-10-07
+Date: 2024-10-08
 Authors@R: c(
     person("Kuan", "Liu", ,"kuan.liu@utoronto.ca", role = c("aut", "cre"),
            comment = "https://Kuan-Liu.com/"),
@@ -37,6 +37,6 @@ Imports:
 	  graphics
 NeedsCompilation: no
 Config/testthat/edition: 3
-URL: https://kuan-liu-lab.github.io/bayesmsm/
+URL: https://kuan-liu-lab.github.io/bayesmsm/, https://github.com/Kuan-Liu-Lab/bayesmsm
 BugReports: https://github.com/Kuan-Liu-Lab/bayesmsm/issues
 VignetteBuilder: knitr

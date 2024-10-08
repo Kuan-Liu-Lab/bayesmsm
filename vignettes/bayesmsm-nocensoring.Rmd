@@ -1,9 +1,9 @@
 ---
-title: "`bayesmsm` for fitting Bayesian marginal structural model with longitudinal causal data without right-censoring"
+title: "`bayesmsm` for longitudinal data without right-censoring"
 author: "Xiao Yan, Kuan Liu"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{`bayesmsm` for fitting Bayesian marginal structural model with longitudinal causal data without right-censoring}
+  %\VignetteIndexEntry{`bayesmsm` for longitudinal data without right-censoring}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-**1. Introduction**
+# Introduction
 
 - The `bayesmsm` package enables easy implementation of the Bayesian marginal structural models (BMSMs) for longitudinal data. The methodology of BMSMs can be divided into 2 estimation steps:
 
@@ -46,7 +46,7 @@ devtools::install_github("Kuan-Liu-Lab/bayesmsm")
 library(bayesmsm)
 ```
 
-**2. Simulated observational data with a time-dependent treatment**
+# Simulated observational data with a time-dependent treatment
 
 - The simulated dataset (continuous outcome)
   - 1000 patients and 3 visits (2 of which patients were assigned a treatment)
@@ -120,7 +120,7 @@ $$
 ATE = E(Y \mid Z_1 = 1, Z_2 = 1) - E(Y \mid Z_1 = 0, Z_2 = 0)
 $$
 
-**3. Bayesian treatment effect weight estimation using `bayesweight`**
+# Bayesian treatment effect weight estimation using `bayesweight`
 
 - The following code calls the function `bayesweight` to run JAGS and calculate the weights.
   - Non-parallel computing requires that `n.chains = 1`. Parallel MCMC requires at least 2 chains because computing is running on 1 core per chain, and we recommend using at most 2 chains less than the number of available cores on your computer.
@@ -152,7 +152,7 @@ str(weights)
 - It returns a list containing:
   - `weights`: The calculated weights for subject-specific treatment effects.
 
-**4. Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`**
+# Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`
 
 The function `bayesmsm` estimates causal effect of time-varying treatments. It uses subject-specific treatment assignmennt weights *weights* calculated using `bayesweight`, and performs Bayesian non-parametric bootstrap to estimate the causal parameters.
 
@@ -191,7 +191,7 @@ str(model)
   - `bootdata`: a data frame containing the bootstrap samples for the reference effect, comparator effect, and average treatment effect (ATE).
   - `reference`, `comparator`: the reference level and comparator level the user chooses to compare. Here the reference level is never treated (0,0), and the comparator level is always treated (1,1).
 
-**5. Visualization functions: `plot_ATE`, `plot_APO`, `plot_est_box`**
+# Visualization functions: `plot_ATE`, `plot_APO`, `plot_est_box`
 
 The `bayesmsm` package also provides several other functions for visualizing the above results: `plot_ATE`, `plot_APO`, and `plot_est_box`. These functions help the user better interpret the estimated causal effects.
 
@@ -217,7 +217,7 @@ plot_APO(model, "effect_comparator")
 plot_est_box(model)
 ```
 
-**Reference**
+# Reference
 
 - Liu, K. (2021). Bayesian causal inference with longitudinal data. Tspace.library.utoronto.ca. https://tspace.library.utoronto.ca/handle/1807/109330
 - Saarela, O., Stephens, D. A., Moodie, E. E. M., & Klein, M. B. (2015). On Bayesian estimation of marginal structural models. Biometrics, 71(2), 279–288. https://doi.org/10.1111/biom.12269
