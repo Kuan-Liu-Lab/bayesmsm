@@ -1,0 +1,130 @@
+---
+output: github_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+<!-- README.md is generated from README.Rmd. Please edit this file -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
+
+## bayesmsm
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+# Overview
+
+*bayesmsm* is an R package that implements the Bayesian marginal structrual models to estimate average treatment effect for drawing causal inference with time-varying treatment assignment and confoudning with extension to handle informative right-censoring. The Bayesian marginal structural models is a semi-parametric approach and features a two-step estimation process. The first step involves Bayesian parametric estimation of the time-varying treatment assignment models and the second step involves non-parametric Bayesian bootstrap to estimate the average treatment effect between two distinct treatment sequences of interest.
+
+Reference paper on Bayesian marginal structural models:
+
+-  Saarela, O., Stephens, D. A., Moodie, E. E., & Klein, M. B. (2015). On Bayesian estimation of marginal structural models. Biometrics, 71(2), 279-288.
+
+-  Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020). Estimation of causal effects with repeatedly measured outcomes in a Bayesian framework. Statistical methods in medical research, 29(9), 2507-2519.
+
+
+# Installation
+
+Install using `devtools` package:
+
+```{r echo=TRUE, eval=FALSE}
+## install.packages(devtools) ## make sure to have devtools installed 
+devtools::install_github("Kuan-Liu-Lab/bayesmsm")
+library(bayesmsm)
+```
+
+
+# Dependency
+
+This package depends on the following R packages:
+
+-  `MCMCpack`
+-  `doParallel`
+-  `foreach`
+-  `parallel`
+-  `R2jags`
+-  `coda`
+
+
+# Quickstart
+
+Here are some examples demonstrating how to use the `bayesmsm` package:
+
+```{r echo=TRUE, eval=FALSE}
+# Load example data
+testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+
+# Calculate Bayesian weights
+weights <- bayesweight(
+  trtmodel.list = list(
+    a_1 ~ w1 + w2 + L1_1 + L2_1,
+    a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1
+  ),
+  data = testdata,
+  n.iter = 250,
+  n.burnin = 150,
+  n.thin = 5,
+  n.chains = 2,
+  seed = 890123,
+  parallel = TRUE
+)
+
+# Perform Bayesian non-parametric bootstrap
+model <- bayesmsm(
+  ymodel = y ~ a_1 + a_2,
+  nvisit = 2,
+  reference = c(rep(0, 2)),
+  comparator = c(rep(1, 2)),
+  family = "gaussian",
+  data = testdata,
+  wmean = weights,
+  nboot = 1000,
+  optim_method = "BFGS",
+  seed = 890123,
+  parallel = TRUE,
+  ncore = 2
+)
+
+# View model summary
+summary.bayesmsm(model)
+```
+
+
+# License
+
+This package is licensed under the MIT License. See the LICENSE file for details.
+
+
+# Citation
+
+Please cite our software using:
+
+```
+@Manual{,
+  title = {bayesmsm: An R package for longitudinal causal analysis using Bayesian Marginal Structural Models},
+  author = {Xiao Yan and Martin Urner and Olli Saarela and Kuan Liu},
+  year = {2024},
+  note = { https://github.com/Kuan-Liu-Lab/bayesmsm},
+  url = {https://kuan-liu-lab.github.io/bayesmsm/},
+}
+```
+
+## Contact
+
+* e-mail: <kuan.liu@utoronto.ca>, <Clarence.YXA@gmail.com>
+
+
+# Getting help or contributing
+
+Please report bugs by opening an
+[issue](https://github.com/Kuan-Liu-Lab/bayesmsm/issues/new). If you have
+a question regarding the usage of `bayesmsm`, please open a
+[discussion](https://github.com/Kuan-Liu-Lab/bayesmsm/discussions/new/choose). 
+If you would like to contribute to the package, please open a pull request.

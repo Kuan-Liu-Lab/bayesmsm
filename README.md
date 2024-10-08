@@ -1,22 +1,40 @@
-# R package bayesmsm
 
-This package provides tools for estimating causal effects using Bayesian Marginal Structural Models. It includes functions for estimating Bayesian weights using JAGS and for Bayesian non-parametric bootstrap to calculate causal effects.
+<!-- README.md is generated from README.Rmd. Please edit this file -->
 
+## bayesmsm
 
-# Reference
+<!-- badges: start -->
+<!-- badges: end -->
+
+# Overview
+
+*bayesmsm* is an R package that implements the Bayesian marginal
+structrual models to estimate average treatment effect for drawing
+causal inference with time-varying treatment assignment and confoudning
+with extension to handle informative right-censoring. The Bayesian
+marginal structural models is a semi-parametric approach and features a
+two-step estimation process. The first step involves Bayesian parametric
+estimation of the time-varying treatment assignment models and the
+second step involves non-parametric Bayesian bootstrap to estimate the
+average treatment effect between two distinct treatment sequences of
+interest.
 
 Reference paper on Bayesian marginal structural models:
 
--  Saarela, O., Stephens, D. A., Moodie, E. E., & Klein, M. B. (2015). On Bayesian estimation of marginal structural models. Biometrics, 71(2), 279-288.
+- Saarela, O., Stephens, D. A., Moodie, E. E., & Klein, M. B. (2015). On
+  Bayesian estimation of marginal structural models. Biometrics, 71(2),
+  279-288.
 
--  Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020). Estimation of causal effects with repeatedly measured outcomes in a Bayesian framework. Statistical methods in medical research, 29(9), 2507-2519.
-
+- Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020).
+  Estimation of causal effects with repeatedly measured outcomes in a
+  Bayesian framework. Statistical methods in medical research, 29(9),
+  2507-2519.
 
 # Installation
 
 Install using `devtools` package:
 
-```r
+``` r
 ## install.packages(devtools) ## make sure to have devtools installed 
 devtools::install_github("Kuan-Liu-Lab/bayesmsm")
 library(bayesmsm)
@@ -25,19 +43,19 @@ library(bayesmsm)
 # Dependency
 
 This package depends on the following R packages:
--  `MCMCpack`
--  `doParallel`
--  `foreach`
--  `parallel`
--  `R2jags`
--  `coda`
 
+- `MCMCpack`
+- `doParallel`
+- `foreach`
+- `parallel`
+- `R2jags`
+- `coda`
 
-# Examples
+# Quickstart
 
 Here are some examples demonstrating how to use the `bayesmsm` package:
 
-```r
+``` r
 # Load example data
 testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
 
@@ -76,23 +94,32 @@ model <- bayesmsm(
 summary.bayesmsm(model)
 ```
 
-
-# Documentation
-
-For comprehensive documentation and examples, visit the [Vignette](https://Kuan-Liu-Lab.github.io/bayesmsm/).
-
-
 # License
 
-This package is licensed under the MIT License. See the LICENSE file for details.
-
+This package is licensed under the MIT License. See the LICENSE file for
+details.
 
 # Citation
 
-If you use the `bayesmsm` package in your research, please cite the reference papers listed above.
+Please cite our software using:
 
+    @Manual{,
+      title = {bayesmsm: An R package for longitudinal causal analysis using Bayesian Marginal Structural Models},
+      author = {Xiao Yan and Martin Urner and Olli Saarela and Kuan Liu},
+      year = {2024},
+      note = { https://github.com/Kuan-Liu-Lab/bayesmsm},
+      url = {https://kuan-liu-lab.github.io/bayesmsm/},
+    }
 
-# Developers
+## Contact
 
--  Xiao Yan
--  Kuan Liu
+- e-mail: <kuan.liu@utoronto.ca>, <Clarence.YXA@gmail.com>
+
+# Getting help or contributing
+
+Please report bugs by opening an
+[issue](https://github.com/Kuan-Liu-Lab/bayesmsm/issues/new). If you
+have a question regarding the usage of `bayesmsm`, please open a
+[discussion](https://github.com/Kuan-Liu-Lab/bayesmsm/discussions/new/choose).
+If you would like to contribute to the package, please open a pull
+request.
