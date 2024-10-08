@@ -1,0 +1,44 @@
+model{
+#N = nobs
+for(i in 1:N){
+
+# visit 1;
+# marginal treatment assignment model, visit 1;
+a_1s[i] ~ dbern(pa_1s[i])
+pa_1s[i] <- ilogit(bs10)
+
+# conditional treatment assignment model, visit 1;
+a_1[i] ~ dbern(pa_1[i])
+pa_1[i] <- ilogit(b10 + b11*w1[i] + b12*w2[i] + b13*L1_1[i] + b14*L2_1[i])
+
+# visit 2;
+# marginal treatment assignment model, visit 2;
+a_2s[i] ~ dbern(pa_2s[i])
+pa_2s[i] <- ilogit(bs20 + bs21*a_1s[i])
+
+# conditional treatment assignment model, visit 2;
+a_2[i] ~ dbern(pa_2[i])
+pa_2[i] <- ilogit(b20 + b21*w1[i] + b22*w2[i] + b23*L1_1[i] + b24*L2_1[i] + b25*L1_2[i] + b26*L2_2[i] + b27*a_1[i])
+
+# export quantity in full posterior specification;
+w[i] <- (pa_1s[i]*pa_2s[i])/(pa_1[i]*pa_2[i])
+}
+
+#prior;
+bs10~dnorm(0,.01)
+b10~dnorm(0,.01)
+b11~dnorm(0,.01)
+b12~dnorm(0,.01)
+b13~dnorm(0,.01)
+b14~dnorm(0,.01)
+bs20~dnorm(0,.01)
+bs21~dnorm(0,.01)
+b20~dnorm(0,.01)
+b21~dnorm(0,.01)
+b22~dnorm(0,.01)
+b23~dnorm(0,.01)
+b24~dnorm(0,.01)
+b25~dnorm(0,.01)
+b26~dnorm(0,.01)
+b27~dnorm(0,.01)
+}
