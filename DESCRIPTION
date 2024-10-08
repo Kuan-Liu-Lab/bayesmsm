@@ -4,25 +4,25 @@ Title: Fitting Bayesian Marginal Structural Models for Longitudinal observationa
 Version: 0.1.0
 Date: 2024-10-07
 Authors@R: c(
-    person("Kuan", "Liu", , "kuan.liu@utoronto.ca", role = c("aut", "cre"),
+    person("Kuan", "Liu", ,"kuan.liu@utoronto.ca", role = c("aut", "cre"),
            comment = "https://Kuan-Liu.com/"),
-    person("Xiao", "Yan", , "Clarence.YXA@gmail.com", role = c("aut", "cre"),
+    person("Xiao", "Yan", , "Clarence.YXA@gmail.com", role = c("aut"),
            comment = "https://www.linkedin.com/in/xiaoyan1596/"),
-    person("Martin", "Urner", ,  role = "aut",
+    person("Martin", "Urner", ,"martin.urner@uhn.ca", role = "aut",
            comment = "https://criticalcaretoronto.com/our-fellows/dr-martin-urner/"),
     person("Olli", "Saarela", , "olli.saarela@utoronto.ca", role = "aut",
-           comment = "https://www.dlsph.utoronto.ca/faculty-profile/saarela-olli/"),
-  )
+           comment = "https://www.dlsph.utoronto.ca/faculty-profile/saarela-olli/"))
 Maintainer: Kuan Liu <kuan.liu@utoronto.ca>
 Description: Fitting Bayesian marginal structrual models to estimate average treatment effect for drawing causal inference with time-varying treatment assignment and confoudning with extension to handle informative right-censoring. The Bayesian marginal structural models is a semi-parametric approach and features a two-step estimation process. The first step involves Bayesian parametric estimation of the time-varying treatment assignment models and the second step involves non-parametric Bayesian bootstrap to estimate the average treatment effect between two distinct treatment sequences of interest. Based on the Bayesian marginal structural models of Saarela et al (2015) <DOI: 10.1111/biom.12269> and Liu et al (2020) <DOI: 10.1177/0962280219900362>. 
 Depends:
     R (>= 4.2.0)
 Suggests: 
+    rmarkdown,
     testthat (>= 3.0.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports: 
     MCMCpack,
 	  doParallel,
@@ -30,8 +30,13 @@ Imports:
 	  parallel,
 	  R2jags,
 	  knitr,
-	  coda (>= 0.19-4)
+	  coda (>= 0.19-4),
+	  stats,
+	  grDevices,
+	  graphics,
+	  knitr
 NeedsCompilation: no
 Config/testthat/edition: 3
 URL: https://kuan-liu-lab.github.io/bayesmsm/
 BugReports: https://github.com/Kuan-Liu-Lab/bayesmsm/issues
+VignetteBuilder: knitr

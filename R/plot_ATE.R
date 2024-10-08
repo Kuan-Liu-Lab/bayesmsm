@@ -10,7 +10,9 @@
 #' @param xlim Limits for the x-axis (default is NULL).
 #' @param ylim Limits for the y-axis (default is NULL).
 #' @param ... Additional graphical parameters passed to the plot function.
-#'
+#' @importFrom stats density quantile
+#' @importFrom grDevices rgb
+#' @importFrom graphics abline arrows axis legend mtext par polygon text
 #' @export
 #'
 #' @examples

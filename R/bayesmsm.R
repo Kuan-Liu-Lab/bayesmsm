@@ -32,6 +32,7 @@
 #' @import parallel
 #' @import MCMCpack
 #' @importFrom MCMCpack rdirichlet
+#' @importFrom stats as.formula density optim quantile sd terms var
 #'
 #' @export
 #'
@@ -87,9 +88,6 @@ bayesmsm <- function(ymodel,
   #   library(MCMCpack)
   # }
 
-  require(foreach)
-  require(doParallel)
-  require(MCMCpack)
 
   # return error message if the input weight vector has different length comparing to the outcome Y;
   if (length(wmean) != nrow(data)) {

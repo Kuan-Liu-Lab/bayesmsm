@@ -3,6 +3,7 @@
 #' @param model A model object from bayesmsm
 #'
 #' @return A summary table of the results from bayesmsm.
+#' @importFrom stats sd quantile
 #' @export
 #'
 #' @examples

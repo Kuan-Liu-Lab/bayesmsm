@@ -7,6 +7,9 @@
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @return A density plot showing the distribution of the specified average potential outcome (reference or comparison).
+#' @importFrom stats density quantile
+#' @importFrom grDevices rgb
+#' @importFrom graphics abline arrows axis legend mtext par polygon text
 #' @export
 #'
 #' @examples

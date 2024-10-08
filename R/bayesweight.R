@@ -15,11 +15,12 @@
 #' @return A list of the calculated weights.
 #'
 #' @importFrom R2jags jags
-#' @importFrom coda mcmc
+#' @importFrom coda mcmc as.mcmc geweke.diag
 #' @import parallel
 #' @import doParallel
 #' @import foreach
 #' @importFrom foreach "%dopar%"
+#' @importFrom stats as.formula terms var
 #'
 #' @export
 #'
@@ -71,10 +72,6 @@ bayesweight <- function(trtmodel.list,
   #   library(parallel)
   # }
 
-  require(R2jags)
-  require(coda)
-  require(doParallel)
-  require(foreach)
 
   create_marginal_treatment_models <- function(trtmodel.list) {
     # Initialize the list for the marginal treatment models

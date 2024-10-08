@@ -4,6 +4,9 @@
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @return An error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
+#' @importFrom stats density quantile
+#' @importFrom grDevices rgb
+#' @importFrom graphics abline arrows axis legend mtext par polygon text
 #' @export
 #'
 #' @examples

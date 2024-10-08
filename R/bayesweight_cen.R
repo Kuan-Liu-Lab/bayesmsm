@@ -13,6 +13,14 @@
 #' @param seed A seed for random number generation to ensure reproducibility of the MCMC.
 #'
 #' @return A vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
+#' @importFrom R2jags jags
+#' @importFrom coda mcmc as.mcmc geweke.diag
+#' @import parallel
+#' @import doParallel
+#' @import foreach
+#' @importFrom foreach "%dopar%"
+#' @importFrom stats as.formula terms var
+#'
 #' @export
 #'
 #' @examples
@@ -31,8 +39,8 @@
 #'                                                     C3 ~ L11 + L21 + A1 +
 #'                                                          L12 + L22 + A2),
 #'                                data = simdat_cen,
-#'                                n.iter = 25000,
-#'                                n.burnin = 15000,
+#'                                n.iter = 2500,
+#'                                n.burnin = 1500,
 #'                                n.thin = 5,
 #'                                parallel = FALSE,
 #'                                n.chains = 1,
@@ -47,17 +55,13 @@ bayesweight_cen <- function(trtmodel.list = list(A1 ~ L11 + L21,
                                                  C2 ~ L11 + L21 + A1,
                                                  C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
                             data,
-                            n.iter = 25000,
-                            n.burnin = 15000,
+                            n.iter = 2500,
+                            n.burnin = 1500,
                             n.thin = 5,
                             parallel = FALSE,
                             n.chains = 1,
                             seed = 890123) {
 
-
-
-  require(R2jags)
-  require(doParallel)
 
   create_marginal_treatment_models <- function(trtmodel.list) {
     # Initialize the list for the marginal treatment models

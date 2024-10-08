@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.align = 'center',
-  fig.width = 8,
+  fig.width = 9,
   fig.height = 6,
   warning = F,
   message = F
@@ -223,3 +223,4 @@ plot_est_box(model)
 - Saarela, O., Stephens, D. A., Moodie, E. E. M., & Klein, M. B. (2015). On Bayesian estimation of marginal structural models. Biometrics, 71(2), 279–288. https://doi.org/10.1111/biom.12269
 - Robins, J. M., Hernán, M. A., & Brumback, B. (2000). Marginal structural models and causal inference in epidemiology. Epidemiology, 11(5), 550–560. https://doi.org/10.1097/00001648-200009000-00011
 - Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020). Estimation of causal effects with repeatedly measured outcomes in a Bayesian framework. Statistical Methods in Medical Research, 29(9), 2507–2519. https://doi.org/10.1177/0962280219900362
+bayesmsm/vignettes/bayesmsm.Rmd at main · Kuan-Liu-Lab/bayesmsm
