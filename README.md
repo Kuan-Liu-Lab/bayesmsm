@@ -111,15 +111,8 @@ Please cite our software using:
       url = {https://kuan-liu-lab.github.io/bayesmsm/},
     }
 
-## Contact
+# Contact
 
 - e-mail: <kuan.liu@utoronto.ca>, <Clarence.YXA@gmail.com>
-
-# Getting help or contributing
-
-Please report bugs by opening an
-[issue](https://github.com/Kuan-Liu-Lab/bayesmsm/issues/new). If you
-have a question regarding the usage of `bayesmsm`, please open a
-[discussion](https://github.com/Kuan-Liu-Lab/bayesmsm/discussions/new/choose).
-If you would like to contribute to the package, please open a pull
-request.
+- Please report bugs by opening an
+  [issue](https://github.com/Kuan-Liu-Lab/bayesmsm/issues/new).

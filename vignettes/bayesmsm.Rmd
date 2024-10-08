@@ -41,7 +41,7 @@ knitr::opts_chunk$set(
 
   - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub:
 
-```{r, eval = FALSE, results=FALSE, force=TRUE}
+```{r, warning = FALSE, results=FALSE, force=TRUE}
 devtools::install_github("Kuan-Liu-Lab/bayesmsm")
 library(bayesmsm)
 ```
@@ -136,12 +136,12 @@ $$
   - `seed`: Seed to ensure reproducibility.
   - `parallel`: Logical flag indicating whether to run the MCMC chains in parallel. Default is TRUE.
 
-```{r eval=FALSE}
+```{r}
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                              a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
                         data = testdata,
-                        n.iter = 250,
-                        n.burnin = 150,
+                        n.iter = 2000,
+                        n.burnin = 1000,
                         n.thin = 5,
                         n.chains = 2,
                         seed = 890123,
@@ -170,7 +170,7 @@ The function `bayesmsm` estimates causal effect of time-varying treatments. It u
   - `parallel`: A logical flag indicating whether to perform computations in parallel (default is TRUE).
   - `ncore`: The number of cores to use for parallel computation (default is 4).
 
-```{r eval=FALSE}
+```{r}
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            nvisit = 2,
                            reference = c(rep(0,2)),
@@ -198,14 +198,14 @@ The `bayesmsm` package also provides several other functions for visualizing the
 - Plotting the Average Treatment Effect (ATE)
   - The `plot_ATE` function generates a plot of the estimated ATE with its 95% credible interval.
   
-```{r eval=FALSE}
+```{r}
 plot_ATE(model)
 ```
 
 - Plotting the Average Potential Outcome (APO)
   - Similarly, the `plot_APO` function plots the estimated APO for both the reference and comparator level effects.
 
-```{r eval=FALSE}
+```{r}
 plot_APO(model, "effect_reference")
 plot_APO(model, "effect_comparator")
 ```
@@ -213,7 +213,7 @@ plot_APO(model, "effect_comparator")
 - Plotting the Distribution of Estimated Treatment Effects
   - The `plot_est_box` function generates an error bar plot of the estimated treatment effects (APO and ATE) from the bootstrap samples.
 
-```{r eval=FALSE}
+```{r}
 plot_est_box(model)
 ```
 

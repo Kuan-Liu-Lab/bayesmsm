@@ -35,7 +35,6 @@ navbar:
     - home
     - Vignettes
     - Reference
-    - Changelog
     right: github
   components:
     home:
@@ -45,10 +44,7 @@ navbar:
       text: Vignettes
       menu:
       - text: Bayesian MSMs without censoring
-        href: articles/bayesmsm-vignette.html
+        href: articles/bayesmsm.html
     reference:
       text: Reference
       href: reference/index.html
-    news:
-      text: Changelog
-      href: news/index.html

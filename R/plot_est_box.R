@@ -66,7 +66,9 @@ plot_est_box <- function(input, ...) {
   par(mar = c(5, 4, 4, 3) + 0.1) # Adjust margins
 
   # Plotting
-  plot(position, means, ylim = range(lowerbd - text_offset, upperbd + text_offset), pch = 19, xaxt = "n", # round down vs round up;
+  plot(position, means, ylim = range(lowerbd - text_offset, upperbd + 2.5*text_offset),
+       xlim = range(0.5, length(means)+0.5),
+       pch = 19, xaxt = "n", # round down vs round up;
        xlab = "Treatment Level", ylab = "Effect", main = "Treatment Effect Estimates", ...)
   axis(1, at = position, labels = if (is_binomial) c("Comparator Level", "Reference Level", "RD", "RR", "OR") else c("Comparator Level", "Reference Level", "RD"))
 
