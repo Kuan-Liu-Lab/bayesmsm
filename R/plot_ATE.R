@@ -31,7 +31,6 @@
 #'                            parallel = TRUE,
 #'                            ncore = 2)
 #' plot_ATE(model)
-#'
 plot_ATE <- function(input,
                      ATE = "RD",
                      col_density = "blue",
@@ -63,7 +62,7 @@ plot_ATE <- function(input,
                    paste("Mean:", round(mean(ate_values), 3)),
                    paste("95% CI: [", round(ci[1], 3), ",", round(ci[2], 3), "]"))
 
-  legend("topright", legend = legend_text,
+  legend("bottom", inset=c(0,-0.5), legend = legend_text,
          col = c(col_density, "purple", "darkgreen"),
          lwd = 2, lty = c(1, 3, 2))
 }

@@ -23,7 +23,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' simdat_cen <- read.csv(system.file("extdata",
 #'                                    "sim_causal.csv",
 #'                                    package = "bayesmsm"))
@@ -44,9 +43,6 @@
 #'                                parallel = FALSE,
 #'                                n.chains = 1,
 #'                                seed = 890123)
-#'
-#'
-#'
 bayesweight_cen <- function(trtmodel.list = list(A1 ~ L11 + L21,
                                                  A2 ~ L11 + L21 + L12 + L22 + A1,
                                                  A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),

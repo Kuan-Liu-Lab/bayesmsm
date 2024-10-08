@@ -24,7 +24,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' # Continuous outcome
 #' testdata <- read.csv(system.file("extdata",
 #'                                  "continuous_outcome_data.csv",
@@ -39,9 +38,6 @@
 #'                        n.chains = 2,
 #'                        seed = 890123,
 #'                        parallel = TRUE)
-#'
-#'
-#'
 bayesweight <- function(trtmodel.list,
                         data,
                         n.chains = 2,

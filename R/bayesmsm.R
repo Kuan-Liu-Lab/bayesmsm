@@ -36,7 +36,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' # Continuous outcome
 #' testdata <- read.csv(system.file("extdata",
 #'                                  "continuous_outcome_data.csv",
@@ -53,9 +52,6 @@
 #'                            seed = 890123,
 #'                            parallel = TRUE,
 #'                            ncore = 2)
-#'
-#'
-#'
 bayesmsm <- function(ymodel,
                      nvisit,
                      reference = c(rep(0,nvisit)), # An example of never treated

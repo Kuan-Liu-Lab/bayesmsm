@@ -24,10 +24,7 @@
 #'                            optim_method = "BFGS",
 #'                            parallel = FALSE,
 #'                            ncore = 2)
-#' plot_est_box(model$bootdata) # without reference & comparator information
-#'                              # below labels
-#' plot_est_box(model) # with reference & comparator information below labels
-#'
+#' plot_est_box(model)
 plot_est_box <- function(input, ...) {
   # Extract bootdata from the model or use the data frame directly
   bootdata <- if (is.data.frame(input)) {
@@ -66,7 +63,7 @@ plot_est_box <- function(input, ...) {
   par(mar = c(5, 4, 4, 3) + 0.1) # Adjust margins
 
   # Plotting
-  plot(position, means, ylim = range(lowerbd - text_offset, upperbd + 2.5*text_offset),
+  plot(position, means, ylim = range(lowerbd - text_offset, upperbd + 3*text_offset),
        xlim = range(0.5, length(means)+0.5),
        pch = 19, xaxt = "n", # round down vs round up;
        xlab = "Treatment Level", ylab = "Effect", main = "Treatment Effect Estimates", ...)

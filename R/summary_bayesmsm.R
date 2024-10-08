@@ -22,9 +22,6 @@
 #'                            parallel = TRUE,
 #'                            ncore = 2)
 #' summary_bayesmsm(model)
-#'
-#'
-#'
 summary_bayesmsm <- function(model) {
   # Extract bootstrapped data
   bootdata <- model$bootdata

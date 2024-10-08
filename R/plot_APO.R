@@ -29,7 +29,6 @@
 #'                            ncore = 2)
 #' plot_APO(model$bootdata, effect_type = "effect_comparator")
 #' plot_APO(model, effect_type = "effect_reference")
-#'
 plot_APO <- function(input, effect_type, ...) {
   # Validate input
   if ("bootdata" %in% names(input)) {
@@ -82,7 +81,7 @@ plot_APO <- function(input, effect_type, ...) {
                    paste("Mean:", round(mean_effect, 3)),
                    paste("95% CI: [", round(ci[1], 3), ",", round(ci[2], 3), "]"))
 
-  legend("topright", legend = legend_text,
+  legend("bottom", inset=c(0,-0.5),legend = legend_text,
          col = c(colors[effect_type], "purple", "darkgreen"),
          lwd = 2, lty = c(1, 3, 12))
 }
