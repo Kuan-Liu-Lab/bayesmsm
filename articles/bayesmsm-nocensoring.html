@@ -33,7 +33,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/bayesmsm-nocensoring.html">`bayesmsm` for longitudinal data without right-censoring</a></li>
+<li><a class="dropdown-item" href="../articles/bayesmsm-censoring.html">`bayesmsm` for longitudinal data with right-censoring</a></li>
+    <li><a class="dropdown-item" href="../articles/bayesmsm-nocensoring.html">`bayesmsm` for longitudinal data without right-censoring</a></li>
   </ul>
 </li>
       </ul>
@@ -274,7 +275,7 @@ MCMC chains in parallel. Default is TRUE.</li>
 <span>                        seed <span class="op">=</span> <span class="fl">890123</span>,</span>
 <span>                        parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  num [1:1000] 1.23 1.106 1.026 0.823 0.788 ...</span></span></code></pre></div>
+<span><span class="co">#&gt;  num [1:1000] 1.234 1.134 1.021 0.82 0.795 ...</span></span></code></pre></div>
 <ul>
 <li>It returns a list containing:
 <ul>
@@ -359,8 +360,8 @@ computation (default is 4).</li>
 <span><span class="co">#&gt;  $ RD_quantile: Named num [1:2] -3.34 -2.98</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:2] "2.5%" "97.5%"</span></span>
 <span><span class="co">#&gt;  $ bootdata   :'data.frame': 1000 obs. of  3 variables:</span></span>
-<span><span class="co">#&gt;   ..$ effect_reference : num [1:1000] 2.36 2.29 2.27 2.34 2.32 ...</span></span>
-<span><span class="co">#&gt;   ..$ effect_comparator: num [1:1000] -0.944 -0.823 -0.754 -0.796 -0.763 ...</span></span>
+<span><span class="co">#&gt;   ..$ effect_reference : num [1:1000] 2.36 2.29 2.26 2.34 2.31 ...</span></span>
+<span><span class="co">#&gt;   ..$ effect_comparator: num [1:1000] -0.946 -0.825 -0.754 -0.796 -0.764 ...</span></span>
 <span><span class="co">#&gt;   ..$ RD               : num [1:1000] -3.31 -3.11 -3.02 -3.13 -3.08 ...</span></span>
 <span><span class="co">#&gt;  $ reference  : num [1:2] 0 0</span></span>
 <span><span class="co">#&gt;  $ comparator : num [1:2] 1 1</span></span></code></pre></div>

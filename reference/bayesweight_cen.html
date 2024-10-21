@@ -18,7 +18,8 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/bayesmsm-nocensoring.html">`bayesmsm` for longitudinal data without right-censoring</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/bayesmsm-censoring.html">`bayesmsm` for longitudinal data with right-censoring</a></li>
+    <li><a class="dropdown-item" href="../articles/bayesmsm-nocensoring.html">`bayesmsm` for longitudinal data without right-censoring</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -104,8 +105,7 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">simdat_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">simdat_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span></span>
 <span class="r-in"><span>                                   <span class="st">"sim_causal.csv"</span>,</span></span>
 <span class="r-in"><span>                                   package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">weights_cen</span> <span class="op">&lt;-</span> <span class="fu">bayesweight_cen</span><span class="op">(</span>trtmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">A1</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span>,</span></span>
@@ -137,9 +137,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some parameters have not converged with Geweke index &gt; 1.96. More iterations may be needed.</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
