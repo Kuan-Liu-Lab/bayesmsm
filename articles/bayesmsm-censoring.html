@@ -102,6 +102,9 @@ sampling weights.</p></li>
 <code>bayesweight</code>: Calculates Bayesian weights for
 subject-specific treatment effects.</li>
 <li>
+<code>bayesweight_cen</code>: Calculates Bayesian weights for
+subject-specific treatment effects with right-censored data.</li>
+<li>
 <code>bayesmsm</code>: Estimates marginal structural models using
 the calculated Bayesian weights.</li>
 <li>
@@ -113,6 +116,9 @@ the calculated Bayesian weights.</li>
 <li>
 <code>plot_est_box</code>: Plots the distribution of estimated
 treatment effects.</li>
+<li>
+<code>summary_bayesmsm</code>: Summarizes the model results from
+<code>bayesmsm</code>.</li>
 </ul>
 </li>
 <li>
@@ -361,8 +367,8 @@ reference and comparator levels chosen by the user.</p>
 <h2 id="visualization-functions-plot_ate-plot_apo-plot_est_box">Visualization functions: <code>plot_ATE</code>,
 <code>plot_APO</code>, <code>plot_est_box</code><a class="anchor" aria-label="anchor" href="#visualization-functions-plot_ate-plot_apo-plot_est_box"></a>
 </h2>
-<p>Similarly, we can use the built-in functions <code>plot_APO</code>
-and <code>summary_bayesmsm</code> to visualize and summarize the
+<p>Similarly, we can use the built-in functions as well as
+<code>summary_bayesmsm</code> to visualize and summarize the
 results.</p>
 <ul>
 <li>Plotting the Average Treatment Effect (ATE)
