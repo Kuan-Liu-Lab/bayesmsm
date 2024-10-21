@@ -60,14 +60,17 @@ plot_est_box <- function(input, ...) {
     UpperCI = upperbd
   )
 
+  # Alternate label positions to avoid overlap
+  label_position <- rep(c(1, -1), length.out = nrow(plot_data))
+
   # ggplot2 visualization
   ggplot2::ggplot(plot_data, ggplot2::aes(x = Treatment, y = Mean)) +
     ggplot2::geom_point(size = 3) +
     ggplot2::geom_errorbar(ggplot2::aes(ymin = LowerCI, ymax = UpperCI), width = 0.2, color = "blue") +
     ggplot2::labs(title = "Treatment Effect Estimates", x = "Treatment Level", y = "Effect") +
     ggplot2::theme_minimal() +
-    ggplot2::geom_text(ggplot2::aes(y = UpperCI + 0.05, label = paste0("Mean: ", round(Mean, 2))), vjust = -0.5) +
-    ggplot2::geom_text(ggplot2::aes(y = UpperCI + 0.25, label = paste0("95% CI: [", round(LowerCI, 2), ", ", round(UpperCI, 2), "]")), vjust = -0.5) +
+    ggplot2::geom_text(ggplot2::aes(y = UpperCI + 0.2 * label_position, label = paste0("Mean: ", round(Mean, 2))), vjust = -0.5) +
+    ggplot2::geom_text(ggplot2::aes(y = UpperCI + 0.4 * label_position, label = paste0("95% CI: [", round(LowerCI, 2), ", ", round(UpperCI, 2), "]")), vjust = -0.5) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
-    ggplot2::expand_limits(y = max(plot_data$UpperCI) + 0.15)
+    ggplot2::expand_limits(y = max(plot_data$UpperCI) + 0.5)
 }

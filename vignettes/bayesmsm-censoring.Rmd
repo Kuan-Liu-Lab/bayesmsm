@@ -30,12 +30,14 @@ knitr::opts_chunk$set(
 - For Step 1, we estimate treatment weights $w_{ij}$ using posterior samples of the $\alpha$ and $\beta$ via fitting a series of logistic regressions in a Bayesian framework. The package incorporates both Inverse Probability of Treatment Weighting (IPTW) and Inverse Probability of Censoring Weighting (IPCW) to handle longitudinal data without and with right-censoring. For Step 2, $P_n(v_{ij})$ is estimated via non-parametric Bayesian bootstrap with $Dir(1,...,1)$ sampling weights.
 
 - The main functions in this package include:
-
+  
   - `bayesweight`: Calculates Bayesian weights for subject-specific treatment effects.
+  - `bayesweight_cen`: Calculates Bayesian weights for subject-specific treatment effects with right-censored data.
   - `bayesmsm`: Estimates marginal structural models using the calculated Bayesian weights.
   - `plot_ATE`: Plots the estimated Average Treatment Effect (ATE).
   - `plot_APO`: Plots the estimated Average Potential Outcome (APO).
   - `plot_est_box`: Plots the distribution of estimated treatment effects.
+  - `summary_bayesmsm`: Summarizes the model results from `bayesmsm`.
 
 - Installation
 
@@ -141,7 +143,7 @@ head(model$bootdata)
 
 # Visualization functions: `plot_ATE`, `plot_APO`, `plot_est_box`
 
-Similarly, we can use the built-in functions `plot_APO` and `summary_bayesmsm` to visualize and summarize the results.
+Similarly, we can use the built-in functions as well as `summary_bayesmsm` to visualize and summarize the results.
 
 - Plotting the Average Treatment Effect (ATE)
   - The `plot_ATE` function generates a plot of the estimated ATE with its 95% credible interval.
