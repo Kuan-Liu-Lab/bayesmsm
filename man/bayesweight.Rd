@@ -40,7 +40,6 @@ This function estimates Bayesian weights for time-varying treatment effects usin
 It uses JAGS for Bayesian inference and supports parallel computation to speed up the MCMC simulations.
 }
 \examples{
-
 # Continuous outcome
 testdata <- read.csv(system.file("extdata",
                                  "continuous_outcome_data.csv",
@@ -55,7 +54,4 @@ weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                        n.chains = 2,
                        seed = 890123,
                        parallel = TRUE)
-
-
-
 }

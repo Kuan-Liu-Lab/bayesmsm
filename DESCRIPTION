@@ -20,7 +20,7 @@ Suggests:
     testthat (>= 3.0.0),
     knitr, 
 	  DiagrammeR, 
-	  DT 
+	  DT
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -34,7 +34,8 @@ Imports:
 	  coda (>= 0.19-4),
 	  stats,
 	  grDevices,
-	  graphics
+	  graphics,
+	  ggplot2
 NeedsCompilation: no
 Config/testthat/edition: 3
 URL: https://kuan-liu-lab.github.io/bayesmsm/, https://github.com/Kuan-Liu-Lab/bayesmsm

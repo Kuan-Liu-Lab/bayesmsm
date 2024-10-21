@@ -57,5 +57,4 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            parallel = TRUE,
                            ncore = 2)
 plot_ATE(model)
-
 }

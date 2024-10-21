@@ -47,43 +47,27 @@ plot_est_box <- function(input, ...) {
     stop("bootdata must contain 'effect_comparator', 'effect_reference', and 'RD' columns.")
   }
 
-  # Calculate means and standard deviations
+  # Calculate means and confidence intervals
   means <- sapply(bootdata[required_columns], mean)
   lowerbd <- sapply(bootdata[required_columns], function(x) quantile(x, probs = 0.025))
   upperbd <- sapply(bootdata[required_columns], function(x) quantile(x, probs = 0.975))
 
-  # Define the position for each point
-  position <- 1:length(means)
+  # Create data frame for ggplot
+  plot_data <- data.frame(
+    Treatment = factor(names(means), levels = names(means)),
+    Mean = means,
+    LowerCI = lowerbd,
+    UpperCI = upperbd
+  )
 
-  # Define some offsets for text placement
-  text_offset <- (max(upperbd) - min(lowerbd)) * 0.05
-
-  old_par <- par(no.readonly = TRUE) # Save current graphical parameters
-  on.exit(par(old_par)) # Restore graphical parameters on exit
-  par(mar = c(5, 4, 4, 3) + 0.1) # Adjust margins
-
-  # Plotting
-  plot(position, means, ylim = range(lowerbd - text_offset, upperbd + 3*text_offset),
-       xlim = range(0.5, length(means)+0.5),
-       pch = 19, xaxt = "n", # round down vs round up;
-       xlab = "Treatment Level", ylab = "Effect", main = "Treatment Effect Estimates", ...)
-  axis(1, at = position, labels = if (is_binomial) c("Comparator Level", "Reference Level", "RD", "RR", "OR") else c("Comparator Level", "Reference Level", "RD"))
-
-  # Error bars
-  arrows(position, lowerbd, position, upperbd, angle = 90, code = 3, length = 0.1, ...)
-
-  # Adding text for means and CIs
-  for (i in seq_along(means)) {
-    text(position[i], upperbd[i] + text_offset, labels = paste("Mean:", round(means[i], 2)), cex = 0.8, pos = 3)
-    text(position[i], upperbd[i] + 2 * text_offset, labels = paste("95% CI: [", round(lowerbd[i], 2), ", ", round(upperbd[i], 2), "]"), cex = 0.8, pos = 3)
-  }
-
-  # Check if the input is a model and extract treatment sequences if they exist
-  has_treatment_info <- "reference" %in% names(input) && "comparator" %in% names(input)
-
-  # Conditional treatment sequence information below x-axis labels
-  if (has_treatment_info) {
-    mtext(paste("(", paste(input$reference, collapse = ", "), ")", sep = ""), side = 1, at = position[2], line = 2)
-    mtext(paste("(", paste(input$comparator, collapse = ", "), ")", sep = ""), side = 1, at = position[1], line = 2)
-  }
+  # ggplot2 visualization
+  ggplot2::ggplot(plot_data, ggplot2::aes(x = Treatment, y = Mean)) +
+    ggplot2::geom_point(size = 3) +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin = LowerCI, ymax = UpperCI), width = 0.2, color = "blue") +
+    ggplot2::labs(title = "Treatment Effect Estimates", x = "Treatment Level", y = "Effect") +
+    ggplot2::theme_minimal() +
+    ggplot2::geom_text(ggplot2::aes(y = UpperCI + 0.05, label = paste0("Mean: ", round(Mean, 2))), vjust = -0.5) +
+    ggplot2::geom_text(ggplot2::aes(y = UpperCI + 0.25, label = paste0("95% CI: [", round(LowerCI, 2), ", ", round(UpperCI, 2), "]")), vjust = -0.5) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+    ggplot2::expand_limits(y = max(plot_data$UpperCI) + 0.15)
 }

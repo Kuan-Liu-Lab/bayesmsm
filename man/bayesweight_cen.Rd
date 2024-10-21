@@ -44,7 +44,6 @@ A vector of posterior mean weights, computed by taking the average of the weight
 This function computes posterior mean weights using Bayesian estimation for treatment models and censoring models across multiple time points. The models can be run in parallel to estimate the weights needed for causal inference with censored data.
 }
 \examples{
-
 simdat_cen <- read.csv(system.file("extdata",
                                    "sim_causal.csv",
                                    package = "bayesmsm"))
@@ -65,7 +64,4 @@ weights_cen <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
                                parallel = FALSE,
                                n.chains = 1,
                                seed = 890123)
-
-
-
 }

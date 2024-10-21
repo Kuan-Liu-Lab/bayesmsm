@@ -36,5 +36,4 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            ncore = 2)
 plot_APO(model$bootdata, effect_type = "effect_comparator")
 plot_APO(model, effect_type = "effect_reference")
-
 }

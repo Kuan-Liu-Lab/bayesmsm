@@ -52,7 +52,7 @@ plot_APO <- function(input, effect_type, ...) {
   effect <- bootdata[, effect_type, drop = FALSE]
 
   # Calculate density
-  density_effect <- density(effect[[1]])
+  density_effect <- stats::density(effect[[1]])
 
   # Define titles and colors based on effect_type
   titles <- c(effect_comparator = "Comparator Level", effect_reference = "Reference Level")
@@ -62,26 +62,28 @@ plot_APO <- function(input, effect_type, ...) {
   mean_effect <- mean(effect[[1]])
 
   # Calculate CI
-  ci <- quantile(effect[[1]], probs = c(0.025, 0.975))
-  density_ci <- density(effect[[1]], from = ci[1], to = ci[2])
+  ci <- stats::quantile(effect[[1]], probs = c(0.025, 0.975))
 
-  # Plotting
-  plot(density_effect, main = paste("Average Potential Outcome (APO) of", titles[effect_type]), xlab = "Effect", ylab = "Density", col = colors[effect_type], lwd = 2, ...)
+  # Create data frame for ggplot
+  density_data <- data.frame(x = density_effect$x, y = density_effect$y)
+  ci_data <- data.frame(x = c(ci[1], ci[2]), y = c(0, 0))
 
-  # Shade the area under the curve within the 95% CI
-  polygon(c(density_ci$x, rev(density_ci$x)), c(rep(min(density_effect$y), length(density_ci$x)), rev(density_ci$y)), col = rgb(0, 0, 1, alpha = 0.3))
-
-  # Add vertical lines for the mean and 95% CI bounds
-  abline(v = mean_effect, col = "darkgrey", lty = 3)
-  abline(v = ci[1], col = "darkgreen", lty = 2)
-  abline(v = ci[2], col = "darkgreen", lty = 2)
-
-  # Legend with mean and 95% CI bounds
-  legend_text <- c(titles[effect_type],
-                   paste("Mean:", round(mean_effect, 3)),
-                   paste("95% CI: [", round(ci[1], 3), ",", round(ci[2], 3), "]"))
-
-  legend("bottom", inset=c(0,-0.5),legend = legend_text,
-         col = c(colors[effect_type], "purple", "darkgreen"),
-         lwd = 2, lty = c(1, 3, 12))
+  # ggplot2 visualization
+  ggplot2::ggplot() +
+    ggplot2::geom_line(data = density_data, ggplot2::aes(x = x, y = y), color = colors[effect_type], size = 1) +
+    ggplot2::geom_ribbon(data = density_data, ggplot2::aes(x = x, ymin = 0, ymax = y), fill = "lightblue", alpha = 0.3) +
+    ggplot2::geom_vline(xintercept = mean_effect, color = "purple", linetype = "dashed", size = 1.2) +
+    ggplot2::geom_vline(xintercept = ci, color = "darkgreen", linetype = "dotted", size = 1.2) +
+    ggplot2::labs(title = paste("Average Potential Outcome (APO) of", titles[effect_type]), x = "Effect", y = "Density") +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) +
+    ggplot2::annotate("text", x = mean_effect, y = max(density_data$y) * 0.9,
+                      label = paste("Mean:", round(mean_effect, 3)),
+                      color = "purple", angle = 90, vjust = -0.5) +
+    ggplot2::annotate("text", x = ci[1], y = max(density_data$y) * 0.8,
+                      label = paste("95% CI Lower:", round(ci[1], 3)),
+                      color = "darkgreen", angle = 90, vjust = -0.5) +
+    ggplot2::annotate("text", x = ci[2], y = max(density_data$y) * 0.8,
+                      label = paste("95% CI Upper:", round(ci[2], 3)),
+                      color = "darkgreen", angle = 90, vjust = -0.5)
 }

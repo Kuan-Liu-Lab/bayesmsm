@@ -31,7 +31,4 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            parallel = TRUE,
                            ncore = 2)
 summary_bayesmsm(model)
-
-
-
 }

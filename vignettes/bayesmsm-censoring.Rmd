@@ -1,0 +1,180 @@
+---
+title: "`bayesmsm` for longitudinal data with right-censoring"
+author: "Xiao Yan, Kuan Liu"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{`bayesmsm` for longitudinal data without right-censoring}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = 'center',
+  fig.width = 9,
+  fig.height = 6,
+  warning = F,
+  message = F
+)
+```
+
+# Introduction
+
+- The `bayesmsm` package enables easy implementation of the Bayesian marginal structural models (BMSMs) for longitudinal data. The methodology of BMSMs can be divided into 2 estimation steps:
+
+  - Step 1. Bayesian treatment effect weight estimation
+  - Step 2. Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect
+  
+- For Step 1, we estimate treatment weights $w_{ij}$ using posterior samples of the $\alpha$ and $\beta$ via fitting a series of logistic regressions in a Bayesian framework. The package incorporates both Inverse Probability of Treatment Weighting (IPTW) and Inverse Probability of Censoring Weighting (IPCW) to handle longitudinal data without and with right-censoring. For Step 2, $P_n(v_{ij})$ is estimated via non-parametric Bayesian bootstrap with $Dir(1,...,1)$ sampling weights.
+
+- The main functions in this package include:
+
+  - `bayesweight`: Calculates Bayesian weights for subject-specific treatment effects.
+  - `bayesmsm`: Estimates marginal structural models using the calculated Bayesian weights.
+  - `plot_ATE`: Plots the estimated Average Treatment Effect (ATE).
+  - `plot_APO`: Plots the estimated Average Potential Outcome (APO).
+  - `plot_est_box`: Plots the distribution of estimated treatment effects.
+
+- Installation
+
+  - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub:
+
+```{r, warning = FALSE, results=FALSE, force=TRUE}
+devtools::install_github("Kuan-Liu-Lab/bayesmsm")
+library(bayesmsm)
+```
+
+# Simulated observational data with right-censoring
+
+We illustrate the implementation of the `bayesmsm` package using a simulated dataset. The simulated dataset contains right-censoring with a binary end-of-study outcome. This example will provide a comprehensive understanding of how to apply the package to real-world data.
+
+# Dataset Introduction
+
+In this simulation study, we use a simulated longitudinal dataset to mimic complex real-world clinical data with right-censoring. This dataset consists of 500 patients observed over 3 visits. The binary outcome variable represents the end-of-study status of the patients. The dataset includes baseline covariates $L11$ and $L21$, with $L11$ being binary and $L21$ continuous. Time-dependent covariates $L12$ and $L22$ are observed at the second visit, and $L13$ and $L23$ at the third visit. The treatment variables are represented as $A1$, $A2$, and $A3$ for the three visits. Right-censoring indicators are represented as $C1$, $C2$, and $C3$. For example, for observations with $C1 = 1$, all records at or after visit 1 were censored.
+
+| Variable   | Description                        |
+|------------|------------------------------------|
+| L11        | Baseline covariate (binary)        |
+| L21        | Baseline covariate (continuous)    |
+| A1, A2, A3 | Treatment assignments (binary)     |
+| C1, C2, C3 | Right-censoring indicators         |
+| Y          | End-of-study outcome (binary)      |
+
+Table: Description of Simulated Right-Censored Dataset
+
+```{r}
+# simulating causal data with censoring;
+simdat_cen <- read.csv(system.file("extdata", "sim_causal.csv", package = "bayesmsm"))
+
+# look at the data;
+head(simdat_cen)
+```
+
+# Bayesian treatment effect weight estimation using `bayesweight_cen`
+
+Next, we use the `bayesweight_cen` function to estimate the weights with censoring. We specify the treatment and censoring models for each time point, including the relevant covariates.
+
+- Parameters Description:
+  - `trtmodel.list`: A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. Interactions and functions of covariates are allowed.
+  - `cenmodel.list`: A list of formulas of the censoring model with the censoring indicators on the left hand side and the covariates prior to the censoring indicators on the right hand side.
+  - `data`: The dataset containing all the variables specified in trtmodel.list.
+  - `n.iter`: Total number of iterations for each chain (including burn-in).
+  - `n.burnin`: Number of iterations to discard at the beginning of the simulation (burn-in).
+  - `n.thin`: Thinning rate for the MCMC sampler.
+  - `n.chains`: Number of MCMC chains to run. For non-parallel execution, this should be set to 1. For parallel execution, it requires at least 2 chains.
+  - `seed`: Seed to ensure reproducibility.
+  - `parallel`: Logical flag indicating whether to run the MCMC chains in parallel. Default is TRUE.
+  
+```{r}
+weights <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
+                                                A2 ~ L11 + L21 + L12 + L22 + A1,
+                                                A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
+                           cenmodel.list = list(C1 ~ L11 + L21,
+                                                C2 ~ L11 + L21 + A1,
+                                                C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
+                           data = simdat_cen,
+                           n.iter = 250,
+                           n.burnin = 150,
+                           n.thin = 5,
+                           n.chains = 1,
+                           seed = 890123,
+                           parallel = FALSE)
+summary(weights)
+```
+
+Similarly, the function will automatically run MCMC with JAGS based on the specified treatment and censoring model inputs, saving a JAGS model file in the working directory for model customization. The function returns a list containing the updated weights for subject-specific treatment and censoring effects.
+
+# Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`
+
+Using the weights estimated by `bayesweight_cen`, we now fit the Bayesian Marginal Structural Model and estimate the marginal treatment effects using the `bayesmsm` function as before. We specify the outcome model and other relevant parameters.
+
+```{r}
+# Remove all NAs (censored observations) from the original dataset and weights
+simdat_cen <- na.omit(simdat_cen)
+weights <- na.omit(weights)
+
+model <- bayesmsm(ymodel = Y ~ A1+A2+A3,
+                  nvisit = 3,
+                  reference = c(rep(0, 3)),
+                  comparator = c(rep(1, 3)),
+                  family = "binomial",
+                  data = simdat_cen,
+                  wmean = weights,
+                  nboot = 364,
+                  optim_method = "BFGS",
+                  parallel = FALSE,
+                  seed = 890123,
+                  ncore = 1)
+str(model)
+```
+
+The `bayesmsm` function returns a model object containing the following: the mean, standard deviation, and 95\% credible interval of the Risk Difference (RD), Risk Ratio (RR), and Odds Ratio (OR). It also includes a data frame containing the bootstrap samples for the reference effect, comparator effect, RD, RR, and OR, as well as the reference and comparator levels chosen by the user.
+
+- We can extract and visualize the results as follows:
+
+```{r}
+# Extract results
+head(model$bootdata)
+```
+
+# Visualization functions: `plot_ATE`, `plot_APO`, `plot_est_box`
+
+Similarly, we can use the built-in functions `plot_APO` and `summary_bayesmsm` to visualize and summarize the results.
+
+- Plotting the Average Treatment Effect (ATE)
+  - The `plot_ATE` function generates a plot of the estimated ATE with its 95% credible interval.
+  
+```{r}
+plot_ATE(model)
+```
+
+- Plotting the Average Potential Outcome (APO)
+  - The `plot_APO` function plots the estimated APO for both the reference and comparator level effects.
+  
+```{r}
+plot_APO(model, effect_type = "effect_comparator")
+plot_APO(model, effect_type = "effect_reference")
+```
+
+- Plotting the Distribution of Estimated Treatment Effects
+  - The `plot_est_box` function generates an error bar plot of the estimated treatment effects (APO and ATE) from the bootstrap samples.
+
+```{r}
+plot_est_box(model)
+```
+
+- Summary function to generate result table from `bayesmsm`
+  - The `summary_bayesmsm` function automatically generates a summary table of the model output from the function `bayesmsm`.
+
+```{r}
+summary_bayesmsm(model)
+```
+
+# Reference
+
+- Liu, K. (2021). Bayesian causal inference with longitudinal data. Tspace.library.utoronto.ca. https://tspace.library.utoronto.ca/handle/1807/109330
+- Saarela, O., Stephens, D. A., Moodie, E. E. M., & Klein, M. B. (2015). On Bayesian estimation of marginal structural models. Biometrics, 71(2), 279–288. https://doi.org/10.1111/biom.12269
+- Robins, J. M., Hernán, M. A., & Brumback, B. (2000). Marginal structural models and causal inference in epidemiology. Epidemiology, 11(5), 550–560. https://doi.org/10.1097/00001648-200009000-00011
+- Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020). Estimation of causal effects with repeatedly measured outcomes in a Bayesian framework. Statistical Methods in Medical Research, 29(9), 2507–2519. https://doi.org/10.1177/0962280219900362

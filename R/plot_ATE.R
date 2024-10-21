@@ -10,6 +10,7 @@
 #' @param xlim Limits for the x-axis (default is NULL).
 #' @param ylim Limits for the y-axis (default is NULL).
 #' @param ... Additional graphical parameters passed to the plot function.
+#' @import ggplot2
 #' @importFrom stats density quantile
 #' @importFrom grDevices rgb
 #' @importFrom graphics abline arrows axis legend mtext par polygon text
@@ -48,21 +49,30 @@ plot_ATE <- function(input,
     }
   }
 
-  ate_density <- density(ate_values)
-  ci <- quantile(ate_values, probs = c(0.025, 0.975))
-  density_ci <- density(ate_values, from = ci[1], to = ci[2])
+  # Calculate density and CI
+  ate_density <- stats::density(ate_values)
+  ci <- stats::quantile(ate_values, probs = c(0.025, 0.975))
 
-  plot(ate_density, col = col_density, main = main, xlab = xlab, ylab = ylab, xlim = xlim, ylim = ylim, ...)
-  polygon(c(density_ci$x, rev(density_ci$x)), c(rep(min(ate_density$y), length(density_ci$x)), rev(density_ci$y)), col = rgb(0, 0, 1, alpha = 0.3))
-  abline(v = mean(ate_values), col = "purple", lwd = 2, lty = 3)
-  abline(v = ci[1], col = "darkgreen", lty = 2)
-  abline(v = ci[2], col = "darkgreen", lty = 2)
+  # Create data frame for ggplot
+  density_data <- data.frame(x = ate_density$x, y = ate_density$y)
+  ci_data <- data.frame(x = c(ci[1], ci[2]), y = c(0, 0))
 
-  legend_text <- c(paste(ATE, "Density",sep = " "),
-                   paste("Mean:", round(mean(ate_values), 3)),
-                   paste("95% CI: [", round(ci[1], 3), ",", round(ci[2], 3), "]"))
-
-  legend("bottom", inset=c(0,-0.5), legend = legend_text,
-         col = c(col_density, "purple", "darkgreen"),
-         lwd = 2, lty = c(1, 3, 2))
+  # ggplot2 visualization
+  ggplot2::ggplot() +
+    ggplot2::geom_line(data = density_data, ggplot2::aes(x = x, y = y), color = col_density, size = 1) +
+    ggplot2::geom_ribbon(data = density_data, ggplot2::aes(x = x, ymin = 0, ymax = y), fill = fill_density, alpha = 0.3) +
+    ggplot2::geom_vline(xintercept = mean(ate_values), color = "purple", linetype = "dashed", size = 1.2) +
+    ggplot2::geom_vline(xintercept = ci, color = "darkgreen", linetype = "dotted", size = 1.2) +
+    ggplot2::labs(title = main, x = xlab, y = ylab) +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) +
+    ggplot2::annotate("text", x = mean(ate_values), y = max(density_data$y) * 0.9,
+                      label = paste("Mean:", round(mean(ate_values), 3)),
+                      color = "purple", angle = 90, vjust = -0.5) +
+    ggplot2::annotate("text", x = ci[1], y = max(density_data$y) * 0.8,
+                      label = paste("95% CI Lower:", round(ci[1], 3)),
+                      color = "darkgreen", angle = 90, vjust = -0.5) +
+    ggplot2::annotate("text", x = ci[2], y = max(density_data$y) * 0.8,
+                      label = paste("95% CI Upper:", round(ci[2], 3)),
+                      color = "darkgreen", angle = 90, vjust = -0.5)
 }
