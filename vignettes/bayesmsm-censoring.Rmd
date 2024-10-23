@@ -1,5 +1,5 @@
 ---
-title: "`bayesmsm` for longitudinal data with right-censoring"
+title: "Longitudinal causal analysis with informative right-censoring"
 author: "Xiao Yan, Kuan Liu"
 output: rmarkdown::html_vignette
 vignette: >
