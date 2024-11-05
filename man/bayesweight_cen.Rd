@@ -58,9 +58,9 @@ weights_cen <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
                                                     C3 ~ L11 + L21 + A1 +
                                                          L12 + L22 + A2),
                                data = simdat_cen,
-                               n.iter = 2500,
-                               n.burnin = 1500,
-                               n.thin = 5,
+                               n.iter = 1500,
+                               n.burnin = 500,
+                               n.thin = 1,
                                parallel = FALSE,
                                n.chains = 1,
                                seed = 890123)

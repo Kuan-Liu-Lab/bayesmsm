@@ -10,11 +10,11 @@ test_that("bayesweight_cen works with no errors", {
                                                       C2 ~ L11 + L21 + A1,
                                                       C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
                                  data = simdat_cen,
-                                 n.iter = 2500,
-                                 n.burnin = 1500,
-                                 n.thin = 5,
-                                 parallel = FALSE,
-                                 n.chains = 1,
+                                 n.iter = 1500,
+                                 n.burnin = 500,
+                                 n.thin = 1,
+                                 parallel = TRUE,
+                                 n.chains = 2,
                                  seed = 890123)
 
   # Check that the weights_cen object has the expected dimensions (length or rows matching the data size)

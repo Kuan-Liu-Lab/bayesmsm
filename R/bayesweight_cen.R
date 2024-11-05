@@ -37,9 +37,9 @@
 #'                                                     C3 ~ L11 + L21 + A1 +
 #'                                                          L12 + L22 + A2),
 #'                                data = simdat_cen,
-#'                                n.iter = 2500,
-#'                                n.burnin = 1500,
-#'                                n.thin = 5,
+#'                                n.iter = 1500,
+#'                                n.burnin = 500,
+#'                                n.thin = 1,
 #'                                parallel = FALSE,
 #'                                n.chains = 1,
 #'                                seed = 890123)
@@ -318,6 +318,7 @@ bayesweight_cen <- function(trtmodel.list = list(A1 ~ L11 + L21,
                            # Combine MCMC output from multiple chains
                            out.mcmc <- as.mcmc(jagsfit)
                            return(do.call(rbind, lapply(out.mcmc, as.matrix)))
+
                          }
 
     parallel::stopCluster(cl)
@@ -337,14 +338,15 @@ bayesweight_cen <- function(trtmodel.list = list(A1 ~ L11 + L21,
 
     out.mcmc <- as.mcmc(jagsfit)
     posterior <- as.matrix(out.mcmc[[1]])
-  }
 
-  diagnostics <- geweke.diag(out.mcmc)
+    diagnostics <- geweke.diag(out.mcmc)
 
-  # Check diagnostics for convergence issues
-  significant_indices <- which(abs(diagnostics[[1]]$z) > 1.96)
-  if (length(significant_indices) > 0) {
-    warning("Some parameters have not converged with Geweke index > 1.96. More iterations may be needed.")
+    # Check diagnostics for convergence issues
+    significant_indices <- which(abs(diagnostics[[1]]$z) > 1.96)
+    if (length(significant_indices) > 0) {
+      warning("Some parameters have not converged with Geweke index > 1.96. More iterations may be needed.")
+    }
+
   }
 
   expit <- function(x){exp(x) / (1+exp(x))}

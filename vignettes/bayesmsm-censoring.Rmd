@@ -3,7 +3,7 @@ title: "Longitudinal causal analysis with informative right-censoring"
 author: "Xiao Yan, Kuan Liu"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{`bayesmsm` for longitudinal data without right-censoring}
+  %\VignetteIndexEntry{`bayesmsm` for longitudinal data with informative right-censoring}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
