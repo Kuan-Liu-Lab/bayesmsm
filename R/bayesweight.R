@@ -3,14 +3,14 @@
 #' This function estimates Bayesian weights for time-varying treatment effects using specified models for each treatment time point.
 #' It uses JAGS for Bayesian inference and supports parallel computation to speed up the MCMC simulations.
 #'
-#' @param trtmodel.list A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. Interactions and functions of covariates are allowed.
-#' @param data A dataframe containing the variables mentioned in the `trtmodel.list`.
-#' @param n.chains The number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains.
-#' @param n.iter The total number of iterations for each chain (including burn-in).
-#' @param n.burnin The number of burn-in iterations for each chain.
-#' @param n.thin Thinning rate for the MCMC sampler.
-#' @param seed A seed to ensure reproducibility.
-#' @param parallel Logical. Indicates whether to run the MCMC chains in parallel. Default is TRUE.
+#' @param trtmodel.list A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point. Interactions and functions of covariates are allowed.
+#' @param data A data set in the form of a data frame containing the variables in `trtmodel.list`. This must be a wide data set with exactly one row per unit.
+#' @param n.chains Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.
+#' @param n.iter Integer specifying the total number of iterations for each chain (including burn-in). The default is 25000.
+#' @param n.burnin Integer specifying the number of burn-in iterations for each chain. The default is 15000.
+#' @param n.thin Integer specifying the thinning rate for the MCMC sampler. The default is 5.
+#' @param seed Starting seed for the JAGS model. The default is 890123.
+#' @param parallel Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.
 #'
 #' @return A list of the calculated weights.
 #'

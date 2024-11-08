@@ -16,33 +16,33 @@ bayesmsm(
   optim_method = "BFGS",
   seed = 890123,
   parallel = TRUE,
-  ncore = 6
+  ncore = 4
 )
 }
 \arguments{
-\item{ymodel}{A formula representing the outcome model with interactions.}
+\item{ymodel}{Model statement for the outcome variable.}
 
-\item{nvisit}{Number of visits or time points.}
+\item{nvisit}{Number of visits or time points to simulate.}
 
-\item{reference}{Reference intervention across all visits. Default is a vector of all 0's with length nvisit (i.e. never treated).}
+\item{reference}{Vector denoting the intervention to be used as the reference across all visits for calculating the risk ratio and risk difference. The default is a vector of all 0's with length nvisit (i.e. never treated).}
 
-\item{comparator}{Comparison intervention across all visits. Default is a vector of all 1's with length nvisit (i.e. always treated).}
+\item{comparator}{Vector denoting the intervention to be used as the comparator across all visits for calculating the risk ratio and risk difference. The default is a vector of all 1's with length nvisit (i.e. always treated).}
 
-\item{family}{Outcome distribution family; "gaussian" (default) for continuous outcomes or "binomial" for binary outcomes.}
+\item{family}{Character string specifying the outcome distribution family. The possible distributions are: "gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.}
 
-\item{data}{The dataset.}
+\item{data}{Data table containing the variable names specified in ymodel.}
 
-\item{wmean}{Vector of treatment assignment weights. Default is rep(1, 1000).}
+\item{wmean}{Vector of treatment assignment weights. The default is rep(1, nrow(data)).}
 
-\item{nboot}{Number of bootstrap iterations.}
+\item{nboot}{Integer specifying the number of bootstrap iterations. The default is 1000.}
 
-\item{optim_method}{Optimization method to be used. Default is 'BFGS'.}
+\item{optim_method}{Character string specifying the optimization method to be used. The default is 'BFGS'.}
 
-\item{seed}{A seed to ensure reproducibility.}
+\item{seed}{Starting seed for simulations and bootstrapping. The default is 890123.}
 
-\item{parallel}{Whether parallel computation should be used. Default is TRUE.}
+\item{parallel}{Logical scalar indicating whether to parallelize bootstrapping to multiple cores. The default is TRUE.}
 
-\item{ncore}{Number of cores to use for parallel computation. Default is 4.}
+\item{ncore}{Integer specifying the number of CPU cores to use in parallel simulation. This argument is required when parallel is set to TRUE, and the default is 4.}
 }
 \value{
 It returns an object of class `bayesmsm` that contains the information about the data, model, etc.

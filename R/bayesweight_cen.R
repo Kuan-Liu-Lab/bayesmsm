@@ -1,16 +1,17 @@
-#' Bayesian Weight Estimation for Censored Data
+#' Bayesian Treatment Effect Weight Estimation for Censored Data
 #'
-#' This function computes posterior mean weights using Bayesian estimation for treatment models and censoring models across multiple time points. The models can be run in parallel to estimate the weights needed for causal inference with censored data.
+#' This function computes posterior mean weights using Bayesian estimation for treatment models and censoring models across multiple time points.
+#' The models can be run in parallel to estimate the weights for censored data.
 #'
-#' @param trtmodel.list A list of formulas corresponding to each time point with the time-specific treatment variable on the left-hand side and pre-treatment covariates to be balanced on the right-hand side. Interactions and functions of covariates are allowed.
-#' @param cenmodel.list A list of formulas for the censoring data at each time point, with censoring indicators on the left-hand side and covariates on the right-hand side.
-#' @param data A data frame containing the variables in the models (treatment, censoring, and covariates).
-#' @param n.iter Number of iterations to run the MCMC algorithm in JAGS.
-#' @param n.burnin Number of iterations to discard as burn-in in the MCMC algorithm.
-#' @param n.thin Thinning rate for the MCMC samples.
-#' @param parallel Logical, indicating whether to run the MCMC sampling in parallel (default is `FALSE`).
-#' @param n.chains Number of MCMC chains to run. If parallel is `TRUE`, this specifies the number of chains run in parallel.
-#' @param seed A seed for random number generation to ensure reproducibility of the MCMC.
+#' @param trtmodel.list A list of formulas corresponding to each time point with the time-specific treatment variable on the left-hand side and pre-treatment covariates to be balanced on the right-hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point. Interactions and functions of covariates are allowed.
+#' @param cenmodel.list A list of formulas for the censored data at each time point, with censoring indicators on the left-hand side and covariates on the right-hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point.
+#' @param data A data set in the form of a data frame containing the variables in `trtmodel.list` and `cenmodel.list`. This must be a wide data set with exactly one row per unit.
+#' @param n.iter Integer specifying the total number of iterations for each chain (including burn-in). The default is 25000.
+#' @param n.burnin Integer specifying the number of burn-in iterations for each chain. The default is 15000.
+#' @param n.thin Integer specifying the thinning rate for the MCMC sampler. The default is 5.
+#' @param parallel Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.
+#' @param n.chains Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.
+#' @param seed Starting seed for the JAGS model. The default is 890123.
 #'
 #' @return A vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
 #' @importFrom R2jags jags
@@ -43,18 +44,14 @@
 #'                                parallel = FALSE,
 #'                                n.chains = 1,
 #'                                seed = 890123)
-bayesweight_cen <- function(trtmodel.list = list(A1 ~ L11 + L21,
-                                                 A2 ~ L11 + L21 + L12 + L22 + A1,
-                                                 A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
-                            cenmodel.list = list(C1 ~ L11 + L21,
-                                                 C2 ~ L11 + L21 + A1,
-                                                 C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
+bayesweight_cen <- function(trtmodel.list,
+                            cenmodel.list,
                             data,
-                            n.iter = 2500,
-                            n.burnin = 1500,
+                            n.iter = 25000,
+                            n.burnin = 15000,
                             n.thin = 5,
-                            parallel = FALSE,
-                            n.chains = 1,
+                            parallel = TRUE,
+                            n.chains = 2,
                             seed = 890123) {
 
 

@@ -4,18 +4,18 @@
 #' effects in Bayesian marginal structural models. It supports both continuous
 #' (gaussian) and binary (binomial) outcome variables.
 #'
-#' @param ymodel A formula representing the outcome model with interactions.
-#' @param nvisit Number of visits or time points.
-#' @param reference Reference intervention across all visits. Default is a vector of all 0's with length nvisit (i.e. never treated).
-#' @param comparator Comparison intervention across all visits. Default is a vector of all 1's with length nvisit (i.e. always treated).
-#' @param family Outcome distribution family; "gaussian" (default) for continuous outcomes or "binomial" for binary outcomes.
-#' @param data The dataset.
-#' @param wmean Vector of treatment assignment weights. Default is rep(1, 1000).
-#' @param nboot Number of bootstrap iterations.
-#' @param optim_method Optimization method to be used. Default is 'BFGS'.
-#' @param seed A seed to ensure reproducibility.
-#' @param parallel Whether parallel computation should be used. Default is TRUE.
-#' @param ncore Number of cores to use for parallel computation. Default is 4.
+#' @param ymodel Model statement for the outcome variable.
+#' @param nvisit Number of visits or time points to simulate.
+#' @param reference Vector denoting the intervention to be used as the reference across all visits for calculating the risk ratio and risk difference. The default is a vector of all 0's with length nvisit (i.e. never treated).
+#' @param comparator Vector denoting the intervention to be used as the comparator across all visits for calculating the risk ratio and risk difference. The default is a vector of all 1's with length nvisit (i.e. always treated).
+#' @param family Character string specifying the outcome distribution family. The possible distributions are: "gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.
+#' @param data Data table containing the variable names in `ymodel`.
+#' @param wmean Vector of treatment assignment weights. The default is rep(1, nrow(data)).
+#' @param nboot Integer specifying the number of bootstrap iterations. The default is 1000.
+#' @param optim_method Character string specifying the optimization method to be used. The default is 'BFGS'.
+#' @param seed Starting seed for simulations and bootstrapping. The default is 890123.
+#' @param parallel Logical scalar indicating whether to parallelize bootstrapping to multiple cores. The default is TRUE.
+#' @param ncore Integer specifying the number of CPU cores to use in parallel simulation. This argument is required when parallel is set to TRUE, and the default is 4.
 #'
 #' @return It returns an object of class `bayesmsm` that contains the information about the data, model, etc.
 #'
@@ -63,7 +63,7 @@ bayesmsm <- function(ymodel,
                      optim_method = 'BFGS',
                      seed = 890123,
                      parallel = TRUE,
-                     ncore = 6){
+                     ncore = 4){
 
   # load all the required R packages;
   # require(foreach)

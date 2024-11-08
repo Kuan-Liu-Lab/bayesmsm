@@ -11,7 +11,7 @@ Authors@R: c(
     person("Martin", "Urner", ,"martin.urner@uhn.ca", role = "aut",
            comment = "https://criticalcaretoronto.com/our-fellows/dr-martin-urner/"))
 Maintainer: Kuan Liu <kuan.liu@utoronto.ca>
-Description: Fitting Bayesian marginal structrual models to estimate average treatment effect for drawing causal inference with time-varying treatment assignment and confoudning with extension to handle informative right-censoring. The Bayesian marginal structural models is a semi-parametric approach and features a two-step estimation process. The first step involves Bayesian parametric estimation of the time-varying treatment assignment models and the second step involves non-parametric Bayesian bootstrap to estimate the average treatment effect between two distinct treatment sequences of interest. Based on the Bayesian marginal structural models of Saarela et al (2015) <DOI: 10.1111/biom.12269> and Liu et al (2020) <DOI: 10.1177/0962280219900362>. 
+Description: Fitting Bayesian marginal structrual models to estimate average treatment effect for drawing causal inference with time-varying treatment assignment and confounding with extension to handle informative right-censoring. This package can be used for continuous or binary treatment assignments, covariates and end-of-study outcomes. Based on the Bayesian marginal structural models of Saarela et al (2015) <DOI: 10.1111/biom.12269> and Liu et al (2020) <DOI: 10.1177/0962280219900362>. 
 Depends:
     R (>= 4.2.0)
 Suggests: 
