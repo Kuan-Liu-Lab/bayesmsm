@@ -63,35 +63,35 @@ It uses JAGS for Bayesian inference and supports parallel computation to speed u
 
 
 <dl><dt id="arg-trtmodel-list">trtmodel.list<a class="anchor" aria-label="anchor" href="#arg-trtmodel-list"></a></dt>
-<dd><p>A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. Interactions and functions of covariates are allowed.</p></dd>
+<dd><p>A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point. Interactions and functions of covariates are allowed.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A dataframe containing the variables mentioned in the `trtmodel.list`.</p></dd>
+<dd><p>A data set in the form of a data frame containing the variables in `trtmodel.list`. This must be a wide data set with exactly one row per unit.</p></dd>
 
 
 <dt id="arg-n-chains">n.chains<a class="anchor" aria-label="anchor" href="#arg-n-chains"></a></dt>
-<dd><p>The number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains.</p></dd>
+<dd><p>Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.</p></dd>
 
 
 <dt id="arg-n-iter">n.iter<a class="anchor" aria-label="anchor" href="#arg-n-iter"></a></dt>
-<dd><p>The total number of iterations for each chain (including burn-in).</p></dd>
+<dd><p>Integer specifying the total number of iterations for each chain (including burn-in). The default is 25000.</p></dd>
 
 
 <dt id="arg-n-burnin">n.burnin<a class="anchor" aria-label="anchor" href="#arg-n-burnin"></a></dt>
-<dd><p>The number of burn-in iterations for each chain.</p></dd>
+<dd><p>Integer specifying the number of burn-in iterations for each chain. The default is 15000.</p></dd>
 
 
 <dt id="arg-n-thin">n.thin<a class="anchor" aria-label="anchor" href="#arg-n-thin"></a></dt>
-<dd><p>Thinning rate for the MCMC sampler.</p></dd>
+<dd><p>Integer specifying the thinning rate for the MCMC sampler. The default is 5.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>A seed to ensure reproducibility.</p></dd>
+<dd><p>Starting seed for the JAGS model. The default is 890123.</p></dd>
 
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
-<dd><p>Logical. Indicates whether to run the MCMC chains in parallel. Default is TRUE.</p></dd>
+<dd><p>Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">
