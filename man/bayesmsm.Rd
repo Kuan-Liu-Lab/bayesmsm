@@ -30,7 +30,7 @@ bayesmsm(
 
 \item{family}{Character string specifying the outcome distribution family. The possible distributions are: "gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.}
 
-\item{data}{Data table containing the variable names specified in ymodel.}
+\item{data}{Data table containing the variable names in `ymodel`.}
 
 \item{wmean}{Vector of treatment assignment weights. The default is rep(1, nrow(data)).}
 
