@@ -105,7 +105,7 @@ Please cite our software using:
 
     @Manual{,
       title = {bayesmsm: An R package for longitudinal causal analysis using Bayesian Marginal Structural Models},
-      author = {Xiao Yan and Martin Urner and Olli Saarela and Kuan Liu},
+      author = {Xiao Yan and Martin Urner and Kuan Liu},
       year = {2024},
       note = { https://github.com/Kuan-Liu-Lab/bayesmsm},
       url = {https://kuan-liu-lab.github.io/bayesmsm/},
