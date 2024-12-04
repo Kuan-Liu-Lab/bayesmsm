@@ -54,6 +54,7 @@ effects in Bayesian marginal structural models. It supports both continuous
 <span>  <span class="va">nvisit</span>,</span>
 <span>  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">nvisit</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">nvisit</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  treatment_effect_type <span class="op">=</span> <span class="st">"sq"</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
 <span>  <span class="va">data</span>,</span>
 <span>  wmean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -83,6 +84,10 @@ effects in Bayesian marginal structural models. It supports both continuous
 
 <dt id="arg-comparator">comparator<a class="anchor" aria-label="anchor" href="#arg-comparator"></a></dt>
 <dd><p>Vector denoting the intervention to be used as the comparator across all visits for calculating the risk ratio and risk difference. The default is a vector of all 1's with length nvisit (i.e. always treated).</p></dd>
+
+
+<dt id="arg-treatment-effect-type">treatment_effect_type<a class="anchor" aria-label="anchor" href="#arg-treatment-effect-type"></a></dt>
+<dd><p>Character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
@@ -139,6 +144,7 @@ effects in Bayesian marginal structural models. It supports both continuous
 <span class="r-in"><span>                           nvisit <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>                           reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                           comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           treatment_effect_type <span class="op">=</span> <span class="st">"sq"</span>,</span></span>
 <span class="r-in"><span>                           family <span class="op">=</span> <span class="st">"gaussian"</span>,</span></span>
 <span class="r-in"><span>                           data <span class="op">=</span> <span class="va">testdata</span>,</span></span>
 <span class="r-in"><span>                           wmean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span>,</span></span>

@@ -43,7 +43,12 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_effect</span><span class="op">(</span><span class="va">intervention_levels</span>, <span class="va">variables</span>, <span class="va">param_estimates</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_effect</span><span class="op">(</span></span>
+<span>  <span class="va">intervention_levels</span>,</span>
+<span>  <span class="va">variables</span>,</span>
+<span>  <span class="va">param_estimates</span>,</span>
+<span>  <span class="va">treatment_effect_type</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -60,6 +65,10 @@
 
 <dt id="arg-param-estimates">param_estimates<a class="anchor" aria-label="anchor" href="#arg-param-estimates"></a></dt>
 <dd><p>A vector of parameter estimates from the model.</p></dd>
+
+
+<dt id="arg-treatment-effect-type">treatment_effect_type<a class="anchor" aria-label="anchor" href="#arg-treatment-effect-type"></a></dt>
+<dd><p>Character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".</p></dd>
 
 </dl></div>
     <div class="section level2">
