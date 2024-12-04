@@ -4,7 +4,12 @@
 \alias{calculate_effect}
 \title{A function to calculate the effect of an intervention given the parameter estimates and intervention levels}
 \usage{
-calculate_effect(intervention_levels, variables, param_estimates)
+calculate_effect(
+  intervention_levels,
+  variables,
+  param_estimates,
+  treatment_effect_type
+)
 }
 \arguments{
 \item{intervention_levels}{A numeric vector indicating the levels of intervention for each predictor variable.}
@@ -12,6 +17,8 @@ calculate_effect(intervention_levels, variables, param_estimates)
 \item{variables}{A list of the names of the response variable and predictor variables extracted from the model.}
 
 \item{param_estimates}{A vector of parameter estimates from the model.}
+
+\item{treatment_effect_type}{Character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".}
 }
 \value{
 A numeric value representing the calculated effect of the specified intervention.

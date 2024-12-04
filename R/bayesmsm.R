@@ -8,6 +8,7 @@
 #' @param nvisit Number of visits or time points to simulate.
 #' @param reference Vector denoting the intervention to be used as the reference across all visits for calculating the risk ratio and risk difference. The default is a vector of all 0's with length nvisit (i.e. never treated).
 #' @param comparator Vector denoting the intervention to be used as the comparator across all visits for calculating the risk ratio and risk difference. The default is a vector of all 1's with length nvisit (i.e. always treated).
+#' @param treatment_effect_type Character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".
 #' @param family Character string specifying the outcome distribution family. The possible distributions are: "gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.
 #' @param data Data table containing the variable names in `ymodel`.
 #' @param wmean Vector of treatment assignment weights. The default is rep(1, nrow(data)).
@@ -44,6 +45,7 @@
 #'                            nvisit = 2,
 #'                            reference = c(rep(0,2)),
 #'                            comparator = c(rep(1,2)),
+#'                            treatment_effect_type = "sq",
 #'                            family = "gaussian",
 #'                            data = testdata,
 #'                            wmean = rep(1, 1000),
@@ -56,6 +58,7 @@ bayesmsm <- function(ymodel,
                      nvisit,
                      reference = c(rep(0,nvisit)), # An example of never treated
                      comparator = c(rep(1,nvisit)),
+                     treatment_effect_type = "sq", # "sq" or "cum"
                      family = "gaussian", # "gaussian" or "binomial"
                      data,
                      wmean = rep(1, nrow(data)),
@@ -87,6 +90,10 @@ bayesmsm <- function(ymodel,
   # return error message if the input weight vector has different length comparing to the outcome Y;
   if (length(wmean) != nrow(data)) {
     stop("The length of the weight vector does not match the length of Y.")
+  }
+  # Check treatment_effect_type validity
+  if (!treatment_effect_type %in% c("cum", "sq")) {
+    stop("Invalid treatment_effect_type. Choose either 'cum' or 'sq'.")
   }
 
   # load utility functions
@@ -128,6 +135,25 @@ bayesmsm <- function(ymodel,
 
   A <- cbind(1, A_base)
   colnames(A)[2:ncol(A)]<- variables$predictors
+
+  # Check for cumulative treatment effect conditions
+  if (treatment_effect_type == "cum") {
+    # Ensure ymodel has only one predictor
+    if (length(variables$predictors) != 1) {
+      stop("A cumulative treatment effect is specified but the model does not have a single predictor.")
+    }
+
+    # Ensure the single predictor in the dataset contains values > 1
+    predictor_var <- variables$predictors[1]
+    if (!predictor_var %in% colnames(data)) {
+      stop(paste("The predictor variable", predictor_var, "is not found in the dataset."))
+    }
+    if (!any(data[[predictor_var]] > 1)) {
+      stop("A cumulative treatment effect is specified but the predictor variable does not contain any value > 1.")
+    }
+  }
+
+
 
   wloglik_normal<-function(param,
                            Y,
@@ -180,27 +206,31 @@ bayesmsm <- function(ymodel,
                        .combine = 'rbind',
                        .packages = 'MCMCpack') %dopar% {
 
-      calculate_effect <- function(intervention_levels, variables, param_estimates) {
-        # Start with the intercept term
-        effect<-effect_intercept<-param_estimates[1]
+      calculate_effect <- function(intervention_levels, variables, param_estimates, treatment_effect_type) {
+        if (treatment_effect_type == "cum") {
+          # For cumulative treatment, only consider b1
+          effect <- param_estimates[1] * intervention_levels[1]
+        } else {
+          # Start with the intercept term
+          effect<-effect_intercept<-param_estimates[1]
 
-        # Go through each predictor and add its contribution
-        for (i in 1:length(variables$predictors)) {
-          term <- variables$predictors[i]
-          term_variables <- unlist(strsplit(term, ":"))
-          term_index <- which(names(param_estimates) == term)
+          # Go through each predictor and add its contribution
+          for (i in 1:length(variables$predictors)) {
+            term <- variables$predictors[i]
+            term_variables <- unlist(strsplit(term, ":"))
+            term_index <- which(names(param_estimates) == term)
 
-          # Calculate the product of intervention levels for the interaction term
-          term_contribution <- param_estimates[term_index]
-          for (term_variable in term_variables) {
-            var_index <- which(variables$predictors == term_variable)
-            term_contribution <- term_contribution * intervention_levels[var_index]
+            # Calculate the product of intervention levels for the interaction term
+            term_contribution <- param_estimates[term_index]
+            for (term_variable in term_variables) {
+              var_index <- which(variables$predictors == term_variable)
+              term_contribution <- term_contribution * intervention_levels[var_index]
+            }
+
+            # Add the term contribution to the effect
+            effect <- effect + term_contribution
           }
-
-          # Add the term contribution to the effect
-          effect <- effect + term_contribution
         }
-
         return(effect)
       }
 
@@ -221,24 +251,42 @@ bayesmsm <- function(ymodel,
       names(maxim$par) <- c("(Intercept)", variables$predictors)
 
       # Calculate the effects
-      effect_ref <- calculate_effect(reference, variables, param_estimates=maxim$par)
-      effect_comp <- calculate_effect(comparator, variables, param_estimates=maxim$par)
+      effect_ref <- calculate_effect(reference, variables, param_estimates=maxim$par, treatment_effect_type)
+      effect_comp <- calculate_effect(comparator, variables, param_estimates=maxim$par, treatment_effect_type)
 
-      # Calculate the ATE
-      if (family == "binomial") { # Binary outcomes
-        results.it[1,1] <- expit(effect_comp) - expit(effect_ref)  # RD
-        results.it[1,2] <- expit(effect_comp) / expit(effect_ref)  # RR
-        results.it[1,3] <- (expit(effect_comp) / (1 - expit(effect_comp))) /
-          (expit(effect_ref) / (1 - expit(effect_ref)))  # OR
-      } else if (family == "gaussian"){ # Continuous outcomes
-        results.it[1,1] <- effect_comp - effect_ref  # RD
-        results.it[1,2] <- NA  # RR not applicable
-        results.it[1,3] <- NA  # OR not applicable
+      if (treatment_effect_type == "sq") {
+        # Calculate the ATE
+        if (family == "binomial") { # Binary outcomes
+          results.it[1,1] <- expit(effect_comp) - expit(effect_ref)  # RD
+          results.it[1,2] <- expit(effect_comp) / expit(effect_ref)  # RR
+          results.it[1,3] <- (expit(effect_comp) / (1 - expit(effect_comp))) /
+            (expit(effect_ref) / (1 - expit(effect_ref)))  # OR
+        } else if (family == "gaussian"){ # Continuous outcomes
+          results.it[1,1] <- effect_comp - effect_ref  # RD
+          results.it[1,2] <- NA  # RR not applicable
+          results.it[1,3] <- NA  # OR not applicable
+        }
+
+        # Store the reference and comparator effects
+        results.it[1,4] <- effect_ref
+        results.it[1,5] <- effect_comp
+      } else if (treatment_effect_type == "cum") {
+        # Calculate the ATE
+        if (family == "binomial") { # Binary outcomes
+          results.it[1,1] <- NA  # RD not applicable
+          results.it[1,2] <- NA  # RR not applicable
+          results.it[1,3] <- (expit(effect_comp) / (1 - expit(effect_comp))) /
+            (expit(effect_ref) / (1 - expit(effect_ref)))  # OR
+        } else if (family == "gaussian"){ # Continuous outcomes
+          results.it[1,1] <- effect_comp - effect_ref  # RD
+          results.it[1,2] <- NA  # RR not applicable
+          results.it[1,3] <- NA  # OR not applicable
+        }
+
+        # Store the reference and comparator effects
+        results.it[1,4] <- effect_ref
+        results.it[1,5] <- effect_comp
       }
-
-      # Store the reference and comparator effects
-      results.it[1,4] <- effect_ref
-      results.it[1,5] <- effect_comp
 
       # combining parallel results;
       cbind(i,results.it) #end of parallel;
@@ -247,28 +295,20 @@ bayesmsm <- function(ymodel,
     parallel::stopCluster(cl)
 
     #saving output for the parallel setting;
-    if (family == "binomial") {
+    if (family == "binomial" && treatment_effect_type == "cum") {
       return(list(
-        RD_mean = mean(results[,2]),
-        RR_mean = mean(results[,3]),
-        OR_mean = mean(results[,4]),
-        RD_sd = sqrt(var(results[,2])),
-        RR_sd = sqrt(var(results[,3])),
-        OR_sd = sqrt(var(results[,4])),
-        RD_quantile = quantile(results[,2], probs = c(0.025, 0.975)),
-        RR_quantile = quantile(results[,3], probs = c(0.025, 0.975)),
-        OR_quantile = quantile(results[,4], probs = c(0.025, 0.975)),
+        OR_mean = mean(results[, 4]),
+        OR_sd = sqrt(var(results[, 4])),
+        OR_quantile = quantile(results[, 4], probs = c(0.025, 0.975)),
         bootdata = data.frame(
-          effect_reference = results[,5],
-          effect_comparator = results[,6],
-          RD = results[,2],
-          RR = results[,3],
-          OR = results[,4]
+          effect_reference = results[, 5],
+          effect_comparator = results[, 6],
+          OR = results[, 4]
         ),
         reference = reference,
         comparator = comparator
       ))
-    } else if (family == "gaussian"){
+    } else if (family == "gaussian" && treatment_effect_type == "cum") {
       return(list(
         RD_mean = mean(results[,2]),
         RD_sd = sqrt(var(results[,2])),
@@ -281,6 +321,42 @@ bayesmsm <- function(ymodel,
         reference = reference,
         comparator = comparator
       ))
+    } else if (treatment_effect_type == "sq") {
+      if (family == "binomial") {
+        return(list(
+          RD_mean = mean(results[,2]),
+          RR_mean = mean(results[,3]),
+          OR_mean = mean(results[,4]),
+          RD_sd = sqrt(var(results[,2])),
+          RR_sd = sqrt(var(results[,3])),
+          OR_sd = sqrt(var(results[,4])),
+          RD_quantile = quantile(results[,2], probs = c(0.025, 0.975)),
+          RR_quantile = quantile(results[,3], probs = c(0.025, 0.975)),
+          OR_quantile = quantile(results[,4], probs = c(0.025, 0.975)),
+          bootdata = data.frame(
+            effect_reference = results[,5],
+            effect_comparator = results[,6],
+            RD = results[,2],
+            RR = results[,3],
+            OR = results[,4]
+          ),
+          reference = reference,
+          comparator = comparator
+        ))
+      } else if (family == "gaussian"){
+        return(list(
+          RD_mean = mean(results[,2]),
+          RD_sd = sqrt(var(results[,2])),
+          RD_quantile = quantile(results[,2], probs = c(0.025, 0.975)),
+          bootdata = data.frame(
+            effect_reference = results[,5],
+            effect_comparator = results[,6],
+            RD = results[,2]
+          ),
+          reference = reference,
+          comparator = comparator
+        ))
+      }
     }
   }
 
@@ -307,57 +383,94 @@ bayesmsm <- function(ymodel,
       names(maxim$par) <- c("(Intercept)", variables$predictors)
 
       # Calculate the effects
-      effect_reference[j] <- calculate_effect(reference, variables, param_estimates=maxim$par)
-      effect_comparator[j] <- calculate_effect(comparator, variables, param_estimates=maxim$par)
+      effect_reference[j] <- calculate_effect(reference, variables, param_estimates=maxim$par, treatment_effect_type)
+      effect_comparator[j] <- calculate_effect(comparator, variables, param_estimates=maxim$par, treatment_effect_type)
 
-      # Calculate the ATE
-      if (family == "binomial") { # Binary outcomes
-        bootest_RD[j] <- expit(effect_comparator[j]) - expit(effect_reference[j])  # RD
-        bootest_RR[j] <- expit(effect_comparator[j]) / expit(effect_reference[j])  # RR
-        bootest_OR[j] <- (expit(effect_comparator[j]) / (1 - expit(effect_comparator[j]))) /
-          (expit(effect_reference[j]) / (1 - expit(effect_reference[j])))  # OR
-      } else if (family == "gaussian"){ # Continuous outcomes
-        bootest_RD[j] <- effect_comparator[j] - effect_reference[j]  # RD
+      if (treatment_effect_type == "sq") {
+        # Calculate the ATE
+        if (family == "binomial") { # Binary outcomes
+          bootest_RD[j] <- expit(effect_comparator[j]) - expit(effect_reference[j])  # RD
+          bootest_RR[j] <- expit(effect_comparator[j]) / expit(effect_reference[j])  # RR
+          bootest_OR[j] <- (expit(effect_comparator[j]) / (1 - expit(effect_comparator[j]))) /
+            (expit(effect_reference[j]) / (1 - expit(effect_reference[j])))  # OR
+        } else if (family == "gaussian"){ # Continuous outcomes
+          bootest_RD[j] <- effect_comparator[j] - effect_reference[j]  # RD
+        }
+      } else if (treatment_effect_type == "cum") {
+        if (family == "binomial") { # Binary outcomes
+          bootest_OR[j] <- (expit(effect_comparator[j]) / (1 - expit(effect_comparator[j]))) /
+            (expit(effect_reference[j]) / (1 - expit(effect_reference[j])))  # OR
+        } else if (family == "gaussian") { # Continuous outcomes
+          bootest_RD[j] <- effect_comparator[j] - effect_reference[j]  # RD
+        }
       }
-
     }
 
     #saving output for the non-parallel setting;
-    if (family == "binomial") {
-      return(list(
-        RD_mean = mean(bootest_RD),
-        RR_mean = mean(bootest_RR),
-        OR_mean = mean(bootest_OR),
-        RD_sd = sqrt(var(bootest_RD)),
-        RR_sd = sqrt(var(bootest_RR)),
-        OR_sd = sqrt(var(bootest_OR)),
-        RD_quantile = quantile(bootest_RD, probs = c(0.025, 0.975)),
-        RR_quantile = quantile(bootest_RR, probs = c(0.025, 0.975)),
-        OR_quantile = quantile(bootest_OR, probs = c(0.025, 0.975)),
-        bootdata = data.frame(
-          effect_reference = effect_reference,
-          effect_comparator = effect_comparator,
-          RD = bootest_RD,
-          RR = bootest_RR,
-          OR = bootest_OR
-        ),
-        reference = reference,
-        comparator = comparator
-      ))
-    } else {
-      return(list(
-        RD_mean = mean(bootest_RD),
-        RD_sd = sqrt(var(bootest_RD)),
-        RD_quantile = quantile(bootest_RD, probs = c(0.025, 0.975)),
-        bootdata = data.frame(
-          effect_reference = effect_reference,
-          effect_comparator = effect_comparator,
-          RD = bootest_RD
-        ),
-        reference = reference,
-        comparator = comparator
-      ))
+    if (treatment_effect_type == "sq") {
+      if (family == "binomial") {
+        return(list(
+          RD_mean = mean(bootest_RD),
+          RR_mean = mean(bootest_RR),
+          OR_mean = mean(bootest_OR),
+          RD_sd = sqrt(var(bootest_RD)),
+          RR_sd = sqrt(var(bootest_RR)),
+          OR_sd = sqrt(var(bootest_OR)),
+          RD_quantile = quantile(bootest_RD, probs = c(0.025, 0.975)),
+          RR_quantile = quantile(bootest_RR, probs = c(0.025, 0.975)),
+          OR_quantile = quantile(bootest_OR, probs = c(0.025, 0.975)),
+          bootdata = data.frame(
+            effect_reference = effect_reference,
+            effect_comparator = effect_comparator,
+            RD = bootest_RD,
+            RR = bootest_RR,
+            OR = bootest_OR
+          ),
+          reference = reference,
+          comparator = comparator
+        ))
+      } else {
+        return(list(
+          RD_mean = mean(bootest_RD),
+          RD_sd = sqrt(var(bootest_RD)),
+          RD_quantile = quantile(bootest_RD, probs = c(0.025, 0.975)),
+          bootdata = data.frame(
+            effect_reference = effect_reference,
+            effect_comparator = effect_comparator,
+            RD = bootest_RD
+          ),
+          reference = reference,
+          comparator = comparator
+        ))
+      }
+    } else if (treatment_effect_type == "cum") {
+      if (family == "binomial") {
+        return(list(
+          OR_mean = mean(bootest_OR),
+          OR_sd = sqrt(var(bootest_OR)),
+          OR_quantile = quantile(bootest_OR, probs = c(0.025, 0.975)),
+          bootdata = data.frame(
+            effect_reference = effect_reference,
+            effect_comparator = effect_comparator,
+            OR = bootest_OR
+          ),
+          reference = reference,
+          comparator = comparator
+        ))
+      } else {
+        return(list(
+          RD_mean = mean(bootest_RD),
+          RD_sd = sqrt(var(bootest_RD)),
+          RD_quantile = quantile(bootest_RD, probs = c(0.025, 0.975)),
+          bootdata = data.frame(
+            effect_reference = effect_reference,
+            effect_comparator = effect_comparator,
+            RD = bootest_RD
+          ),
+          reference = reference,
+          comparator = comparator
+        ))
+      }
     }
-
   }
 }

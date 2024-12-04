@@ -6,6 +6,7 @@ test_that("plot_ATE works with no errors", {
                     nvisit = 2,
                     reference = c(rep(0,2)),
                     comparator = c(rep(1,2)),
+                    treatment_effect_type = "sq",
                     family = "gaussian",
                     data = testdata,
                     wmean = rep(1, 1000),

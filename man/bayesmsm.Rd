@@ -9,6 +9,7 @@ bayesmsm(
   nvisit,
   reference = c(rep(0, nvisit)),
   comparator = c(rep(1, nvisit)),
+  treatment_effect_type = "sq",
   family = "gaussian",
   data,
   wmean = rep(1, nrow(data)),
@@ -27,6 +28,8 @@ bayesmsm(
 \item{reference}{Vector denoting the intervention to be used as the reference across all visits for calculating the risk ratio and risk difference. The default is a vector of all 0's with length nvisit (i.e. never treated).}
 
 \item{comparator}{Vector denoting the intervention to be used as the comparator across all visits for calculating the risk ratio and risk difference. The default is a vector of all 1's with length nvisit (i.e. always treated).}
+
+\item{treatment_effect_type}{Character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".}
 
 \item{family}{Character string specifying the outcome distribution family. The possible distributions are: "gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.}
 
@@ -69,6 +72,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            nvisit = 2,
                            reference = c(rep(0,2)),
                            comparator = c(rep(1,2)),
+                           treatment_effect_type = "sq",
                            family = "gaussian",
                            data = testdata,
                            wmean = rep(1, 1000),
