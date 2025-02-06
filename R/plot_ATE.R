@@ -1,4 +1,4 @@
-#' Plot Average Treatment Effect Density from Bootstrap Results
+#' Plot Average Treatment Effect Density from bayesmsm output
 #'
 #' @param input A model object, data frame or vector containing the bootstrap estimates of ATE.
 #' @param ATE define causal estimand of interest from RD, OR, RR.

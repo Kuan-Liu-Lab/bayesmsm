@@ -1,6 +1,6 @@
 #' Plot Average Potential Outcomes (APO)
 #'
-#' This function plots the density of APO for a specified effect type from bootstrap simulation results.
+#' This function plots the density of APO for a specified effect type from bayesmsms output.
 #'
 #' @param input A data frame or model object containing 'bootdata', which include 'effect_comparator' and 'effect_reference' columns.
 #' @param effect_type A character string specifying which effect to plot: 'effect_comparator' or 'effect_reference'.

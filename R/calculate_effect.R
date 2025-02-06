@@ -1,4 +1,4 @@
-#' A function to calculate the effect of an intervention given the parameter estimates and intervention levels
+#' A function to calculate the causal effect of an intervention given the parameter estimates and intervention levels
 #'
 #' @param intervention_levels A numeric vector indicating the levels of intervention for each predictor variable.
 #' @param variables A list of the names of the response variable and predictor variables extracted from the model.

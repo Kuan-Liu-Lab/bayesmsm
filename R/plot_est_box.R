@@ -1,4 +1,4 @@
-#' Error bar plots for treatment effects
+#' Error bar plots for causal treatment effects
 #'
 #' @param input A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'RD' columns.
 #' @param ... Additional arguments passed to the plotting function.
