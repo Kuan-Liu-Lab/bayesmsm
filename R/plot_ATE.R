@@ -60,10 +60,10 @@ plot_ATE <- function(input,
 
   # ggplot2 visualization
   ggplot2::ggplot() +
-    ggplot2::geom_line(data = density_data, ggplot2::aes(x = x, y = y), color = col_density, size = 1) +
+    ggplot2::geom_line(data = density_data, ggplot2::aes(x = x, y = y), color = col_density, linewidth = 1) +
     ggplot2::geom_ribbon(data = density_data, ggplot2::aes(x = x, ymin = 0, ymax = y), fill = fill_density, alpha = 0.3) +
-    ggplot2::geom_vline(xintercept = mean(ate_values), color = "purple", linetype = "dashed", size = 1.2) +
-    ggplot2::geom_vline(xintercept = ci, color = "darkgreen", linetype = "dotted", size = 1.2) +
+    ggplot2::geom_vline(xintercept = mean(ate_values), color = "purple", linetype = "dashed", linewidth = 1.2) +
+    ggplot2::geom_vline(xintercept = ci, color = "darkgreen", linetype = "dotted", linewidth = 1.2) +
     ggplot2::labs(title = main, x = xlab, y = ylab) +
     ggplot2::theme_minimal() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) +

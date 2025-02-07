@@ -12,6 +12,8 @@
 #' @param parallel Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.
 #' @param n.chains Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.
 #' @param seed Starting seed for the JAGS model. The default is 890123.
+#' @param save_jags_model_file Logical; if TRUE, writes the model to outputfile. Default is FALSE.
+#' @param output_file File name to save the JAGS model (if save_to_file = TRUE).
 #'
 #' @return A vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
 #' @importFrom R2jags jags
@@ -38,12 +40,13 @@
 #'                                                     C3 ~ L11 + L21 + A1 +
 #'                                                          L12 + L22 + A2),
 #'                                data = simdat_cen,
-#'                                n.iter = 1500,
-#'                                n.burnin = 500,
+#'                                n.iter = 200,
+#'                                n.burnin = 100,
 #'                                n.thin = 1,
 #'                                parallel = FALSE,
 #'                                n.chains = 1,
-#'                                seed = 890123)
+#'                                seed = 890123,
+#'                                save_jags_model_file = FALSE)
 bayesweight_cen <- function(trtmodel.list,
                             cenmodel.list,
                             data,
@@ -52,8 +55,9 @@ bayesweight_cen <- function(trtmodel.list,
                             n.thin = 5,
                             parallel = TRUE,
                             n.chains = 2,
-                            seed = 890123) {
-
+                            seed = 890123,
+                            save_jags_model_file = FALSE,
+                            output_file = "treatment_censoring_model.txt") {
 
   create_marginal_treatment_models <- function(trtmodel.list) {
 
@@ -77,30 +81,6 @@ bayesweight_cen <- function(trtmodel.list,
       return(formula_s)
     })
 
-    # # Initialize the list for the marginal treatment models
-    # trtmodel.list_s <- list()
-    #
-    # # Loop through each model in the original list
-    # for (i in seq_along(trtmodel.list)) {
-    #   # Extract the response variable (treatment variable) from each model
-    #   response_var <- all.vars(trtmodel.list[[i]])[1]  # assuming the response is the first variable on the LHS
-    #
-    #   # Create the marginal model formula
-    #   if (i == 1) {
-    #     # The first treatment model does not depend on any previous treatments
-    #     formula_s <- as.formula(paste(response_var, "~ 1"))
-    #   } else {
-    #     # Subsequent treatment models depend on all previous treatments
-    #     previous_treatments <- sapply(seq_len(length(trtmodel.list) - 1), function(j) {
-    #       all.vars(trtmodel.list[[j]])[1]
-    #     })
-    #     formula_s <- as.formula(paste(response_var, "~", paste(previous_treatments, collapse = " + ")))
-    #   }
-    #
-    #   # Append the new formula to the list
-    #   trtmodel.list_s[[i]] <- formula_s
-    # }
-    #
     return(trtmodel.list_s)
   }
 
@@ -133,13 +113,15 @@ bayesweight_cen <- function(trtmodel.list,
   cenmodel_s <- extract_variables_list(cenmodel.list_s)
 
   # Define JAGS model for treatment and censoring
-  write_jags_model <- function(trtmodel.list, cenmodel.list) {
+  write_jags_model <- function(trtmodel.list,
+                               cenmodel.list,
+                               save_jags_model_file=FALSE,
+                               output_file=output_file) {
+
     var_info_trt <- lapply(trtmodel.list, extract_variables_list)
     var_info_cen <- lapply(cenmodel.list, extract_variables_list)
 
     model_string <- "model{\n"
-
-    all_parameters <- c()
 
     for (v in seq_along(var_info_trt)) {
       visit_trt <- var_info_trt[[v]]
@@ -158,7 +140,6 @@ bayesweight_cen <- function(trtmodel.list,
                              "logit(p", v, "[i]) <- b", v, "0")
       for (p in seq_along(predictors_trt)) {
         model_string <- paste0(model_string, " + b", v, p, "*", predictors_trt[p], "[i]")
-        all_parameters <- c(all_parameters, sprintf("b%d%d", v, p))
       }
       model_string <- paste0(model_string, "\n")
 
@@ -168,7 +149,6 @@ bayesweight_cen <- function(trtmodel.list,
                              "logit(cp", v, "[i]) <- s", v, "0")
       for (p in seq_along(predictors_cen)) {
         model_string <- paste0(model_string, " + s", v, p, "*", predictors_cen[p], "[i]")
-        all_parameters <- c(all_parameters, sprintf("s%d%d", v, p))
       }
       model_string <- paste0(model_string, "\n")
 
@@ -177,12 +157,10 @@ bayesweight_cen <- function(trtmodel.list,
                              "\n# marginal model;\n",
                              response_trt, "s[i] ~ dbern(p", v, "s[i])\n",
                              "logit(p", v, "s[i]) <- bs", v, "0")
-      all_parameters <- c(all_parameters, sprintf("bs%d0", v))
       if (v > 1) {
         for (j in 1:(v - 1)) {
           prev_response_trt <- var_info_trt[[j]]$response
           model_string <- paste0(model_string, " + bs", v, j, "*", prev_response_trt, "s[i]")
-          all_parameters <- c(all_parameters, sprintf("bs%d%d", v, j))
         }
       }
       model_string <- paste0(model_string, "\n")
@@ -191,12 +169,10 @@ bayesweight_cen <- function(trtmodel.list,
       model_string <- paste0(model_string,
                              response_cen, "s[i] ~ dbern(cp", v, "s[i])\n",
                              "logit(cp", v, "s[i]) <- ts", v, "0")
-      all_parameters <- c(all_parameters, sprintf("ts%d0", v))
       if (v > 1) {
         for (j in 1:(v - 1)) {
           prev_response_trt <- var_info_trt[[j]]$response
           model_string <- paste0(model_string, " + ts", v, j, "*", prev_response_trt, "s[i]")
-          all_parameters <- c(all_parameters, sprintf("ts%d%d", v, j))
         }
       }
       model_string <- paste0(model_string, "\n}\n")
@@ -211,32 +187,26 @@ bayesweight_cen <- function(trtmodel.list,
       # Treatment priors
       for (p in 0:num_preds_trt) {
         model_string <- paste0(model_string, "b", v, p, " ~ dunif(-10, 10)\n")
-        all_parameters <- c(all_parameters, sprintf("b%d%d", v, p))
       }
 
       # Censoring priors
       for (p in 0:num_preds_cen) {
         model_string <- paste0(model_string, "s", v, p, " ~ dunif(-10, 10)\n")
-        all_parameters <- c(all_parameters, sprintf("s%d%d", v, p))
       }
 
       # Marginal treatment priors
       model_string <- paste0(model_string, "bs", v, "0 ~ dunif(-10, 10)\n")
-      all_parameters <- c(all_parameters, sprintf("bs%d0", v))
       if (v > 1) {
         for (j in 1:(v - 1)) {
           model_string <- paste0(model_string, "bs", v, j, " ~ dunif(-10, 10)\n")
-          all_parameters <- c(all_parameters, sprintf("bs%d%d", v, j))
         }
       }
 
       # Marginal censoring priors
       model_string <- paste0(model_string, "ts", v, "0 ~ dunif(-10, 10)\n")
-      all_parameters <- c(all_parameters, sprintf("ts%d0", v))
       if (v > 1) {
         for (j in 1:(v - 1)) {
           model_string <- paste0(model_string, "ts", v, j, " ~ dunif(-10, 10)\n")
-          all_parameters <- c(all_parameters, sprintf("ts%d%d", v, j))
         }
       }
     }
@@ -244,13 +214,96 @@ bayesweight_cen <- function(trtmodel.list,
     # Add the closing brace for the model block
     model_string <- paste0(model_string, "}\n")
 
-    # Write the finalized model string to a file
-    cat(model_string, file = "censoring_model.txt")
+    # Assume model_string is being built here...
 
-    return(unique(all_parameters))
+    # If saving to file, write and return file path
+    if (save_jags_model_file) {
+      writeLines(model_string, output_file)
+      return(output_file)
+    } else {
+      # Otherwise, return the model as a text connection for direct use in R2jags
+      return(model_string)
+    }
   }
 
-  write_jags_model(trtmodel.list, cenmodel.list)
+  # extracting parameters list;
+  jags_model_parameter <- function(trtmodel.list,
+                                   cenmodel.list){
+    all_parameters <- c()
+    var_info_trt <- lapply(trtmodel.list, extract_variables_list)
+    var_info_cen <- lapply(cenmodel.list, extract_variables_list)
+
+    for (v in seq_along(var_info_trt)) {
+      visit_trt <- var_info_trt[[v]]
+      response_trt <- visit_trt$response
+      predictors_trt <- visit_trt$predictors
+      visit_cen <- var_info_cen[[v]]
+      response_cen <- visit_cen$response
+      predictors_cen <- visit_cen$predictors
+
+      # Treatment model
+      for (p in seq_along(predictors_trt)) {
+        all_parameters <- c(all_parameters, sprintf("b%d%d", v, p))
+      }
+
+      # Censoring model
+      for (p in seq_along(predictors_cen)) {
+        all_parameters <- c(all_parameters, sprintf("s%d%d", v, p))
+      }
+
+      all_parameters <- c(all_parameters, sprintf("bs%d0", v))
+
+      if (v > 1) {
+        for (j in 1:(v - 1)) {
+          prev_response_trt <- var_info_trt[[j]]$response
+          all_parameters <- c(all_parameters, sprintf("bs%d%d", v, j))
+        }
+      }
+
+      all_parameters <- c(all_parameters, sprintf("ts%d0", v))
+      if (v > 1) {
+        for (j in 1:(v - 1)) {
+          prev_response_trt <- var_info_trt[[j]]$response
+          all_parameters <- c(all_parameters, sprintf("ts%d%d", v, j))
+        }
+      }
+    }
+
+    # Priors section
+    for (v in seq_along(var_info_trt)) {
+      num_preds_trt <- length(var_info_trt[[v]]$predictors)
+      num_preds_cen <- length(var_info_cen[[v]]$predictors)
+
+      # Treatment priors
+      for (p in 0:num_preds_trt) {
+        all_parameters <- c(all_parameters, sprintf("b%d%d", v, p))
+      }
+
+      # Censoring priors
+      for (p in 0:num_preds_cen) {
+        all_parameters <- c(all_parameters, sprintf("s%d%d", v, p))
+      }
+
+      # Marginal treatment priors
+      all_parameters <- c(all_parameters, sprintf("bs%d0", v))
+      if (v > 1) {
+        for (j in 1:(v - 1)) {
+          all_parameters <- c(all_parameters, sprintf("bs%d%d", v, j))
+        }
+      }
+
+      # Marginal censoring priors
+      all_parameters <- c(all_parameters, sprintf("ts%d0", v))
+      if (v > 1) {
+        for (j in 1:(v - 1)) {
+          all_parameters <- c(all_parameters, sprintf("ts%d%d", v, j))
+        }
+      }
+    }
+
+    return(unique(all_parameters))
+
+  }
 
   # Prepare data for JAGS
   prepare_jags_data <- function(data, trtmodel.list, cenmodel.list) {
@@ -284,7 +337,40 @@ bayesweight_cen <- function(trtmodel.list,
   }
 
   jags.data <- prepare_jags_data(data, trtmodel.list, cenmodel.list)
-  jags.params <- write_jags_model(trtmodel.list, cenmodel.list)
+  jags.params <- jags_model_parameter(trtmodel.list, cenmodel.list)
+
+  # Check if parallel computing is requested
+  # Handle JAGS model file creation based on parallel and save_jags_model_file flags
+  if (parallel == TRUE) {
+    # If parallel, always use files (either user-specified or temp files)
+    if (save_jags_model_file== TRUE) {
+      # User wants to save the model to a file
+      jags.model.file <- write_jags_model(trtmodel.list, cenmodel.list,
+                                          save_jags_model_file=TRUE,
+                                          output_file=output_file)
+      jags.model.files <- rep(jags.model.file, n.chains)  # Use same file for all chains
+    } else {
+      # Create temporary model files for each chain
+      jags.model.files <- sapply(1:n.chains, function(i) tempfile(fileext = ".txt"))
+      sapply(jags.model.files, function(f) {
+        model_str <- write_jags_model(trtmodel.list, cenmodel.list,
+                                      save_jags_model_file=FALSE,
+                                      output_file=f)
+        writeLines(model_str, f)  # Ensure model is written
+      })
+    }
+  } else {
+    # If not parallel, handle saving logic
+    if (save_jags_model_file== TRUE) {
+      jags.model.file <- write_jags_model(trtmodel.list, cenmodel.list,
+                                          save_jags_model_file=TRUE,
+                                          output_file=output_file)
+    } else {
+      jags.model.file <- textConnection(write_jags_model(trtmodel.list, cenmodel.list,
+                                                         save_jags_model_file=FALSE))  # textConnection
+    }
+  }
+
 
   # Run JAGS model
   if (parallel == TRUE) {
@@ -299,7 +385,7 @@ bayesweight_cen <- function(trtmodel.list,
     cl <- parallel::makeCluster(n.chains)
     doParallel::registerDoParallel(cl)
 
-    jags.model.wd <- paste(getwd(), '/censoring_model.txt',sep='')
+    # jags.model.wd <- paste(getwd(), '/censoring_model.txt',sep='')
 
     posterior <- foreach::foreach(chain_idx=1:n.chains, .packages=c('R2jags'),
                          .combine='rbind') %dopar%{
@@ -307,7 +393,7 @@ bayesweight_cen <- function(trtmodel.list,
                            set.seed(seed+chain_idx) #define seed;
                            jagsfit <- jags(data = jags.data,
                                            parameters.to.save = jags.params,
-                                           model.file = jags.model.wd,
+                                           model.file = jags.model.files[chain_idx],
                                            n.chains = 1,
                                            n.iter = n.iter,
                                            n.burnin = n.burnin,
@@ -320,13 +406,18 @@ bayesweight_cen <- function(trtmodel.list,
 
     parallel::stopCluster(cl)
 
+    # Clean up temp files if they were used
+    if (!save_jags_model_file) {
+      file.remove(jags.model.files)
+    }
+
   } else if (parallel == FALSE) {
     if (n.chains != 1) {
       stop("Non-parallel MCMC requires exactly 1 chain.")
     }
     jagsfit <- jags(data = jags.data,
                     parameters.to.save = jags.params,
-                    model.file = "censoring_model.txt",
+                    model.file = jags.model.file,
                     n.chains = 1,
                     n.iter = n.iter,
                     n.burnin = n.burnin,

@@ -1,5 +1,5 @@
 ---
-title: "Longitudinal causal analysis with informative right-censoring"
+title: "`bayesmsm` for longitudinal data with informative right-censoring"
 author: "Xiao Yan, Kuan Liu"
 output: rmarkdown::html_vignette
 vignette: >
@@ -88,6 +88,7 @@ Next, we use the `bayesweight_cen` function to estimate the weights with censori
   - `n.chains`: Number of MCMC chains to run. For non-parallel execution, this should be set to 1. For parallel execution, it requires at least 2 chains.
   - `seed`: Seed to ensure reproducibility.
   - `parallel`: Logical flag indicating whether to run the MCMC chains in parallel. Default is TRUE.
+  - `save_jags_model_file`: Logical flag indicating whether save the jags model as a text file for model customization. Default is FALSE.
   
 ```{r}
 weights <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
@@ -99,7 +100,7 @@ weights <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
                            data = simdat_cen,
                            n.iter = 250,
                            n.burnin = 150,
-                           n.thin = 5,
+                           n.thin = 1,
                            n.chains = 1,
                            seed = 890123,
                            parallel = FALSE)
@@ -124,7 +125,7 @@ model <- bayesmsm(ymodel = Y ~ A1+A2+A3,
                   family = "binomial",
                   data = simdat_cen,
                   wmean = weights,
-                  nboot = 364,
+                  nboot = 100,
                   optim_method = "BFGS",
                   parallel = FALSE,
                   seed = 890123,

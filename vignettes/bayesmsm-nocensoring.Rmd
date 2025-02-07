@@ -1,5 +1,5 @@
 ---
-title: "Longitudinal causal analysis without censoring"
+title: "`bayesmsm` for longitudinal data without right-censoring"
 author: "Xiao Yan, Kuan Liu"
 output: rmarkdown::html_vignette
 vignette: >
@@ -57,44 +57,7 @@ library(bayesmsm)
   - w1 and w2 are two baseline covariates (one continuous and one binary, mimicking age and sex)
   - L1 and L2 are two time-dependent covariates (also one continuous and one binary)
   - no missing data
-- The simulated DAG
 
-```{r}
-library(DiagrammeR)
-grViz("
-    digraph causal {
-    # Nodes
-    node [shape=plaintext]
-    W [label = 'w1, w2']
-    L1 [label = 'L11, L21']
-    Z1 [label = 'Z1']
-    L2 [label = 'L12, L22']
-    Z2 [label = 'Z2']
-    Y [label = 'Y']
-    
-    # Edges
-    edge [color=black, arrowhead=vee]
-    rankdir = LR
-    W->L1
-    W->Z1
-    W->L2
-    W->Z2
-    W->Y
-    L1->Z1
-    L1->L2
-    L1->Z2
-    L1->Y
-    Z1->L2
-    Z1->Z2
-    Z1->Y
-    L2->Z2
-    L2->Y
-    Z2->Y
-    
-    # Graph
-    graph [overlap=true, fontsize=14]
-    }")
-```
 
 ```{r}
 library(DT)
@@ -137,17 +100,18 @@ $$
   - `n.chains`: Number of MCMC chains to run. For non-parallel execution, this should be set to 1. For parallel execution, it requires at least 2 chains.
   - `seed`: Seed to ensure reproducibility.
   - `parallel`: Logical flag indicating whether to run the MCMC chains in parallel. Default is TRUE.
+  - `save_jags_model_file`: Logical flag indicating whether save the jags model as a text file for model customization. Default is FALSE.
 
 ```{r}
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                              a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
                         data = testdata,
-                        n.iter = 2000,
-                        n.burnin = 1000,
-                        n.thin = 5,
-                        n.chains = 2,
+                        n.iter = 250,
+                        n.burnin = 150,
+                        n.thin = 1,
+                        n.chains = 1,
                         seed = 890123,
-                        parallel = TRUE)
+                        parallel = FALSE)
 str(weights)
 ```
 
@@ -180,7 +144,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            family = "gaussian",
                            data = testdata,
                            wmean = weights,
-                           nboot = 1000,
+                           nboot = 100,
                            optim_method = "BFGS",
                            parallel = TRUE,
                            seed = 890123,

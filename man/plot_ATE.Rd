@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_ATE.R
 \name{plot_ATE}
 \alias{plot_ATE}
-\title{Plot Average Treatment Effect Density from Bootstrap Results}
+\title{Plot Average Treatment Effect Density from bayesmsm output}
 \usage{
 plot_ATE(
   input,
@@ -39,7 +39,7 @@ plot_ATE(
 \item{...}{Additional graphical parameters passed to the plot function.}
 }
 \description{
-Plot Average Treatment Effect Density from Bootstrap Results
+Plot Average Treatment Effect Density from bayesmsm output
 }
 \examples{
 testdata <- read.csv(system.file("extdata",

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_est_box.R
 \name{plot_est_box}
 \alias{plot_est_box}
-\title{Error bar plots for treatment effects}
+\title{Error bar plots for causal treatment effects}
 \usage{
 plot_est_box(input, ...)
 }
@@ -15,7 +15,7 @@ plot_est_box(input, ...)
 An error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
 }
 \description{
-Error bar plots for treatment effects
+Error bar plots for causal treatment effects
 }
 \examples{
 testdata <- read.csv(system.file("extdata",

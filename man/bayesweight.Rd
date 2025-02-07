@@ -12,7 +12,9 @@ bayesweight(
   n.burnin = 15000,
   n.thin = 5,
   seed = 890123,
-  parallel = TRUE
+  parallel = TRUE,
+  save_jags_model_file = FALSE,
+  output_file = "treatment_model.txt"
 )
 }
 \arguments{
@@ -31,13 +33,17 @@ bayesweight(
 \item{seed}{Starting seed for the JAGS model. The default is 890123.}
 
 \item{parallel}{Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.}
+
+\item{save_jags_model_file}{Logical; if TRUE, writes the model to outputfile. Default is FALSE.}
+
+\item{output_file}{File name to save the JAGS model (if save_to_file = TRUE).}
 }
 \value{
 A list of the calculated weights.
 }
 \description{
-This function estimates Bayesian weights for time-varying treatment effects using specified models for each treatment time point.
-It uses JAGS for Bayesian inference and supports parallel computation to speed up the MCMC simulations.
+This function estimates Bayesian importance sampling weights for time-varying treatment effects using specified models for each treatment time point.
+It uses JAGS for Bayesian estimation and supports parallel computation to speed up the MCMC simulations.
 }
 \examples{
 # Continuous outcome
@@ -48,10 +54,11 @@ weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                             a_2 ~ w1 + w2 + L1_1 + L2_1 +
                                                   L1_2 + L2_2 + a_1),
                        data = testdata,
-                       n.iter = 2500,
-                       n.burnin = 1500,
-                       n.thin = 5,
-                       n.chains = 2,
+                       n.iter = 200,
+                       n.burnin = 100,
+                       n.thin = 1,
+                       n.chains = 1,
                        seed = 890123,
-                       parallel = TRUE)
+                       parallel = FALSE,
+                       save_jags_model_file = FALSE)
 }

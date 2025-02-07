@@ -13,7 +13,9 @@ bayesweight_cen(
   n.thin = 5,
   parallel = TRUE,
   n.chains = 2,
-  seed = 890123
+  seed = 890123,
+  save_jags_model_file = FALSE,
+  output_file = "treatment_censoring_model.txt"
 )
 }
 \arguments{
@@ -34,12 +36,16 @@ bayesweight_cen(
 \item{n.chains}{Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.}
 
 \item{seed}{Starting seed for the JAGS model. The default is 890123.}
+
+\item{save_jags_model_file}{Logical; if TRUE, writes the model to outputfile. Default is FALSE.}
+
+\item{output_file}{File name to save the JAGS model (if save_to_file = TRUE).}
 }
 \value{
 A vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
 }
 \description{
-This function computes posterior mean weights using Bayesian estimation for treatment models and censoring models across multiple time points.
+This function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points.
 The models can be run in parallel to estimate the weights for censored data.
 }
 \examples{
@@ -57,10 +63,11 @@ weights_cen <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
                                                     C3 ~ L11 + L21 + A1 +
                                                          L12 + L22 + A2),
                                data = simdat_cen,
-                               n.iter = 1500,
-                               n.burnin = 500,
+                               n.iter = 200,
+                               n.burnin = 100,
                                n.thin = 1,
                                parallel = FALSE,
                                n.chains = 1,
-                               seed = 890123)
+                               seed = 890123,
+                               save_jags_model_file = FALSE)
 }

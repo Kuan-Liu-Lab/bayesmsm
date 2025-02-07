@@ -1,17 +1,16 @@
 Package: bayesmsm
 Type: Package
-Title: Fitting Bayesian Marginal Structural Models for Longitudinal observational Data
+Title: Fitting Bayesian Marginal Structural Models for Longitudinal Observational Data
 Version: 0.1.0
-Date: 2024-10-08
 Authors@R: c(
-    person("Kuan", "Liu", NULL,"kuan.liu@utoronto.ca", role = c("aut", "cre"),
+    person("Kuan", "Liu", ,"kuan.liu@utoronto.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5017-1276")),
-    person("Xiao", "Yan", NULL, "Clarence.YXA@gmail.com", role = c("aut"),
+    person("Xiao", "Yan", , "Clarence.YXA@gmail.com", role = c("aut"),
            comment = c(ORCID = "0000-0001-9712-1199")),
-    person("Martin", "Urner", NULL,"martin.urner@uhn.ca", role = "aut",
+    person("Martin", "Urner", ,"martin.urner@uhn.ca", role = "aut",
            comment = c(ORCID = "0000-0003-1133-4885")))
 Maintainer: Kuan Liu <kuan.liu@utoronto.ca>
-Description: Fitting Bayesian marginal structrual models to estimate average treatment effect for drawing causal inference with time-varying treatment assignment and confounding with extension to handle informative right-censoring. This package can be used for continuous or binary treatment assignments, covariates and end-of-study outcomes. Based on the Bayesian marginal structural models of Saarela et al (2015) <DOI: 10.1111/biom.12269> and Liu et al (2020) <DOI: 10.1177/0962280219900362>. 
+Description: Fitting Bayesian marginal structural models for estimating average treatment effect for drawing causal inference with time-varying treatment assignment and confounding with extension to handle informative right-censoring. This package can be used for continuous or binary end-of-study outcomes. 
 Depends:
     R (>= 4.2.0)
 Suggests: 
@@ -19,11 +18,9 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
     knitr, 
-	  DiagrammeR, 
 	  DT
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.3.2
 Imports: 
     MCMCpack,
@@ -38,6 +35,6 @@ Imports:
 	  ggplot2
 NeedsCompilation: no
 Config/testthat/edition: 3
-URL: https://kuan-liu-lab.github.io/bayesmsm/, https://github.com/Kuan-Liu-Lab/bayesmsm
+URL: https://github.com/Kuan-Liu-Lab/bayesmsm
 BugReports: https://github.com/Kuan-Liu-Lab/bayesmsm/issues
 VignetteBuilder: knitr
