@@ -10,7 +10,12 @@ Authors@R: c(
     person("Martin", "Urner", ,"martin.urner@uhn.ca", role = "aut",
            comment = c(ORCID = "0000-0003-1133-4885")))
 Maintainer: Kuan Liu <kuan.liu@utoronto.ca>
-Description: Fitting Bayesian marginal structural models for estimating average treatment effect for drawing causal inference with time-varying treatment assignment and confounding with extension to handle informative right-censoring. This package can be used for continuous or binary end-of-study outcomes. 
+Description: Fitting Bayesian marginal structural models for estimating average treatment effect for drawing causal inference with time-varying treatment assignment and confounding with extension to handle informative right-censoring. This package can be used for continuous or binary end-of-study outcomes.
+    For more details, see:
+        Liu (2021) <https://tspace.library.utoronto.ca/handle/1807/109330>,
+        Robins, Hernán and Brumback (2000) <doi:10.1097/00001648-200009000-00011>,
+        Saarela et al. (2015) <doi:10.1111/biom.12269>,
+        and Liu et al. (2020) <doi:10.1177/0962280219900362>.
 Depends:
     R (>= 4.2.0)
 Suggests: 

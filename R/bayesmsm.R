@@ -14,7 +14,7 @@
 #' @param wmean Vector of treatment assignment weights. The default is rep(1, nrow(data)).
 #' @param nboot Integer specifying the number of bootstrap iterations. The default is 1000.
 #' @param optim_method Character string specifying the optimization method to be used. The default is 'BFGS'.
-#' @param seed Starting seed for simulations and bootstrapping. The default is 890123.
+#' @param seed Starting seed for simulations and bootstrapping. The default is NULL.
 #' @param parallel Logical scalar indicating whether to parallelize bootstrapping to multiple cores. The default is TRUE.
 #' @param ncore Integer specifying the number of CPU cores to use in parallel simulation. This argument is required when parallel is set to TRUE, and the default is 4.
 #'
@@ -64,7 +64,7 @@ bayesmsm <- function(ymodel,
                      wmean = rep(1, nrow(data)),
                      nboot = 1000,
                      optim_method = 'BFGS',
-                     seed = 890123,
+                     seed = NULL,
                      parallel = TRUE,
                      ncore = 4){
 
@@ -136,6 +136,15 @@ bayesmsm <- function(ymodel,
   A <- cbind(1, A_base)
   colnames(A)[2:ncol(A)]<- variables$predictors
 
+  # Define seed and bootstrap sampling weights matrix (alpha)
+  if(!is.null(seed)){
+    set.seed(seed)
+  }
+  alpha <- matrix(NA, nrow=length(Y), ncol=nboot)
+  for (i in 1:nboot){
+    alpha[,i] <- as.numeric(MCMCpack::rdirichlet(1, rep(1.0, length(Y))))
+  }
+
   # Check for cumulative treatment effect conditions
   if (treatment_effect_type == "cum") {
     # Ensure ymodel has only one predictor
@@ -152,8 +161,6 @@ bayesmsm <- function(ymodel,
       stop("A cumulative treatment effect is specified but the predictor variable does not contain any value > 1.")
     }
   }
-
-
 
   wloglik_normal<-function(param,
                            Y,
@@ -236,14 +243,11 @@ bayesmsm <- function(ymodel,
 
       results.it <- matrix(NA, 1, 5) # Result matrix for RD, RR, OR, effect_ref, and effect_comp
 
-      set.seed(seed+i) #define seed;
-      alpha <- as.numeric(MCMCpack::rdirichlet(1, rep(1.0, length(Y))))
-
       maxim <- optim(inits1,
                      fn = wfn,
                      Y = Y,
                      A = A,
-                     weight = alpha * wmean,
+                     weight = alpha[,i] * wmean,
                      control = list(fnscale = -1),
                      method = optim_method,
                      hessian = FALSE)
@@ -369,13 +373,12 @@ bayesmsm <- function(ymodel,
     effect_comparator <- numeric(nboot)
 
     for (j in 1:nboot) {
-      alpha <- as.numeric(rdirichlet(1, rep(1.0, length(Y))))
 
       maxim <- optim(inits1,
                      fn = wfn,
                      Y = Y,
                      A = A,
-                     weight = alpha * wmean,
+                     weight = alpha[,i] * wmean,
                      control = list(fnscale = -1),
                      method = optim_method,
                      hessian = FALSE)

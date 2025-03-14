@@ -11,7 +11,7 @@
 #' @param n.thin Integer specifying the thinning rate for the MCMC sampler. The default is 5.
 #' @param parallel Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.
 #' @param n.chains Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.
-#' @param seed Starting seed for the JAGS model. The default is 890123.
+#' @param seed Starting seed for the JAGS model. The default is NULL.
 #' @param save_jags_model_file Logical; if TRUE, writes the model to outputfile. Default is FALSE.
 #' @param output_file File name to save the JAGS model (if save_to_file = TRUE).
 #'
@@ -55,7 +55,7 @@ bayesweight_cen <- function(trtmodel.list,
                             n.thin = 5,
                             parallel = TRUE,
                             n.chains = 2,
-                            seed = 890123,
+                            seed = NULL,
                             save_jags_model_file = FALSE,
                             output_file = "treatment_censoring_model.txt") {
 
@@ -371,6 +371,11 @@ bayesweight_cen <- function(trtmodel.list,
     }
   }
 
+  # Define seed for each chain
+  if(!is.null(seed)){
+    set.seed(seed)
+  }
+  new.seed.by.chain <- sample.int(2^30, size=n.chains)
 
   # Run JAGS model
   if (parallel == TRUE) {
@@ -390,14 +395,14 @@ bayesweight_cen <- function(trtmodel.list,
     posterior <- foreach::foreach(chain_idx=1:n.chains, .packages=c('R2jags'),
                          .combine='rbind') %dopar%{
 
-                           set.seed(seed+chain_idx) #define seed;
                            jagsfit <- jags(data = jags.data,
                                            parameters.to.save = jags.params,
                                            model.file = jags.model.files[chain_idx],
                                            n.chains = 1,
                                            n.iter = n.iter,
                                            n.burnin = n.burnin,
-                                           n.thin = n.thin)
+                                           n.thin = n.thin,
+                                           jags.seed = new.seed.by.chain[chain_idx])
                            # Combine MCMC output from multiple chains
                            out.mcmc <- as.mcmc(jagsfit)
                            return(do.call(rbind, lapply(out.mcmc, as.matrix)))
@@ -422,7 +427,7 @@ bayesweight_cen <- function(trtmodel.list,
                     n.iter = n.iter,
                     n.burnin = n.burnin,
                     n.thin = n.thin,
-                    jags.seed = seed)
+                    jags.seed = new.seed.by.chain[1])
 
     out.mcmc <- as.mcmc(jagsfit)
     posterior <- as.matrix(out.mcmc[[1]])

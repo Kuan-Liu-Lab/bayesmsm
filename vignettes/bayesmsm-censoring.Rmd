@@ -43,9 +43,18 @@ knitr::opts_chunk$set(
 
   - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub:
 
-```{r, warning = FALSE, results=FALSE, force=TRUE}
+```r
 devtools::install_github("Kuan-Liu-Lab/bayesmsm")
 library(bayesmsm)
+```
+
+```{r, warning = FALSE, results=FALSE, force=TRUE, include=FALSE}
+if (!requireNamespace("bayesmsm", quietly = TRUE)) {
+  stop("The package 'bayesmsm' is required to run this vignette. Please install it manually using:
+       devtools::install_github('Kuan-Liu-Lab/bayesmsm')")
+} else {
+  library(bayesmsm)
+}
 ```
 
 # Simulated observational data with right-censoring

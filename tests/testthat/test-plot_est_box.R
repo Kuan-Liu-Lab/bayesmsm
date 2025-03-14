@@ -12,6 +12,7 @@ test_that("plot_est_box works with no errors", {
                     wmean = rep(1, 1000),
                     nboot = 100,
                     optim_method = "BFGS",
+                    seed = 890123,
                     parallel = TRUE,
                     ncore = 2)
 

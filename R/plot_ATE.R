@@ -10,6 +10,7 @@
 #' @param xlim Limits for the x-axis (default is NULL).
 #' @param ylim Limits for the y-axis (default is NULL).
 #' @param ... Additional graphical parameters passed to the plot function.
+#' @return A density plot for the posterior predictive distribution of the Average Treatment Effect (ATE).
 #' @import ggplot2
 #' @importFrom stats density quantile
 #' @importFrom grDevices rgb

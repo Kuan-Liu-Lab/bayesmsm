@@ -15,7 +15,7 @@ bayesmsm(
   wmean = rep(1, nrow(data)),
   nboot = 1000,
   optim_method = "BFGS",
-  seed = 890123,
+  seed = NULL,
   parallel = TRUE,
   ncore = 4
 )
@@ -41,7 +41,7 @@ bayesmsm(
 
 \item{optim_method}{Character string specifying the optimization method to be used. The default is 'BFGS'.}
 
-\item{seed}{Starting seed for simulations and bootstrapping. The default is 890123.}
+\item{seed}{Starting seed for simulations and bootstrapping. The default is NULL.}
 
 \item{parallel}{Logical scalar indicating whether to parallelize bootstrapping to multiple cores. The default is TRUE.}
 

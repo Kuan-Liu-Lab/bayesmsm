@@ -38,6 +38,9 @@ plot_ATE(
 
 \item{...}{Additional graphical parameters passed to the plot function.}
 }
+\value{
+A density plot for the posterior predictive distribution of the Average Treatment Effect (ATE).
+}
 \description{
 Plot Average Treatment Effect Density from bayesmsm output
 }

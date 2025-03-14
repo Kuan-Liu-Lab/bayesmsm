@@ -13,7 +13,7 @@ bayesweight_cen(
   n.thin = 5,
   parallel = TRUE,
   n.chains = 2,
-  seed = 890123,
+  seed = NULL,
   save_jags_model_file = FALSE,
   output_file = "treatment_censoring_model.txt"
 )
@@ -35,7 +35,7 @@ bayesweight_cen(
 
 \item{n.chains}{Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.}
 
-\item{seed}{Starting seed for the JAGS model. The default is 890123.}
+\item{seed}{Starting seed for the JAGS model. The default is NULL.}
 
 \item{save_jags_model_file}{Logical; if TRUE, writes the model to outputfile. Default is FALSE.}
 

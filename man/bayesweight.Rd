@@ -11,7 +11,7 @@ bayesweight(
   n.iter = 25000,
   n.burnin = 15000,
   n.thin = 5,
-  seed = 890123,
+  seed = NULL,
   parallel = TRUE,
   save_jags_model_file = FALSE,
   output_file = "treatment_model.txt"
@@ -30,7 +30,7 @@ bayesweight(
 
 \item{n.thin}{Integer specifying the thinning rate for the MCMC sampler. The default is 5.}
 
-\item{seed}{Starting seed for the JAGS model. The default is 890123.}
+\item{seed}{Starting seed for the JAGS model. The default is NULL.}
 
 \item{parallel}{Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.}
 
