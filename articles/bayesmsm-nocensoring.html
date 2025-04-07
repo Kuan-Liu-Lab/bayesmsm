@@ -212,6 +212,10 @@ Interactions and functions of covariates are allowed.</li>
 <code>data</code>: The dataset containing all the variables
 specified in trtmodel.list.</li>
 <li>
+<code>n.chains</code>: Number of MCMC chains to run. For
+non-parallel execution, this should be set to 1. For parallel execution,
+it requires at least 2 chains.</li>
+<li>
 <code>n.iter</code>: Total number of iterations for each chain
 (including burn-in).</li>
 <li>
@@ -220,18 +224,10 @@ beginning of the simulation (burn-in).</li>
 <li>
 <code>n.thin</code>: Thinning rate for the MCMC sampler.</li>
 <li>
-<code>n.chains</code>: Number of MCMC chains to run. For
-non-parallel execution, this should be set to 1. For parallel execution,
-it requires at least 2 chains.</li>
-<li>
 <code>seed</code>: Seed to ensure reproducibility.</li>
 <li>
 <code>parallel</code>: Logical flag indicating whether to run the
 MCMC chains in parallel. Default is TRUE.</li>
-<li>
-<code>save_jags_model_file</code>: Logical flag indicating whether
-save the jags model as a text file for model customization. Default is
-FALSE.</li>
 </ul>
 </li>
 </ul>
@@ -239,10 +235,10 @@ FALSE.</li>
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bayesweight.html">bayesweight</a></span><span class="op">(</span>trtmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">a_1</span> <span class="op">~</span> <span class="va">w1</span> <span class="op">+</span> <span class="va">w2</span> <span class="op">+</span> <span class="va">L1_1</span> <span class="op">+</span> <span class="va">L2_1</span>,</span>
 <span>                                             <span class="va">a_2</span> <span class="op">~</span> <span class="va">w1</span> <span class="op">+</span> <span class="va">w2</span> <span class="op">+</span> <span class="va">L1_1</span> <span class="op">+</span> <span class="va">L2_1</span> <span class="op">+</span> <span class="va">L1_2</span> <span class="op">+</span> <span class="va">L2_2</span> <span class="op">+</span> <span class="va">a_1</span><span class="op">)</span>,</span>
 <span>                        data <span class="op">=</span> <span class="va">testdata</span>,</span>
+<span>                        n.chains <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                        n.iter <span class="op">=</span> <span class="fl">250</span>,</span>
 <span>                        n.burnin <span class="op">=</span> <span class="fl">150</span>,</span>
 <span>                        n.thin <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                        n.chains <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                        seed <span class="op">=</span> <span class="fl">890123</span>,</span>
 <span>                        parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Compiling model graph</span></span>
@@ -255,16 +251,70 @@ FALSE.</li>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Initializing model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  num [1:1000] 1.262 1.131 1.035 0.826 0.8 ...</span></span></code></pre></div>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ weights     : num [1:1000] 1.262 1.131 1.035 0.826 0.8 ...</span></span>
+<span><span class="co">#&gt;  $ model_string: chr "model{\n#N = nobs\nfor(i in 1:N){\n\n# visit 1;\n# marginal treatment assignment model, visit 1;\na_1s[i] ~ dbe"| __truncated__</span></span></code></pre></div>
 <ul>
 <li>It returns a list containing:
 <ul>
 <li>
 <code>weights</code>: The calculated weights for subject-specific
-treatment effects.</li>
+treatment effects, computed by taking the average of the weights across
+all MCMC iterations.</li>
+<li>
+<code>model_string</code>: A character of the jags model based on
+input of the argument trtmodel.list.</li>
 </ul>
 </li>
+<li>We can print and view the JAGS model stored in
+<code>model_string</code> from the above function output:</li>
 </ul>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">weights</span><span class="op">$</span><span class="va">model_string</span><span class="op">)</span></span>
+<span><span class="co">#&gt; model{</span></span>
+<span><span class="co">#&gt; #N = nobs</span></span>
+<span><span class="co">#&gt; for(i in 1:N){</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # visit 1;</span></span>
+<span><span class="co">#&gt; # marginal treatment assignment model, visit 1;</span></span>
+<span><span class="co">#&gt; a_1s[i] ~ dbern(pa_1s[i])</span></span>
+<span><span class="co">#&gt; pa_1s[i] &lt;- ilogit(bs10)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # conditional treatment assignment model, visit 1;</span></span>
+<span><span class="co">#&gt; a_1[i] ~ dbern(pa_1[i])</span></span>
+<span><span class="co">#&gt; pa_1[i] &lt;- ilogit(b10 + b11*w1[i] + b12*w2[i] + b13*L1_1[i] + b14*L2_1[i])</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # visit 2;</span></span>
+<span><span class="co">#&gt; # marginal treatment assignment model, visit 2;</span></span>
+<span><span class="co">#&gt; a_2s[i] ~ dbern(pa_2s[i])</span></span>
+<span><span class="co">#&gt; pa_2s[i] &lt;- ilogit(bs20 + bs21*a_1s[i])</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # conditional treatment assignment model, visit 2;</span></span>
+<span><span class="co">#&gt; a_2[i] ~ dbern(pa_2[i])</span></span>
+<span><span class="co">#&gt; pa_2[i] &lt;- ilogit(b20 + b21*w1[i] + b22*w2[i] + b23*L1_1[i] + b24*L2_1[i] + b25*L1_2[i] + b26*L2_2[i] + b27*a_1[i])</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; # export quantity in full posterior specification;</span></span>
+<span><span class="co">#&gt; w[i] &lt;- (pa_1s[i]*pa_2s[i])/(pa_1[i]*pa_2[i])</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; #prior;</span></span>
+<span><span class="co">#&gt; bs10~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b10~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b11~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b12~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b13~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b14~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; bs20~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; bs21~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b20~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b21~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b22~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b23~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b24~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b25~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b26~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; b27~dnorm(0,.01)</span></span>
+<span><span class="co">#&gt; }</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="bayesian-non-parametric-bootstrap-to-maximize-the-utility-function-with-respect-to-the-causal-effect-using-bayesmsm">Bayesian non-parametric bootstrap to maximize the utility function
@@ -320,14 +370,14 @@ computation (default is 4).</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bayesmsm.html">bayesmsm</a></span><span class="op">(</span>ymodel <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">a_1</span><span class="op">+</span><span class="va">a_2</span>,</span>
 <span>                           nvisit <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>                           reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                           comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                           family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
 <span>                           data <span class="op">=</span> <span class="va">testdata</span>,</span>
-<span>                           wmean <span class="op">=</span> <span class="va">weights</span>,</span>
+<span>                           wmean <span class="op">=</span> <span class="va">weights</span><span class="op">$</span><span class="va">weights</span>,</span>
 <span>                           nboot <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>                           optim_method <span class="op">=</span> <span class="st">"BFGS"</span>,</span>
 <span>                           parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -384,9 +434,9 @@ ATE with its 95% credible interval.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_ATE.html">plot_ATE</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="bayesmsm-nocensoring_files/figure-html/unnamed-chunk-7-1.png" width="864" style="display: block; margin: auto;"></p>
+<p><img src="bayesmsm-nocensoring_files/figure-html/unnamed-chunk-8-1.png" width="864" style="display: block; margin: auto;"></p>
 <ul>
 <li>Plotting the Average Potential Outcome (APO)
 <ul>
@@ -395,12 +445,12 @@ APO for both the reference and comparator level effects.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_APO.html">plot_APO</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"effect_reference"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="bayesmsm-nocensoring_files/figure-html/unnamed-chunk-8-1.png" width="864" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_APO.html">plot_APO</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"effect_reference"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="bayesmsm-nocensoring_files/figure-html/unnamed-chunk-9-1.png" width="864" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_APO.html">plot_APO</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"effect_comparator"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="bayesmsm-nocensoring_files/figure-html/unnamed-chunk-8-2.png" width="864" style="display: block; margin: auto;"></p>
+<p><img src="bayesmsm-nocensoring_files/figure-html/unnamed-chunk-9-2.png" width="864" style="display: block; margin: auto;"></p>
 <ul>
 <li>Plotting the Distribution of Estimated Treatment Effects
 <ul>
@@ -410,9 +460,9 @@ samples.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_est_box.html">plot_est_box</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="bayesmsm-nocensoring_files/figure-html/unnamed-chunk-9-1.png" width="864" style="display: block; margin: auto;"></p>
+<p><img src="bayesmsm-nocensoring_files/figure-html/unnamed-chunk-10-1.png" width="864" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
