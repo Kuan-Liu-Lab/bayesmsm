@@ -38,7 +38,7 @@ bayesweight_cen(
 \value{
 A list of the calculated weights and the JAGS model:
 * `weights` is a vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
-* `model_string` is a character of the JAGS model based on input of the argument trtmodel.list.
+* `model_string` is a character of the JAGS model based on the input of `trtmodel.list`.
 }
 \description{
 This function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points.

@@ -124,7 +124,7 @@ str(weights)
 
 - It returns a list containing:
   - `weights`: The calculated weights for subject-specific treatment effects, computed by taking the average of the weights across all MCMC iterations.
-  - `model_string`: A character of the jags model based on input of the argument trtmodel.list.
+  - `model_string`: A character of the JAGS model based on input of the argument trtmodel.list.
 
 - We can print and view the JAGS model stored in `model_string` from the above function output:
 

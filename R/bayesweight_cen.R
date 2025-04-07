@@ -15,7 +15,7 @@
 #'
 #' @return A list of the calculated weights and the JAGS model:
 #' * `weights` is a vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
-#' * `model_string` is a character of the JAGS model based on input of the argument trtmodel.list.
+#' * `model_string` is a character of the JAGS model based on the input of `trtmodel.list`.
 #'
 #' @importFrom R2jags jags
 #' @importFrom coda mcmc as.mcmc geweke.diag

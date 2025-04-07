@@ -56,7 +56,7 @@ This package depends on the following R packages:
 Here are some examples demonstrating how to use the `bayesmsm` package:
 
 ``` r
-# Load example data
+# Load example data without right-censoring
 testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
 
 # Calculate Bayesian weights
@@ -82,7 +82,7 @@ model <- bayesmsm(
   comparator = c(rep(1, 2)),
   family = "gaussian",
   data = testdata,
-  wmean = weights,
+  wmean = weights$weights,
   nboot = 1000,
   optim_method = "BFGS",
   seed = 890123,
@@ -107,7 +107,7 @@ Please cite our software using:
       title = {bayesmsm: An R package for longitudinal causal analysis using Bayesian Marginal Structural Models},
       author = {Xiao Yan and Martin Urner and Kuan Liu},
       year = {2024},
-      note = { https://github.com/Kuan-Liu-Lab/bayesmsm},
+      note = {https://github.com/Kuan-Liu-Lab/bayesmsm},
       url = {https://kuan-liu-lab.github.io/bayesmsm/},
     }
 
