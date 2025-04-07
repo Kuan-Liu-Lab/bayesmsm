@@ -95,7 +95,7 @@
 </h1>
 <p>Here are some examples demonstrating how to use the <code>bayesmsm</code> package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load example data</span></span>
+<code class="sourceCode R"><span><span class="co"># Load example data without right-censoring</span></span>
 <span><span class="va">testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"continuous_outcome_data.csv"</span>, package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate Bayesian weights</span></span>
@@ -121,7 +121,7 @@
 <span>  comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">testdata</span>,</span>
-<span>  wmean <span class="op">=</span> <span class="va">weights</span>,</span>
+<span>  wmean <span class="op">=</span> <span class="va">weights</span><span class="op">$</span><span class="va">weights</span>,</span>
 <span>  nboot <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  optim_method <span class="op">=</span> <span class="st">"BFGS"</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
@@ -145,7 +145,7 @@
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  title <span class="ot">=</span> {bayesmsm<span class="sc">:</span> An R package <span class="cf">for</span> longitudinal causal analysis using Bayesian Marginal Structural Models},</span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  author <span class="ot">=</span> {Xiao Yan and Martin Urner and Kuan Liu},</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2024</span>},</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  note <span class="ot">=</span> { https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>Kuan<span class="sc">-</span>Liu<span class="sc">-</span>Lab<span class="sc">/</span>bayesmsm},</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  note <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>Kuan<span class="sc">-</span>Liu<span class="sc">-</span>Lab<span class="sc">/</span>bayesmsm},</span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>kuan<span class="sc">-</span>liu<span class="sc">-</span>lab.github.io<span class="sc">/</span>bayesmsm<span class="sc">/</span>},</span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>}</span></code></pre></div>
 </div>
