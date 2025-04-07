@@ -91,32 +91,37 @@ Next, we use the `bayesweight_cen` function to estimate the weights with censori
   - `trtmodel.list`: A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. Interactions and functions of covariates are allowed.
   - `cenmodel.list`: A list of formulas of the censoring model with the censoring indicators on the left hand side and the covariates prior to the censoring indicators on the right hand side.
   - `data`: The dataset containing all the variables specified in trtmodel.list.
+  - `n.chains`: Number of MCMC chains to run. For non-parallel execution, this should be set to 1. For parallel execution, it requires at least 2 chains.
   - `n.iter`: Total number of iterations for each chain (including burn-in).
   - `n.burnin`: Number of iterations to discard at the beginning of the simulation (burn-in).
   - `n.thin`: Thinning rate for the MCMC sampler.
-  - `n.chains`: Number of MCMC chains to run. For non-parallel execution, this should be set to 1. For parallel execution, it requires at least 2 chains.
   - `seed`: Seed to ensure reproducibility.
   - `parallel`: Logical flag indicating whether to run the MCMC chains in parallel. Default is TRUE.
-  - `save_jags_model_file`: Logical flag indicating whether save the jags model as a text file for model customization. Default is FALSE.
   
 ```{r}
-weights <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
+weights_cen <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
                                                 A2 ~ L11 + L21 + L12 + L22 + A1,
                                                 A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
                            cenmodel.list = list(C1 ~ L11 + L21,
                                                 C2 ~ L11 + L21 + A1,
                                                 C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
                            data = simdat_cen,
+                           n.chains = 1,
                            n.iter = 250,
                            n.burnin = 150,
                            n.thin = 1,
-                           n.chains = 1,
                            seed = 890123,
                            parallel = FALSE)
-summary(weights)
+summary(weights_cen$weights)
 ```
 
-Similarly, the function will automatically run MCMC with JAGS based on the specified treatment and censoring model inputs, saving a JAGS model file in the working directory for model customization. The function returns a list containing the updated weights for subject-specific treatment and censoring effects.
+Similarly, the function will automatically run MCMC with JAGS based on the specified treatment and censoring model inputs, generating a JAGS model string as part of the function output. The function returns a list containing the updated weights for subject-specific treatment and censoring effects as well as the JAGS model.
+
+- We can print and view the JAGS model stored in `model_string` from the above function output:
+
+```{r}
+cat(weights_cen$model_string)
+```
 
 # Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`
 
@@ -125,7 +130,7 @@ Using the weights estimated by `bayesweight_cen`, we now fit the Bayesian Margin
 ```{r}
 # Remove all NAs (censored observations) from the original dataset and weights
 simdat_cen <- na.omit(simdat_cen)
-weights <- na.omit(weights)
+weights_cen$weights <- na.omit(weights_cen$weights)
 
 model <- bayesmsm(ymodel = Y ~ A1+A2+A3,
                   nvisit = 3,
@@ -133,7 +138,7 @@ model <- bayesmsm(ymodel = Y ~ A1+A2+A3,
                   comparator = c(rep(1, 3)),
                   family = "binomial",
                   data = simdat_cen,
-                  wmean = weights,
+                  wmean = weights_cen$weights,
                   nboot = 100,
                   optim_method = "BFGS",
                   parallel = FALSE,

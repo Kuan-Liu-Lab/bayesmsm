@@ -9,21 +9,20 @@ test_that("bayesweight_cen works with no errors", {
                                                       C2 ~ L11 + L21 + A1,
                                                       C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
                                  data = simdat_cen,
-                                 n.iter = 500,
-                                 n.burnin = 200,
-                                 n.thin = 1,
-                                 parallel = FALSE,
                                  n.chains = 1,
+                                 n.iter = 200,
+                                 n.burnin = 100,
+                                 n.thin = 1,
                                  seed = 890123,
-                                 save_jags_model_file = FALSE)
+                                 parallel = FALSE)
 
   # Check that the weights_cen object has the expected dimensions (length or rows matching the data size)
-  expect_equal(length(weights_cen), nrow(simdat_cen))
+  expect_equal(length(weights_cen$weights), nrow(simdat_cen))
 
   # Check if the weights_cen object is numeric
-  expect_true(is.numeric(weights_cen))
+  expect_true(is.numeric(weights_cen$weights))
 
   # Check that weights are non-negative
-  expect_true(all(na.omit(weights_cen) >= 0))
+  expect_true(all(na.omit(weights_cen$weights) >= 0))
 
 })

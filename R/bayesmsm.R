@@ -19,7 +19,6 @@
 #' @param ncore Integer specifying the number of CPU cores to use in parallel simulation. This argument is required when parallel is set to TRUE, and the default is 4.
 #'
 #' @return It returns an object of class `bayesmsm` that contains the information about the data, model, etc.
-#'
 #' An object of class `bayesmsm` is a list containing at least the following components:
 #' * `mean`, the mean of the bootstrap estimates
 #' * `sd`, the standard deviation of the bootstrap estimates

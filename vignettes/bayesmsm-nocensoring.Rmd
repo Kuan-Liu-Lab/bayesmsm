@@ -102,29 +102,36 @@ $$
 - Parameters Description:
   - `trtmodel.list`: A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. Interactions and functions of covariates are allowed.
   - `data`: The dataset containing all the variables specified in trtmodel.list.
+  - `n.chains`: Number of MCMC chains to run. For non-parallel execution, this should be set to 1. For parallel execution, it requires at least 2 chains.
   - `n.iter`: Total number of iterations for each chain (including burn-in).
   - `n.burnin`: Number of iterations to discard at the beginning of the simulation (burn-in).
   - `n.thin`: Thinning rate for the MCMC sampler.
-  - `n.chains`: Number of MCMC chains to run. For non-parallel execution, this should be set to 1. For parallel execution, it requires at least 2 chains.
   - `seed`: Seed to ensure reproducibility.
   - `parallel`: Logical flag indicating whether to run the MCMC chains in parallel. Default is TRUE.
-  - `save_jags_model_file`: Logical flag indicating whether save the jags model as a text file for model customization. Default is FALSE.
 
 ```{r}
 weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                              a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
                         data = testdata,
+                        n.chains = 1,
                         n.iter = 250,
                         n.burnin = 150,
                         n.thin = 1,
-                        n.chains = 1,
                         seed = 890123,
                         parallel = FALSE)
 str(weights)
 ```
 
 - It returns a list containing:
-  - `weights`: The calculated weights for subject-specific treatment effects.
+  - `weights`: The calculated weights for subject-specific treatment effects, computed by taking the average of the weights across all MCMC iterations.
+  - `model_string`: A character of the jags model based on input of the argument trtmodel.list.
+
+- We can print and view the JAGS model stored in `model_string` from the above function output:
+
+```{r}
+cat(weights$model_string)
+```
+
 
 # Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`
 
@@ -151,7 +158,7 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            comparator = c(rep(1,2)),
                            family = "gaussian",
                            data = testdata,
-                           wmean = weights,
+                           wmean = weights$weights,
                            nboot = 100,
                            optim_method = "BFGS",
                            parallel = TRUE,

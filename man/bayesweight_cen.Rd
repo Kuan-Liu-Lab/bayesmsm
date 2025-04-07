@@ -8,14 +8,12 @@ bayesweight_cen(
   trtmodel.list,
   cenmodel.list,
   data,
+  n.chains = 2,
   n.iter = 25000,
   n.burnin = 15000,
   n.thin = 5,
-  parallel = TRUE,
-  n.chains = 2,
   seed = NULL,
-  save_jags_model_file = FALSE,
-  output_file = "treatment_censoring_model.txt"
+  parallel = TRUE
 )
 }
 \arguments{
@@ -25,24 +23,22 @@ bayesweight_cen(
 
 \item{data}{A data set in the form of a data frame containing the variables in `trtmodel.list` and `cenmodel.list`. This must be a wide data set with exactly one row per unit.}
 
+\item{n.chains}{Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.}
+
 \item{n.iter}{Integer specifying the total number of iterations for each chain (including burn-in). The default is 25000.}
 
 \item{n.burnin}{Integer specifying the number of burn-in iterations for each chain. The default is 15000.}
 
 \item{n.thin}{Integer specifying the thinning rate for the MCMC sampler. The default is 5.}
 
-\item{parallel}{Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.}
-
-\item{n.chains}{Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.}
-
 \item{seed}{Starting seed for the JAGS model. The default is NULL.}
 
-\item{save_jags_model_file}{Logical; if TRUE, writes the model to outputfile. Default is FALSE.}
-
-\item{output_file}{File name to save the JAGS model (if save_to_file = TRUE).}
+\item{parallel}{Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.}
 }
 \value{
-A vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
+A list of the calculated weights and the JAGS model:
+* `weights` is a vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
+* `model_string` is a character of the JAGS model based on input of the argument trtmodel.list.
 }
 \description{
 This function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points.
@@ -63,11 +59,12 @@ weights_cen <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
                                                     C3 ~ L11 + L21 + A1 +
                                                          L12 + L22 + A2),
                                data = simdat_cen,
+                               n.chains = 1,
                                n.iter = 200,
                                n.burnin = 100,
                                n.thin = 1,
-                               parallel = FALSE,
-                               n.chains = 1,
                                seed = 890123,
-                               save_jags_model_file = FALSE)
+                               parallel = FALSE)
+weights_cen$weights
+cat(weights_cen$model_string)
 }

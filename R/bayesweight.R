@@ -11,9 +11,10 @@
 #' @param n.thin Integer specifying the thinning rate for the MCMC sampler. The default is 5.
 #' @param seed Starting seed for the JAGS model. The default is NULL.
 #' @param parallel Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.
-#' @param save_jags_model_file Logical; if TRUE, writes the model to outputfile. Default is FALSE.
-#' @param output_file File name to save the JAGS model (if save_to_file = TRUE).
-#' @return A list of the calculated weights.
+#'
+#' @return A list of the calculated weights and the JAGS model:
+#' * `weights` is a vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
+#' * `model_string` is a character of the JAGS model based on input of the argument trtmodel.list.
 #'
 #' @importFrom R2jags jags
 #' @importFrom coda mcmc as.mcmc geweke.diag
@@ -33,13 +34,14 @@
 #'                                             a_2 ~ w1 + w2 + L1_1 + L2_1 +
 #'                                                   L1_2 + L2_2 + a_1),
 #'                        data = testdata,
+#'                        n.chains = 1,
 #'                        n.iter = 200,
 #'                        n.burnin = 100,
 #'                        n.thin = 1,
-#'                        n.chains = 1,
 #'                        seed = 890123,
-#'                        parallel = FALSE,
-#'                        save_jags_model_file = FALSE)
+#'                        parallel = FALSE)
+#' weights$weights
+#' cat(weights$model_string)
 bayesweight <- function(trtmodel.list,
                         data,
                         n.chains = 2,
@@ -47,9 +49,7 @@ bayesweight <- function(trtmodel.list,
                         n.burnin = 15000,
                         n.thin = 5,
                         seed = NULL,
-                        parallel = TRUE,
-                        save_jags_model_file = FALSE,
-                        output_file = "treatment_model.txt"){
+                        parallel = TRUE){
 
   create_marginal_treatment_models <- function(trtmodel.list) {
 
@@ -113,7 +113,7 @@ bayesweight <- function(trtmodel.list,
   trtmodel_s <- extract_variables_list(trtmodel.list_s)
 
   # Function to generate and write the JAGS model
-  write_jags_model <- function(trtmodel.list,save_jags_model_file=FALSE,output_file=output_file) {
+  write_jags_model <- function(trtmodel.list) {
     # Extract variable information for each formula
     var_info <- lapply(trtmodel.list, extract_variables_list)
 
@@ -183,47 +183,34 @@ bayesweight <- function(trtmodel.list,
     # Add the closing brace for the model block
     model_string <- paste(model_string, "}\n", sep="")
 
-
-    # Assume model_string is being built here...
-
-    # If saving to file, write and return file path
-    if (save_jags_model_file) {
-      writeLines(model_string, output_file)
-      return(output_file)
-    } else {
-      # Otherwise, return the model as a text connection for direct use in R2jags
-      return(model_string)
-    }
-
+    return(model_string)
   }
 
   # extracting parameters list;
   jags_model_parameter <- function(trtmodel.list){
-  all_parameters <- c()
+    all_parameters <- c()
 
-  # Process each visit
-  for (v in seq_along(trtmodel.list)) {
-    var_info <- extract_variables_list(trtmodel.list[[v]])
-    response <- var_info$response
-    predictors <- var_info$predictors
+    # Process each visit
+    for (v in seq_along(trtmodel.list)) {
+      var_info <- extract_variables_list(trtmodel.list[[v]])
+      response <- var_info$response
+      predictors <- var_info$predictors
 
-    # Add bs parameters for marginal models
-    all_parameters <- c(all_parameters, sprintf("bs%d0", v))
-    if (v > 1) {
-      all_parameters <- c(all_parameters, sprintf("bs%d1", v))
+      # Add bs parameters for marginal models
+      all_parameters <- c(all_parameters, sprintf("bs%d0", v))
+      if (v > 1) {
+        all_parameters <- c(all_parameters, sprintf("bs%d1", v))
+      }
+
+      # Add b parameters for conditional models
+      all_parameters <- c(all_parameters, sprintf("b%d0", v))  # intercept
+      for (p in seq_along(predictors)) {
+        all_parameters <- c(all_parameters, sprintf("b%d%d", v, p))
+      }
     }
 
-    # Add b parameters for conditional models
-    all_parameters <- c(all_parameters, sprintf("b%d0", v))  # intercept
-    for (p in seq_along(predictors)) {
-      all_parameters <- c(all_parameters, sprintf("b%d%d", v, p))
-    }
-
+    return(unique(all_parameters))
   }
-
-  return(unique(all_parameters))
-}
-
 
   # Prepare data and parameters for JAGS
   prepare_jags_data <- function(data, trtmodel.list) {
@@ -251,41 +238,12 @@ bayesweight <- function(trtmodel.list,
     return(jags.data)
   }
 
-  # Use this function to prepare JAGS data
+  # Generate the model string
+  model_str <- write_jags_model(trtmodel.list)
+
+  # Prepare JAGS data
   jags.data <- prepare_jags_data(data, trtmodel.list)
   jags.params <- jags_model_parameter(trtmodel.list)
-
-  # Check if parallel computing is requested
-  # Handle JAGS model file creation based on parallel and save_jags_model_file flags
-  if (parallel == TRUE) {
-    # If parallel, always use files (either user-specified or temp files)
-    if (save_jags_model_file== TRUE) {
-      # User wants to save the model to a file
-      jags.model.file <- write_jags_model(trtmodel.list,
-                                          save_jags_model_file=TRUE,
-                                          output_file=output_file)
-      jags.model.files <- rep(jags.model.file, n.chains)  # Use same file for all chains
-    } else {
-      # Create temporary model files for each chain
-      jags.model.files <- sapply(1:n.chains, function(i) tempfile(fileext = ".txt"))
-      sapply(jags.model.files, function(f) {
-        model_str <- write_jags_model(trtmodel.list,
-                                      save_jags_model_file=FALSE,
-                                      output_file=f)
-        writeLines(model_str, f)  # Ensure model is written
-      })
-    }
-  } else {
-    # If not parallel, handle saving logic
-    if (save_jags_model_file== TRUE) {
-      jags.model.file <- write_jags_model(trtmodel.list,
-                                          save_jags_model_file=TRUE,
-                                          output_file=output_file)
-    } else {
-      jags.model.file <- textConnection(write_jags_model(trtmodel.list,
-                                          save_jags_model_file=FALSE))  # textConnection
-    }
-  }
 
   # Define seed for each chain
   if(!is.null(seed)){
@@ -309,26 +267,24 @@ bayesweight <- function(trtmodel.list,
     posterior <- foreach::foreach(chain_idx=1:n.chains, .packages=c('R2jags'),
                          .combine='rbind') %dopar%{
 
+                           con <- textConnection(model_str)
                            jagsfit <- R2jags::jags(data = jags.data,
                                            parameters.to.save = jags.params,
-                                           model.file = jags.model.files[chain_idx],
+                                           model.file = con,
                                            n.chains = 1,
                                            n.iter = n.iter,
                                            n.burnin = n.burnin,
                                            n.thin = n.thin,
                                            jags.seed = new.seed.by.chain[chain_idx])
+                           close(con)
+
                            # Combine MCMC output from multiple chains
-                           out.mcmc <- as.mcmc(jagsfit)
+                           out.mcmc <- coda::as.mcmc(jagsfit)
                            return(do.call(rbind, lapply(out.mcmc, as.matrix)))
 
                          }
 
     parallel::stopCluster(cl)
-
-    # Clean up temp files if they were used
-    if (!save_jags_model_file) {
-      file.remove(jags.model.files)
-    }
 
   } else if (parallel == FALSE) {
 
@@ -336,18 +292,20 @@ bayesweight <- function(trtmodel.list,
       stop("Non-parallel MCMC requires 1 chain.")
     }
 
+    con <- textConnection(model_str)
     # Run JAGS model without parallel computing
     jagsfit <- R2jags::jags(data = jags.data,
                     parameters.to.save = jags.params,
-                    model.file = jags.model.file,
+                    model.file = con,
                     n.chains = 1,
                     n.iter = n.iter,
                     n.burnin = n.burnin,
                     n.thin = n.thin,
                     jags.seed = new.seed.by.chain[1])
+    close(con)
 
     # Extract MCMC output
-    out.mcmc <- as.mcmc(jagsfit)
+    out.mcmc <- coda::as.mcmc(jagsfit)
     diagnostics <- geweke.diag(out.mcmc)
 
     # Check diagnostics for convergence issues
@@ -362,7 +320,7 @@ bayesweight <- function(trtmodel.list,
 
 
   # number of parameters for this model is 5 and design matrix is 1 variables
-  # looping throught each treatment model 1 visit at a time;
+  # looping through each treatment model 1 visit at a time;
   expit <- function(x){exp(x) / (1+exp(x))}
 
   n_visits <- length(trtmodel)
@@ -407,5 +365,7 @@ bayesweight <- function(trtmodel.list,
   # Mean weight across all observations
   wmean <- colMeans(weights)
 
-  return(wmean)
+  # Return the weights and the model string
+  return(list(weights = wmean, model_string = model_str))
+
 }
