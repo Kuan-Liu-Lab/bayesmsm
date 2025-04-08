@@ -41,8 +41,7 @@ A list of the calculated weights and the JAGS model:
 * `model_string` is a character of the JAGS model based on the input of `trtmodel.list`.
 }
 \description{
-This function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points.
-The models can be run in parallel to estimate the weights for censored data.
+The `bayesweight_cen()` function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points via JAGS
 }
 \examples{
 simdat_cen <- read.csv(system.file("extdata",

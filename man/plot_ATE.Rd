@@ -42,7 +42,7 @@ plot_ATE(
 A ggplot object representing the density plot for the posterior predictive distribution of the Average Treatment Effect (ATE).
 }
 \description{
-Plot Average Treatment Effect Density from bayesmsm output
+The `plot_ATE()` function plots the density of ATE from bayesmsms output.
 }
 \examples{
 testdata <- read.csv(system.file("extdata",

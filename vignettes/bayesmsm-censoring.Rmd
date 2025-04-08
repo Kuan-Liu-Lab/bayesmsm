@@ -41,12 +41,7 @@ knitr::opts_chunk$set(
 
 - Installation
 
-  - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub:
-
-```r
-devtools::install_github("Kuan-Liu-Lab/bayesmsm")
-library(bayesmsm)
-```
+  - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub.
 
 ```{r, warning = FALSE, results=FALSE, force=TRUE, include=FALSE}
 if (!requireNamespace("bayesmsm", quietly = TRUE)) {
@@ -76,7 +71,7 @@ In this simulation study, we use a simulated longitudinal dataset to mimic compl
 Table: Description of Simulated Right-Censored Dataset
 
 ```{r}
-# simulating causal data with censoring;
+# example simulated causal data with censoring;
 simdat_cen <- read.csv(system.file("extdata", "sim_causal.csv", package = "bayesmsm"))
 
 # look at the data;
@@ -149,11 +144,11 @@ str(model)
 
 The `bayesmsm` function returns a model object containing the following: the mean, standard deviation, and 95\% credible interval of the Risk Difference (RD), Risk Ratio (RR), and Odds Ratio (OR). It also includes a data frame containing the bootstrap samples for the reference effect, comparator effect, RD, RR, and OR, as well as the reference and comparator levels chosen by the user.
 
-- We can extract and visualize the results as follows:
+- Summary function to generate result table from `bayesmsm`
+  - The `summary_bayesmsm` function automatically generates a summary table of the model output from the function `bayesmsm`.
 
 ```{r}
-# Extract results
-head(model$bootdata)
+summary_bayesmsm(model)
 ```
 
 # Visualization functions: `plot_ATE`, `plot_APO`, `plot_est_box`
@@ -182,16 +177,9 @@ plot_APO(model, effect_type = "effect_reference")
 plot_est_box(model)
 ```
 
-- Summary function to generate result table from `bayesmsm`
-  - The `summary_bayesmsm` function automatically generates a summary table of the model output from the function `bayesmsm`.
-
-```{r}
-summary_bayesmsm(model)
-```
 
 # Reference
 
-- Liu, K. (2021). Bayesian causal inference with longitudinal data. Tspace.library.utoronto.ca. https://tspace.library.utoronto.ca/handle/1807/109330
 - Saarela, O., Stephens, D. A., Moodie, E. E. M., & Klein, M. B. (2015). On Bayesian estimation of marginal structural models. Biometrics, 71(2), 279–288. https://doi.org/10.1111/biom.12269
 - Robins, J. M., Hernán, M. A., & Brumback, B. (2000). Marginal structural models and causal inference in epidemiology. Epidemiology, 11(5), 550–560. https://doi.org/10.1097/00001648-200009000-00011
 - Liu, K., Saarela, O., Feldman, B. M., & Pullenayegum, E. (2020). Estimation of causal effects with repeatedly measured outcomes in a Bayesian framework. Statistical Methods in Medical Research, 29(9), 2507–2519. https://doi.org/10.1177/0962280219900362

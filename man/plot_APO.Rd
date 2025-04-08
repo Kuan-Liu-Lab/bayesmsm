@@ -17,7 +17,7 @@ plot_APO(input, effect_type, ...)
 A ggplot object representing density plot showing the distribution of the specified average potential outcome (reference or comparison).
 }
 \description{
-This function plots the density of APO for a specified effect type from bayesmsms output.
+The `plot_APO()` function plots the density of APO for a specified effect type from bayesmsms output.
 }
 \examples{
 testdata <- read.csv(system.file("extdata",

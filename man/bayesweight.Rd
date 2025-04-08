@@ -38,8 +38,7 @@ A list of the calculated weights and the JAGS model:
 * `model_string` is a character of the JAGS model based on the input of `trtmodel.list`.
 }
 \description{
-This function estimates Bayesian importance sampling weights for time-varying treatment effects using specified models for each treatment time point.
-It uses JAGS for Bayesian estimation and supports parallel computation to speed up the MCMC simulations.
+The `bayesweight()` function estimates Bayesian importance sampling weights for time-varying treatment effects using specified models for each treatment time point via JAGS
 }
 \examples{
 # Continuous outcome

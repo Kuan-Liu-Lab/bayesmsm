@@ -12,10 +12,9 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-1133-4885"))
   )
 Maintainer: Kuan Liu <kuan.liu@utoronto.ca>
-Description: 
-    Package for fitting Bayesian marginal structural models for estimating average treatment effect with longitudinal causal data with extension to handle informative right censoring. 
-    This package can be used for continuous or binary end-of-study outcome and a time-varying binary treatment. 
-    This method was originally described by Saarela, Stephens, Moodie, and Klein in Biometrics, 71(2), 279-288 <doi:10.1111/biom.12269>
+Description: Implements Bayesian marginal structural models for causal effect estimation in longitudinal observational studies
+             with longitudinal treatments. It includes an extension to handle informative right censoring. The Bayesian importance sampling weights are estimated using JAGS 
+             and the Bayesian non-parametric bootstrap is implemented using optimation with Dirichlet sampling weights. See Saarela et al. (2015) <doi:10.1111/biom.12269> and Liu et al. (2020) <doi:10.1177/0962280219900362> for methodological details. 
 License: MIT + file LICENSE
 URL: https://github.com/Kuan-Liu-Lab/bayesmsm
 BugReports: https://github.com/Kuan-Liu-Lab/bayesmsm/issues
@@ -34,7 +33,6 @@ Imports:
     stats
 Suggests: 
     devtools,
-    DT,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)

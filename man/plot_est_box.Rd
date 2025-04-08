@@ -15,7 +15,7 @@ plot_est_box(input, ...)
 A ggplot object presenting error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
 }
 \description{
-Error bar plots for causal treatment effects
+The `plot_est_box()` function plots the point estimates and 95% credible intervals of ATE and APO from bayesmsms output.
 }
 \examples{
 testdata <- read.csv(system.file("extdata",
