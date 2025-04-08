@@ -1,8 +1,8 @@
 #' Error bar plots for causal treatment effects
 #'
-#' The `plot_est_box()` function plots the point estimates and 95\% credible intervals of ATE and APO from bayesmsms output.
+#' This function plots the point estimates and 95\% credible intervals of ATE and APO from bayesmsm output.
 #'
-#' @param input A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'RD' columns.
+#' @param input A data frame or model object containing bootstrap results.
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @return A ggplot object presenting error bar plot of the mean effects and their 95\% credible intervals for comparator level, reference level, and ATE.
@@ -13,19 +13,19 @@
 #'
 #' @examples
 #' testdata <- read.csv(system.file("extdata",
-#'                                  "continuous_outcome_data.csv",
-#'                                  package = "bayesmsm"))
+#'                      "continuous_outcome_data.csv",
+#'                      package = "bayesmsm"))
 #' model <- bayesmsm(ymodel = y ~ a_1+a_2,
-#'                            nvisit = 2,
-#'                            reference = c(rep(0,2)),
-#'                            comparator = c(rep(1,2)),
-#'                            treatment_effect_type = "sq",
-#'                            family = "gaussian",
-#'                            data = testdata,
-#'                            wmean = rep(1, 1000),
-#'                            nboot = 10,
-#'                            optim_method = "BFGS",
-#'                            parallel = FALSE)
+#'                   nvisit = 2,
+#'                   reference = c(rep(0,2)),
+#'                   comparator = c(rep(1,2)),
+#'                   treatment_effect_type = "sq",
+#'                   family = "gaussian",
+#'                   data = testdata,
+#'                   wmean = rep(1, 1000),
+#'                   nboot = 10,
+#'                   optim_method = "BFGS",
+#'                   parallel = FALSE)
 #' plot_est_box(model)
 plot_est_box <- function(input, ...) {
   # Extract bootdata from the model or use the data frame directly

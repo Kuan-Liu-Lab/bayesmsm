@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_effect.R
 \name{calculate_effect}
 \alias{calculate_effect}
-\title{The `calculate_effect()` function to calculate the causal effect of an intervention given the parameter estimates and intervention levels}
+\title{This function to calculate the causal effect of an intervention given the parameter estimates and intervention levels}
 \usage{
 calculate_effect(
   intervention_levels,
@@ -24,5 +24,5 @@ calculate_effect(
 A numeric value representing the calculated effect of the specified intervention.
 }
 \description{
-The `calculate_effect()` function to calculate the causal effect of an intervention given the parameter estimates and intervention levels
+This function to calculate the causal effect of an intervention given the parameter estimates and intervention levels
 }

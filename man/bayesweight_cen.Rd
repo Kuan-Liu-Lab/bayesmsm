@@ -21,7 +21,7 @@ bayesweight_cen(
 
 \item{cenmodel.list}{A list of formulas for the censored data at each time point, with censoring indicators on the left-hand side and covariates on the right-hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point.}
 
-\item{data}{A data set in the form of a data frame containing the variables in `trtmodel.list` and `cenmodel.list`. This must be a wide data set with exactly one row per unit.}
+\item{data}{A data set in the form of a data frame containing the variables in "trtmodel.list" and "cenmodel.list". This must be a wide data set with exactly one row per unit.}
 
 \item{n.chains}{Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.}
 
@@ -36,34 +36,31 @@ bayesweight_cen(
 \item{parallel}{Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.}
 }
 \value{
-A list of the calculated weights and the JAGS model:
-* `weights` is a vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
-* `model_string` is a character of the JAGS model based on the input of `trtmodel.list`.
+A list of the calculated weights and the JAGS model where "weights" is a vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations and `model_string` is a character of the JAGS model based on the input of "trtmodel.list".
 }
 \description{
-The `bayesweight_cen()` function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points via JAGS
+This function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points via JAGS
 }
 \examples{
 simdat_cen <- read.csv(system.file("extdata",
-                                   "sim_causal.csv",
-                                   package = "bayesmsm"))
-weights_cen <- bayesweight_cen(trtmodel.list = list(A1 ~ L11 + L21,
-                                                    A2 ~ L11 + L21 + L12 +
-                                                         L22 + A1,
-                                                    A3 ~ L11 + L21 + L12 +
-                                                         L22 + A1 + L13 +
-                                                         L23 + A2),
-                               cenmodel.list = list(C1 ~ L11 + L21,
-                                                    C2 ~ L11 + L21 + A1,
-                                                    C3 ~ L11 + L21 + A1 +
-                                                         L12 + L22 + A2),
-                               data = simdat_cen,
-                               n.chains = 1,
-                               n.iter = 20,
-                               n.burnin = 10,
-                               n.thin = 1,
-                               seed = 890123,
-                               parallel = FALSE)
+                       "sim_causal.csv",
+                       package = "bayesmsm"))
+weights_cen <- bayesweight_cen(
+                trtmodel.list = list(
+                A1 ~ L11 + L21,
+                A2 ~ L11 + L21 + L12 + L22 + A1,
+                A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
+                cenmodel.list = list(
+                C1 ~ L11 + L21,
+                C2 ~ L11 + L21 + A1,
+                C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
+                data = simdat_cen,
+                n.chains = 1,
+                n.iter = 20,
+                n.burnin = 10,
+                n.thin = 1,
+                seed = 890123,
+                parallel = FALSE)
 weights_cen$weights
 cat(weights_cen$model_string)
 }

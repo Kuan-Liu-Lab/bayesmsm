@@ -1,6 +1,6 @@
 #' Bayesian Marginal Structural Model Bootstrap Estimation
 #'
-#' The `bayesmsm()` function performs Bayesian non-parametric bootstrap to estimate causal
+#' This function performs Bayesian non-parametric bootstrap to estimate causal
 #' effects in Bayesian marginal structural models. It supports both continuous
 #' (Gaussian) and binary (binomial) outcome variables
 #'
@@ -9,23 +9,17 @@
 #' @param reference Vector denoting the intervention to be used as the reference across all visits for calculating the risk ratio and risk difference. The default is a vector of all 0's with length nvisit (i.e. never treated).
 #' @param comparator Vector denoting the intervention to be used as the comparator across all visits for calculating the risk ratio and risk difference. The default is a vector of all 1's with length nvisit (i.e. always treated).
 #' @param treatment_effect_type Character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".
-#' @param family Character string specifying the outcome distribution family. The possible distributions are: "gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.
-#' @param data Data table containing the variable names in `ymodel`.
+#' @param family Character string specifying the outcome distribution family. The possible distributions are: "Gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.
+#' @param data Data table containing the variable names in the outcome model.
 #' @param wmean Vector of treatment assignment weights. The default is rep(1, nrow(data)).
 #' @param nboot Integer specifying the number of bootstrap iterations. The default is 1000.
-#' @param optim_method Character string specifying the optimization method to be used. The default is 'BFGS'.
+#' @param optim_method Character string specifying the optimization method to be used. The default is "BFGS".
 #' @param seed Starting seed for simulations and bootstrapping. The default is NULL.
 #' @param parallel Logical scalar indicating whether to parallelize bootstrapping to multiple cores. The default is TRUE.
 #' @param ncore Integer specifying the number of CPU cores to use in parallel simulation. This argument is required when parallel is set to TRUE, and the default is 4.
 #'
-#' @return It returns an object of class `bayesmsm` that contains the information about the data, model, etc.
-#' An object of class `bayesmsm` is a list containing at least the following components:
-#' * `mean`, the mean of the bootstrap estimates
-#' * `sd`, the standard deviation of the bootstrap estimates
-#' * `quantile`, the 95% quantiles of the bootstrap estimates
-#' * `bootdata`, a data frame of bootstrapped estimates
-#' * `reference`, the reference intervention level
-#' * `comparator`, the comparison intervention level
+#' @return It returns an object of class "bayesmsm" that contains the information about the data, model, etc.
+#' An object of class "bayesmsm" is a list containing at least the following components: "mean", the mean of the bootstrap estimates; "sd", the standard deviation of the bootstrap estimates; "quantile", the 95\% quantiles of the bootstrap estimates; "bootdata", a data frame of bootstrapped estimates; "reference", the reference intervention level and "comparator", the comparison intervention level
 #'
 #' @importFrom foreach "%dopar%"
 #' @import doParallel
@@ -36,22 +30,21 @@
 #' @export
 #'
 #' @examples
-#' # Continuous outcome
 #' testdata <- read.csv(system.file("extdata",
-#'                                  "continuous_outcome_data.csv",
-#'                                  package = "bayesmsm"))
+#'                      "continuous_outcome_data.csv",
+#'                      package = "bayesmsm"))
 #' model <- bayesmsm(ymodel = y ~ a_1+a_2,
-#'                            nvisit = 2,
-#'                            reference = c(rep(0,2)),
-#'                            comparator = c(rep(1,2)),
-#'                            treatment_effect_type = "sq",
-#'                            family = "gaussian",
-#'                            data = testdata,
-#'                            wmean = rep(1, 1000),
-#'                            nboot = 10,
-#'                            optim_method = "BFGS",
-#'                            seed = 890123,
-#'                            parallel = FALSE)
+#'                   nvisit = 2,
+#'                   reference = c(rep(0,2)),
+#'                   comparator = c(rep(1,2)),
+#'                   treatment_effect_type = "sq",
+#'                   family = "gaussian",
+#'                   data = testdata,
+#'                   wmean = rep(1, 1000),
+#'                   nboot = 10,
+#'                   optim_method = "BFGS",
+#'                   seed = 890123,
+#'                   parallel = FALSE)
 bayesmsm <- function(ymodel,
                      nvisit,
                      reference = c(rep(0,nvisit)), # An example of never treated

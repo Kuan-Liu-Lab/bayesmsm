@@ -13,23 +13,24 @@ summary_bayesmsm(model)
 A summary table of the results from bayesmsm.
 }
 \description{
-The `summary_bayesmsm()` function generates a ready to use result table that contents the estimated APO and ATE and their 95\% credible intervals
+This function generates a ready to use result table that contents the estimated APO and ATE and their 95\% credible intervals
 }
 \examples{
 # Continuous outcome
-testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+testdata <- read.csv(system.file("extdata",
+                     "continuous_outcome_data.csv",
+                     package = "bayesmsm"))
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
-                           nvisit = 2,
-                           reference = c(rep(0,2)),
-                           comparator = c(rep(1,2)),
-                           treatment_effect_type = "sq",
-                           family = "gaussian",
-                           data = testdata,
-                           wmean = rep(1, 1000),
-                           nboot = 10,
-                           optim_method = "BFGS",
-                           seed = 890123,
-                           parallel = TRUE,
-                           ncore = 2)
+                  nvisit = 2,
+                  reference = c(rep(0,2)),
+                  comparator = c(rep(1,2)),
+                  treatment_effect_type = "sq",
+                  family = "gaussian",
+                  data = testdata,
+                  wmean = rep(1, 1000),
+                  nboot = 10,
+                  optim_method = "BFGS",
+                  seed = 890123,
+                  parallel = FALSE)
 summary_bayesmsm(model)
 }

@@ -1,6 +1,6 @@
 #' Plot Average Treatment Effect Density from bayesmsm output
 #'
-#' The `plot_ATE()` function plots the density of ATE from bayesmsms output.
+#' This function plots the density of ATE from bayesmsm output.
 #'
 #' @param input A model object, data frame or vector containing the bootstrap estimates of ATE.
 #' @param ATE define causal estimand of interest from RD, OR, RR.
@@ -21,19 +21,19 @@
 #'
 #' @examples
 #' testdata <- read.csv(system.file("extdata",
-#'                                  "continuous_outcome_data.csv",
-#'                                  package = "bayesmsm"))
+#'                      "continuous_outcome_data.csv",
+#'                      package = "bayesmsm"))
 #' model <- bayesmsm(ymodel = y ~ a_1+a_2,
-#'                            nvisit = 2,
-#'                            reference = c(rep(0,2)),
-#'                            comparator = c(rep(1,2)),
-#'                            treatment_effect_type = "sq",
-#'                            family = "gaussian",
-#'                            data = testdata,
-#'                            wmean = rep(1, 1000),
-#'                            nboot = 10,
-#'                            optim_method = "BFGS",
-#'                            parallel = FALSE)
+#'                   nvisit = 2,
+#'                   reference = c(rep(0,2)),
+#'                   comparator = c(rep(1,2)),
+#'                   treatment_effect_type = "sq",
+#'                   family = "gaussian",
+#'                   data = testdata,
+#'                   wmean = rep(1, 1000),
+#'                   nboot = 10,
+#'                   optim_method = "BFGS",
+#'                   parallel = FALSE)
 #' plot_ATE(model)
 plot_ATE <- function(input,
                      ATE = "RD",

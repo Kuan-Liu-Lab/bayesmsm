@@ -1,9 +1,9 @@
 #' Bayesian Treatment Effect Weight Estimation Using JAGS
 #'
-#' The `bayesweight()` function estimates Bayesian importance sampling weights for time-varying treatment effects using specified models for each treatment time point via JAGS
+#' This function estimates Bayesian importance sampling weights for time-varying treatment effects using specified models for each treatment time point via JAGS
 #'
 #' @param trtmodel.list A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point. Interactions and functions of covariates are allowed.
-#' @param data A data set in the form of a data frame containing the variables in `trtmodel.list`. This must be a wide data set with exactly one row per unit.
+#' @param data A data set in the form of a data frame containing the variables in "trtmodel.list". This must be a wide data set with exactly one row per unit.
 #' @param n.chains Integer specifying the number of MCMC chains to run. Set to 1 for non-parallel computation. For parallel computation, it is required to use at least 2 chains. The default is 2.
 #' @param n.iter Integer specifying the total number of iterations for each chain (including burn-in). The default is 25000.
 #' @param n.burnin Integer specifying the number of burn-in iterations for each chain. The default is 15000.
@@ -11,9 +11,7 @@
 #' @param seed Starting seed for the JAGS model. The default is NULL.
 #' @param parallel Logical scalar indicating whether to run the MCMC chains in parallel. The default is TRUE.
 #'
-#' @return A list of the calculated weights and the JAGS model:
-#' * `weights` is a vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations.
-#' * `model_string` is a character of the JAGS model based on the input of `trtmodel.list`.
+#' @return A list of the calculated weights and the JAGS model, where `weights` is a vector of posterior mean weights, computed by taking the average of the weights across all MCMC iterations and `model_string` is a character of the JAGS model based on the input of `trtmodel.list`.
 #'
 #' @importFrom R2jags jags
 #' @importFrom coda mcmc as.mcmc geweke.diag
@@ -27,11 +25,12 @@
 #' @examples
 #' # Continuous outcome
 #' testdata <- read.csv(system.file("extdata",
-#'                                  "continuous_outcome_data.csv",
-#'                                  package = "bayesmsm"))
-#' weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
-#'                                             a_2 ~ w1 + w2 + L1_1 + L2_1 +
-#'                                                   L1_2 + L2_2 + a_1),
+#'                      "continuous_outcome_data.csv",
+#'                      package = "bayesmsm"))
+#' weights <- bayesweight(trtmodel.list = list(
+#'                        a_1 ~ w1 + w2 + L1_1 + L2_1,
+#'                        a_2 ~ w1 + w2 + L1_1 + L2_1 +
+#'                              L1_2 + L2_2 + a_1),
 #'                        data = testdata,
 #'                        n.chains = 1,
 #'                        n.iter = 20,

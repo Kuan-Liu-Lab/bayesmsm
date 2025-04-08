@@ -31,15 +31,15 @@ bayesmsm(
 
 \item{treatment_effect_type}{Character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".}
 
-\item{family}{Character string specifying the outcome distribution family. The possible distributions are: "gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.}
+\item{family}{Character string specifying the outcome distribution family. The possible distributions are: "Gaussian" (default) for continuous outcomes, and "binomial" for binary outcomes.}
 
-\item{data}{Data table containing the variable names in `ymodel`.}
+\item{data}{Data table containing the variable names in the outcome model.}
 
 \item{wmean}{Vector of treatment assignment weights. The default is rep(1, nrow(data)).}
 
 \item{nboot}{Integer specifying the number of bootstrap iterations. The default is 1000.}
 
-\item{optim_method}{Character string specifying the optimization method to be used. The default is 'BFGS'.}
+\item{optim_method}{Character string specifying the optimization method to be used. The default is "BFGS".}
 
 \item{seed}{Starting seed for simulations and bootstrapping. The default is NULL.}
 
@@ -48,35 +48,28 @@ bayesmsm(
 \item{ncore}{Integer specifying the number of CPU cores to use in parallel simulation. This argument is required when parallel is set to TRUE, and the default is 4.}
 }
 \value{
-It returns an object of class `bayesmsm` that contains the information about the data, model, etc.
-An object of class `bayesmsm` is a list containing at least the following components:
-* `mean`, the mean of the bootstrap estimates
-* `sd`, the standard deviation of the bootstrap estimates
-* `quantile`, the 95% quantiles of the bootstrap estimates
-* `bootdata`, a data frame of bootstrapped estimates
-* `reference`, the reference intervention level
-* `comparator`, the comparison intervention level
+It returns an object of class "bayesmsm" that contains the information about the data, model, etc.
+An object of class "bayesmsm" is a list containing at least the following components: "mean", the mean of the bootstrap estimates; "sd", the standard deviation of the bootstrap estimates; "quantile", the 95\% quantiles of the bootstrap estimates; "bootdata", a data frame of bootstrapped estimates; "reference", the reference intervention level and "comparator", the comparison intervention level
 }
 \description{
-The `bayesmsm()` function performs Bayesian non-parametric bootstrap to estimate causal
+This function performs Bayesian non-parametric bootstrap to estimate causal
 effects in Bayesian marginal structural models. It supports both continuous
 (Gaussian) and binary (binomial) outcome variables
 }
 \examples{
-# Continuous outcome
 testdata <- read.csv(system.file("extdata",
-                                 "continuous_outcome_data.csv",
-                                 package = "bayesmsm"))
+                     "continuous_outcome_data.csv",
+                     package = "bayesmsm"))
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
-                           nvisit = 2,
-                           reference = c(rep(0,2)),
-                           comparator = c(rep(1,2)),
-                           treatment_effect_type = "sq",
-                           family = "gaussian",
-                           data = testdata,
-                           wmean = rep(1, 1000),
-                           nboot = 10,
-                           optim_method = "BFGS",
-                           seed = 890123,
-                           parallel = FALSE)
+                  nvisit = 2,
+                  reference = c(rep(0,2)),
+                  comparator = c(rep(1,2)),
+                  treatment_effect_type = "sq",
+                  family = "gaussian",
+                  data = testdata,
+                  wmean = rep(1, 1000),
+                  nboot = 10,
+                  optim_method = "BFGS",
+                  seed = 890123,
+                  parallel = FALSE)
 }

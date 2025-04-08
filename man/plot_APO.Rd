@@ -7,9 +7,9 @@
 plot_APO(input, effect_type, ...)
 }
 \arguments{
-\item{input}{A data frame or model object containing 'bootdata', which include 'effect_comparator' and 'effect_reference' columns.}
+\item{input}{A data frame or model object containing boostrap results.}
 
-\item{effect_type}{A character string specifying which effect to plot: 'effect_comparator' or 'effect_reference'.}
+\item{effect_type}{A character string specifying which effect to plot (e.g., comparator or reference treatment sequences).}
 
 \item{...}{Additional arguments passed to the plotting function.}
 }
@@ -17,23 +17,23 @@ plot_APO(input, effect_type, ...)
 A ggplot object representing density plot showing the distribution of the specified average potential outcome (reference or comparison).
 }
 \description{
-The `plot_APO()` function plots the density of APO for a specified effect type from bayesmsms output.
+This function plots the density of APO for a specified effect type from bayesmsms output.
 }
 \examples{
 testdata <- read.csv(system.file("extdata",
-                                 "continuous_outcome_data.csv",
-                                 package = "bayesmsm"))
+                     "continuous_outcome_data.csv",
+                     package = "bayesmsm"))
 model <- bayesmsm(ymodel = y ~ a_1+a_2,
-                           nvisit = 2,
-                           reference = c(rep(0,2)),
-                           comparator = c(rep(1,2)),
-                           treatment_effect_type = "sq",
-                           family = "gaussian",
-                           data = testdata,
-                           wmean = rep(1, 1000),
-                           nboot = 10,
-                           optim_method = "BFGS",
-                           parallel = FALSE)
+                   nvisit = 2,
+                   reference = c(rep(0,2)),
+                   comparator = c(rep(1,2)),
+                   treatment_effect_type = "sq",
+                   family = "gaussian",
+                   data = testdata,
+                   wmean = rep(1, 1000),
+                   nboot = 10,
+                   optim_method = "BFGS",
+                   parallel = FALSE)
 plot_APO(model$bootdata, effect_type = "effect_comparator")
 plot_APO(model, effect_type = "effect_reference")
 }
