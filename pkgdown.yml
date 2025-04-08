@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   bayesmsm-censoring: bayesmsm-censoring.html
   bayesmsm-nocensoring: bayesmsm-nocensoring.html
-last_built: 2025-04-08T06:10Z
+last_built: 2025-04-08T06:48Z
 urls:
   reference: https://kuan-liu-lab.github.io/bayesmsm/reference
   article: https://kuan-liu-lab.github.io/bayesmsm/articles
