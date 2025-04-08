@@ -1,7 +1,6 @@
 #' Bayesian Treatment Effect Weight Estimation for Censored Data
 #'
-#' This function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points.
-#' The models can be run in parallel to estimate the weights for censored data.
+#' The `bayesweight_cen()` function estimates Bayesian importance sampling weights for treatment models and censoring models across multiple time points via JAGS
 #'
 #' @param trtmodel.list A list of formulas corresponding to each time point with the time-specific treatment variable on the left-hand side and pre-treatment covariates to be balanced on the right-hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point. Interactions and functions of covariates are allowed.
 #' @param cenmodel.list A list of formulas for the censored data at each time point, with censoring indicators on the left-hand side and covariates on the right-hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point.

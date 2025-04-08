@@ -1,5 +1,7 @@
 #' Plot Average Treatment Effect Density from bayesmsm output
 #'
+#' The `plot_ATE()` function plots the density of ATE from bayesmsms output.
+#'
 #' @param input A model object, data frame or vector containing the bootstrap estimates of ATE.
 #' @param ATE define causal estimand of interest from RD, OR, RR.
 #' @param col_density Color for the density plot (default is "blue").

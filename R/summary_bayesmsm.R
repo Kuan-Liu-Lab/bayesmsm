@@ -1,5 +1,7 @@
 #' Summary function to generate result table from bayesmsm
 #'
+#' The `summary_bayesmsm()` function generates a ready to use result table that contents the estimated APO and ATE and their 95% credible intervals
+#'
 #' @param model A model object from bayesmsm
 #'
 #' @return A summary table of the results from bayesmsm.

@@ -1,8 +1,8 @@
 #' Bayesian Marginal Structural Model Bootstrap Estimation
 #'
-#' This function performs Bayesian non-parametric bootstrap to estimate causal
+#' The `bayesmsm()` function performs Bayesian non-parametric bootstrap to estimate causal
 #' effects in Bayesian marginal structural models. It supports both continuous
-#' (gaussian) and binary (binomial) outcome variables.
+#' (Gaussian) and binary (binomial) outcome variables
 #'
 #' @param ymodel Model statement for the outcome variable.
 #' @param nvisit Number of visits or time points to simulate.

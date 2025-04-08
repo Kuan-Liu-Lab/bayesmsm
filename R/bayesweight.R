@@ -1,7 +1,6 @@
 #' Bayesian Treatment Effect Weight Estimation Using JAGS
 #'
-#' This function estimates Bayesian importance sampling weights for time-varying treatment effects using specified models for each treatment time point.
-#' It uses JAGS for Bayesian estimation and supports parallel computation to speed up the MCMC simulations.
+#' The `bayesweight()` function estimates Bayesian importance sampling weights for time-varying treatment effects using specified models for each treatment time point via JAGS
 #'
 #' @param trtmodel.list A list of formulas corresponding to each time point with the time-specific treatment variable on the left hand side and pre-treatment covariates to be balanced on the right hand side. The formulas must be in temporal order, and must contain all covariates to be balanced at that time point. Interactions and functions of covariates are allowed.
 #' @param data A data set in the form of a data frame containing the variables in `trtmodel.list`. This must be a wide data set with exactly one row per unit.

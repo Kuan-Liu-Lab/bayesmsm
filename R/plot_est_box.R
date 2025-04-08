@@ -1,5 +1,7 @@
 #' Error bar plots for causal treatment effects
 #'
+#' The `plot_est_box()` function plots the point estimates and 95% credible intervals of ATE and APO from bayesmsms output.
+#'
 #' @param input A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'RD' columns.
 #' @param ... Additional arguments passed to the plotting function.
 #'
