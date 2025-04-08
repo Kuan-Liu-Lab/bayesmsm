@@ -55,7 +55,7 @@ An object of class `bayesmsm` is a list containing at least the following compon
 * `quantile`, the 95% quantiles of the bootstrap estimates
 * `bootdata`, a data frame of bootstrapped estimates
 * `reference`, the reference intervention level
-* `comparator`, the camparison intervention level
+* `comparator`, the comparison intervention level
 }
 \description{
 This function performs Bayesian non-parametric bootstrap to estimate causal

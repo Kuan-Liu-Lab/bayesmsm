@@ -1,45 +1,52 @@
-Package: bayesmsm
 Type: Package
-Title: Fitting Bayesian Marginal Structural Models for Longitudinal Observational Data
+Package: bayesmsm
+Title: Fitting Bayesian Marginal Structural Models for Longitudinal
+    Observational Data
 Version: 0.1.0
 Authors@R: c(
-    person("Kuan", "Liu", ,"kuan.liu@utoronto.ca", role = c("aut", "cre"),
+    person("Kuan", "Liu", , "kuan.liu@utoronto.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5017-1276")),
-    person("Xiao", "Yan", , "Clarence.YXA@gmail.com", role = c("aut"),
+    person("Xiao", "Yan", , "Clarence.YXA@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0001-9712-1199")),
-    person("Martin", "Urner", ,"martin.urner@uhn.ca", role = "aut",
-           comment = c(ORCID = "0000-0003-1133-4885")))
+    person("Martin", "Urner", , "martin.urner@uhn.ca", role = "aut",
+           comment = c(ORCID = "0000-0003-1133-4885"))
+  )
 Maintainer: Kuan Liu <kuan.liu@utoronto.ca>
-Description: Fitting Bayesian marginal structural models for estimating average treatment effect for drawing causal inference with time-varying treatment assignment and confounding with extension to handle informative right-censoring. This package can be used for continuous or binary end-of-study outcomes.
-    For more details, see:
-        Liu (2021) <https://tspace.library.utoronto.ca/handle/1807/109330>,
-        Robins, Hernán and Brumback (2000) <doi:10.1097/00001648-200009000-00011>,
-        Saarela et al. (2015) <doi:10.1111/biom.12269>,
-        and Liu et al. (2020) <doi:10.1177/0962280219900362>.
-Depends:
-    R (>= 4.2.0)
-Suggests: 
-    devtools,
-    rmarkdown,
-    testthat (>= 3.0.0),
-    knitr, 
-	  DT
+Description: Fitting Bayesian marginal structural models for estimating
+    average treatment effect for drawing causal inference with
+    time-varying treatment assignment and confounding with extension to
+    handle informative right-censoring. This package can be used for
+    continuous or binary end-of-study outcomes.  For more details, see:
+    Liu (2021) <https://tspace.library.utoronto.ca/handle/1807/109330>,
+    Robins, Hernán and Brumback (2000)
+    <doi:10.1097/00001648-200009000-00011>, Saarela et al. (2015)
+    <doi:10.1111/biom.12269>, and Liu et al. (2020)
+    <doi:10.1177/0962280219900362>.
 License: MIT + file LICENSE
-Encoding: UTF-8
-RoxygenNote: 7.3.2
-Imports: 
-    MCMCpack,
-	  doParallel,
-	  foreach,
-	  parallel,
-	  R2jags,
-	  coda (>= 0.19-4),
-	  stats,
-	  grDevices,
-	  graphics,
-	  ggplot2
-NeedsCompilation: no
-Config/testthat/edition: 3
 URL: https://github.com/Kuan-Liu-Lab/bayesmsm
 BugReports: https://github.com/Kuan-Liu-Lab/bayesmsm/issues
-VignetteBuilder: knitr
+Depends:
+    R (>= 4.2.0)
+Imports: 
+    coda (>= 0.19-4),
+    doParallel,
+    foreach,
+    ggplot2,
+    graphics,
+    grDevices,
+    MCMCpack,
+    parallel,
+    R2jags,
+    stats
+Suggests: 
+    devtools,
+    DT,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+NeedsCompilation: no
+RoxygenNote: 7.3.2

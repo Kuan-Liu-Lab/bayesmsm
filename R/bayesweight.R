@@ -35,8 +35,8 @@
 #'                                                   L1_2 + L2_2 + a_1),
 #'                        data = testdata,
 #'                        n.chains = 1,
-#'                        n.iter = 200,
-#'                        n.burnin = 100,
+#'                        n.iter = 100,
+#'                        n.burnin = 50,
 #'                        n.thin = 1,
 #'                        seed = 890123,
 #'                        parallel = FALSE)

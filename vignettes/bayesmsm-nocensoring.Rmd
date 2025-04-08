@@ -114,8 +114,8 @@ weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                                              a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
                         data = testdata,
                         n.chains = 1,
-                        n.iter = 250,
-                        n.burnin = 150,
+                        n.iter = 200,
+                        n.burnin = 100,
                         n.thin = 1,
                         seed = 890123,
                         parallel = FALSE)
@@ -135,7 +135,7 @@ cat(weights$model_string)
 
 # Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`
 
-The function `bayesmsm` estimates causal effect of time-varying treatments. It uses subject-specific treatment assignmennt weights *weights* calculated using `bayesweight`, and performs Bayesian non-parametric bootstrap to estimate the causal parameters.
+The function `bayesmsm` estimates causal effect of time-varying treatments. It uses subject-specific treatment assignment weights *weights* calculated using `bayesweight`, and performs Bayesian non-parametric bootstrap to estimate the causal parameters.
 
 - Parameters Description:
   - `ymodel`: A formula representing the outcome model, which can include interactions and functions of covariates.

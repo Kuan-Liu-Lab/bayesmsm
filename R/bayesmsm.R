@@ -25,7 +25,7 @@
 #' * `quantile`, the 95% quantiles of the bootstrap estimates
 #' * `bootdata`, a data frame of bootstrapped estimates
 #' * `reference`, the reference intervention level
-#' * `comparator`, the camparison intervention level
+#' * `comparator`, the comparison intervention level
 #'
 #' @importFrom foreach "%dopar%"
 #' @import doParallel

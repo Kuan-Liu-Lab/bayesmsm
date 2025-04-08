@@ -9,8 +9,8 @@
 # Overview
 
 *bayesmsm* is an R package that implements the Bayesian marginal
-structrual models to estimate average treatment effect for drawing
-causal inference with time-varying treatment assignment and confoudning
+structural models to estimate average treatment effect for drawing
+causal inference with time-varying treatment assignment and confounding
 with extension to handle informative right-censoring. The Bayesian
 marginal structural models is a semi-parametric approach and features a
 two-step estimation process. The first step involves Bayesian parametric
@@ -51,7 +51,7 @@ This package depends on the following R packages:
 - `R2jags`
 - `coda`
 
-# Quickstart
+# Quick Start
 
 Here are some examples demonstrating how to use the `bayesmsm` package:
 
