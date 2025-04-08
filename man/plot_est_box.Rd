@@ -12,10 +12,10 @@ plot_est_box(input, ...)
 \item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
-A ggplot object presenting error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
+A ggplot object presenting error bar plot of the mean effects and their 95\% credible intervals for comparator level, reference level, and ATE.
 }
 \description{
-The `plot_est_box()` function plots the point estimates and 95% credible intervals of ATE and APO from bayesmsms output.
+The `plot_est_box()` function plots the point estimates and 95\% credible intervals of ATE and APO from bayesmsms output.
 }
 \examples{
 testdata <- read.csv(system.file("extdata",

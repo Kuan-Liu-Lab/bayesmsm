@@ -13,7 +13,7 @@ summary_bayesmsm(model)
 A summary table of the results from bayesmsm.
 }
 \description{
-The `summary_bayesmsm()` function generates a ready to use result table that contents the estimated APO and ATE and their 95% credible intervals
+The `summary_bayesmsm()` function generates a ready to use result table that contents the estimated APO and ATE and their 95\% credible intervals
 }
 \examples{
 # Continuous outcome

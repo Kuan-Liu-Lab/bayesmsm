@@ -1,11 +1,11 @@
 #' Error bar plots for causal treatment effects
 #'
-#' The `plot_est_box()` function plots the point estimates and 95% credible intervals of ATE and APO from bayesmsms output.
+#' The `plot_est_box()` function plots the point estimates and 95\% credible intervals of ATE and APO from bayesmsms output.
 #'
 #' @param input A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'RD' columns.
 #' @param ... Additional arguments passed to the plotting function.
 #'
-#' @return A ggplot object presenting error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
+#' @return A ggplot object presenting error bar plot of the mean effects and their 95\% credible intervals for comparator level, reference level, and ATE.
 #' @importFrom stats density quantile
 #' @importFrom grDevices rgb
 #' @importFrom graphics abline arrows axis legend mtext par polygon text
