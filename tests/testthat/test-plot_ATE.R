@@ -10,11 +10,10 @@ test_that("plot_ATE works with no errors", {
                     family = "gaussian",
                     data = testdata,
                     wmean = rep(1, 1000),
-                    nboot = 100,
+                    nboot = 10,
                     optim_method = "BFGS",
                     seed = 890123,
-                    parallel = TRUE,
-                    ncore = 2)
+                    parallel = FALSE)
 
   expect_silent(plot_ATE(model, ATE = "RD"))
 

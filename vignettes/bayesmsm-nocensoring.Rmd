@@ -159,9 +159,9 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            family = "gaussian",
                            data = testdata,
                            wmean = weights$weights,
-                           nboot = 100,
+                           nboot = 50,
                            optim_method = "BFGS",
-                           parallel = TRUE,
+                           parallel = FALSE,
                            seed = 890123,
                            ncore = 2)
 str(model)

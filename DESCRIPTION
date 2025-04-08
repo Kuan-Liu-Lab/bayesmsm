@@ -2,7 +2,7 @@ Type: Package
 Package: bayesmsm
 Title: Fitting Bayesian Marginal Structural Models for Longitudinal
     Observational Data
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: c(
     person("Kuan", "Liu", , "kuan.liu@utoronto.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5017-1276")),

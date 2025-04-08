@@ -10,7 +10,7 @@
 #' @param xlim Limits for the x-axis (default is NULL).
 #' @param ylim Limits for the y-axis (default is NULL).
 #' @param ... Additional graphical parameters passed to the plot function.
-#' @return A density plot for the posterior predictive distribution of the Average Treatment Effect (ATE).
+#' @return A ggplot object representing the density plot for the posterior predictive distribution of the Average Treatment Effect (ATE).
 #' @import ggplot2
 #' @importFrom stats density quantile
 #' @importFrom grDevices rgb
@@ -29,10 +29,9 @@
 #'                            family = "gaussian",
 #'                            data = testdata,
 #'                            wmean = rep(1, 1000),
-#'                            nboot = 100,
+#'                            nboot = 10,
 #'                            optim_method = "BFGS",
-#'                            parallel = TRUE,
-#'                            ncore = 2)
+#'                            parallel = FALSE)
 #' plot_ATE(model)
 plot_ATE <- function(input,
                      ATE = "RD",

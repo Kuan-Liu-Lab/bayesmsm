@@ -12,7 +12,7 @@ plot_est_box(input, ...)
 \item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
-An error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
+A ggplot object presenting error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
 }
 \description{
 Error bar plots for causal treatment effects
@@ -29,9 +29,8 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            family = "gaussian",
                            data = testdata,
                            wmean = rep(1, 1000),
-                           nboot = 100,
+                           nboot = 10,
                            optim_method = "BFGS",
-                           parallel = FALSE,
-                           ncore = 2)
+                           parallel = FALSE)
 plot_est_box(model)
 }

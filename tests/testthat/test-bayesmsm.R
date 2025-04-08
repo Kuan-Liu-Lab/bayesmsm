@@ -13,12 +13,11 @@ test_that("bayesmsm works with no errors", {
                       family = "gaussian",
                       data = testdata,
                       wmean = rep(1, 1000),
-                      nboot = 100,
+                      nboot = 10,
                       optim_method = "BFGS",
                       # estimand = 'RD',
                       seed = 890123,
-                      parallel = TRUE,
-                      ncore = 2)
+                      parallel = FALSE)
 
   # Check if 'model' is a list
   expect_true(is.list(model))

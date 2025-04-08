@@ -10,8 +10,8 @@ test_that("bayesweight_cen works with no errors", {
                                                       C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
                                  data = simdat_cen,
                                  n.chains = 1,
-                                 n.iter = 100,
-                                 n.burnin = 50,
+                                 n.iter = 20,
+                                 n.burnin = 10,
                                  n.thin = 1,
                                  seed = 890123,
                                  parallel = FALSE)

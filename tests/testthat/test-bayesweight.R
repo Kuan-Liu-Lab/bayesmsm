@@ -7,8 +7,8 @@ test_that("bayesweight works with no errors", {
                                               a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
                          data = testdata,
                          n.chains = 1,
-                         n.iter = 100,
-                         n.burnin = 50,
+                         n.iter = 20,
+                         n.burnin = 10,
                          n.thin = 1,
                          seed = 890123,
                          parallel = FALSE)

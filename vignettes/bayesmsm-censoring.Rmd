@@ -139,11 +139,11 @@ model <- bayesmsm(ymodel = Y ~ A1+A2+A3,
                   family = "binomial",
                   data = simdat_cen,
                   wmean = weights_cen$weights,
-                  nboot = 100,
+                  nboot = 50,
                   optim_method = "BFGS",
-                  parallel = FALSE,
+                  parallel = TRUE,
                   seed = 890123,
-                  ncore = 1)
+                  ncore = 2)
 str(model)
 ```
 

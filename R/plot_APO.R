@@ -6,7 +6,7 @@
 #' @param effect_type A character string specifying which effect to plot: 'effect_comparator' or 'effect_reference'.
 #' @param ... Additional arguments passed to the plotting function.
 #'
-#' @return A density plot showing the distribution of the specified average potential outcome (reference or comparison).
+#' @return A ggplot object representing density plot showing the distribution of the specified average potential outcome (reference or comparison).
 #' @importFrom stats density quantile
 #' @importFrom grDevices rgb
 #' @importFrom graphics abline arrows axis legend mtext par polygon text
@@ -24,10 +24,9 @@
 #'                            family = "gaussian",
 #'                            data = testdata,
 #'                            wmean = rep(1, 1000),
-#'                            nboot = 100,
+#'                            nboot = 10,
 #'                            optim_method = "BFGS",
-#'                            parallel = FALSE,
-#'                            ncore = 2)
+#'                            parallel = FALSE)
 #' plot_APO(model$bootdata, effect_type = "effect_comparator")
 #' plot_APO(model, effect_type = "effect_reference")
 plot_APO <- function(input, effect_type, ...) {

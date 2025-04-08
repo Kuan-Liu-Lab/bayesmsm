@@ -48,11 +48,10 @@
 #'                            family = "gaussian",
 #'                            data = testdata,
 #'                            wmean = rep(1, 1000),
-#'                            nboot = 100,
+#'                            nboot = 10,
 #'                            optim_method = "BFGS",
 #'                            seed = 890123,
-#'                            parallel = TRUE,
-#'                            ncore = 2)
+#'                            parallel = FALSE)
 bayesmsm <- function(ymodel,
                      nvisit,
                      reference = c(rep(0,nvisit)), # An example of never treated

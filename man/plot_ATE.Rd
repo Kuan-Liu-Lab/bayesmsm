@@ -39,7 +39,7 @@ plot_ATE(
 \item{...}{Additional graphical parameters passed to the plot function.}
 }
 \value{
-A density plot for the posterior predictive distribution of the Average Treatment Effect (ATE).
+A ggplot object representing the density plot for the posterior predictive distribution of the Average Treatment Effect (ATE).
 }
 \description{
 Plot Average Treatment Effect Density from bayesmsm output
@@ -56,9 +56,8 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            family = "gaussian",
                            data = testdata,
                            wmean = rep(1, 1000),
-                           nboot = 100,
+                           nboot = 10,
                            optim_method = "BFGS",
-                           parallel = TRUE,
-                           ncore = 2)
+                           parallel = FALSE)
 plot_ATE(model)
 }

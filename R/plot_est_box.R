@@ -3,7 +3,7 @@
 #' @param input A data frame or model object containing 'bootdata', which include 'effect_comparator', 'effect_reference', and 'RD' columns.
 #' @param ... Additional arguments passed to the plotting function.
 #'
-#' @return An error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
+#' @return A ggplot object presenting error bar plot of the mean effects and their 95\% confidence intervals for comparator level, reference level, and ATE.
 #' @importFrom stats density quantile
 #' @importFrom grDevices rgb
 #' @importFrom graphics abline arrows axis legend mtext par polygon text
@@ -21,10 +21,9 @@
 #'                            family = "gaussian",
 #'                            data = testdata,
 #'                            wmean = rep(1, 1000),
-#'                            nboot = 100,
+#'                            nboot = 10,
 #'                            optim_method = "BFGS",
-#'                            parallel = FALSE,
-#'                            ncore = 2)
+#'                            parallel = FALSE)
 #' plot_est_box(model)
 plot_est_box <- function(input, ...) {
   # Extract bootdata from the model or use the data frame directly

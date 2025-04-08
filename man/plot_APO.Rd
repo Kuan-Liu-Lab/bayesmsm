@@ -14,7 +14,7 @@ plot_APO(input, effect_type, ...)
 \item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
-A density plot showing the distribution of the specified average potential outcome (reference or comparison).
+A ggplot object representing density plot showing the distribution of the specified average potential outcome (reference or comparison).
 }
 \description{
 This function plots the density of APO for a specified effect type from bayesmsms output.
@@ -31,10 +31,9 @@ model <- bayesmsm(ymodel = y ~ a_1+a_2,
                            family = "gaussian",
                            data = testdata,
                            wmean = rep(1, 1000),
-                           nboot = 100,
+                           nboot = 10,
                            optim_method = "BFGS",
-                           parallel = FALSE,
-                           ncore = 2)
+                           parallel = FALSE)
 plot_APO(model$bootdata, effect_type = "effect_comparator")
 plot_APO(model, effect_type = "effect_reference")
 }
