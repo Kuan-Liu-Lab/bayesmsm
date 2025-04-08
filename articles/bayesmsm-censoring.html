@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bayesmsm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
     <li><a class="dropdown-item" href="../articles/bayesmsm-nocensoring.html">`bayesmsm` for longitudinal data without right-censoring</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -415,31 +416,31 @@ specify the outcome model and other relevant parameters.</p>
 <span>                  family <span class="op">=</span> <span class="st">"binomial"</span>,</span>
 <span>                  data <span class="op">=</span> <span class="va">simdat_cen</span>,</span>
 <span>                  wmean <span class="op">=</span> <span class="va">weights_cen</span><span class="op">$</span><span class="va">weights</span>,</span>
-<span>                  nboot <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>                  nboot <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>                  optim_method <span class="op">=</span> <span class="st">"BFGS"</span>,</span>
-<span>                  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
-<span>                  ncore <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>                  ncore <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 12</span></span>
-<span><span class="co">#&gt;  $ RD_mean    : num 0.29</span></span>
-<span><span class="co">#&gt;  $ RR_mean    : num 1.73</span></span>
-<span><span class="co">#&gt;  $ OR_mean    : num 3.35</span></span>
-<span><span class="co">#&gt;  $ RD_sd      : num 0</span></span>
-<span><span class="co">#&gt;  $ RR_sd      : num 0</span></span>
-<span><span class="co">#&gt;  $ OR_sd      : num 0</span></span>
-<span><span class="co">#&gt;  $ RD_quantile: Named num [1:2] 0.29 0.29</span></span>
+<span><span class="co">#&gt;  $ RD_mean    : num 0.23</span></span>
+<span><span class="co">#&gt;  $ RR_mean    : num 1.56</span></span>
+<span><span class="co">#&gt;  $ OR_mean    : num 2.97</span></span>
+<span><span class="co">#&gt;  $ RD_sd      : num 0.114</span></span>
+<span><span class="co">#&gt;  $ RR_sd      : num 0.354</span></span>
+<span><span class="co">#&gt;  $ OR_sd      : num 1.42</span></span>
+<span><span class="co">#&gt;  $ RD_quantile: Named num [1:2] 0.0139 0.42</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:2] "2.5%" "97.5%"</span></span>
-<span><span class="co">#&gt;  $ RR_quantile: Named num [1:2] 1.73 1.73</span></span>
+<span><span class="co">#&gt;  $ RR_quantile: Named num [1:2] 1.02 2.35</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:2] "2.5%" "97.5%"</span></span>
-<span><span class="co">#&gt;  $ OR_quantile: Named num [1:2] 3.35 3.35</span></span>
+<span><span class="co">#&gt;  $ OR_quantile: Named num [1:2] 1.06 6.13</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:2] "2.5%" "97.5%"</span></span>
-<span><span class="co">#&gt;  $ bootdata   :'data.frame': 100 obs. of  5 variables:</span></span>
-<span><span class="co">#&gt;   ..$ effect_reference : num [1:100] -0.405 -0.405 -0.405 -0.405 -0.405 ...</span></span>
-<span><span class="co">#&gt;   ..$ effect_comparator: num [1:100] 0.802 0.802 0.802 0.802 0.802 ...</span></span>
-<span><span class="co">#&gt;   ..$ RD               : num [1:100] 0.29 0.29 0.29 0.29 0.29 ...</span></span>
-<span><span class="co">#&gt;   ..$ RR               : num [1:100] 1.73 1.73 1.73 1.73 1.73 ...</span></span>
-<span><span class="co">#&gt;   ..$ OR               : num [1:100] 3.35 3.35 3.35 3.35 3.35 ...</span></span>
+<span><span class="co">#&gt;  $ bootdata   :'data.frame': 50 obs. of  5 variables:</span></span>
+<span><span class="co">#&gt;   ..$ effect_reference : num [1:50] 0.4624 -0.2683 -0.0994 -0.4618 -0.4679 ...</span></span>
+<span><span class="co">#&gt;   ..$ effect_comparator: num [1:50] 0.629 0.938 0.901 1.018 1.142 ...</span></span>
+<span><span class="co">#&gt;   ..$ RD               : num [1:50] 0.0388 0.2854 0.2359 0.348 0.373 ...</span></span>
+<span><span class="co">#&gt;   ..$ RR               : num [1:50] 1.06 1.66 1.5 1.9 1.97 ...</span></span>
+<span><span class="co">#&gt;   ..$ OR               : num [1:50] 1.18 3.34 2.72 4.39 5 ...</span></span>
 <span><span class="co">#&gt;  $ reference  : num [1:3] 0 0 0</span></span>
 <span><span class="co">#&gt;  $ comparator : num [1:3] 1 1 1</span></span></code></pre></div>
 <p>The <code>bayesmsm</code> function returns a model object containing
@@ -454,13 +455,13 @@ reference and comparator levels chosen by the user.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">model</span><span class="op">$</span><span class="va">bootdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   effect_reference effect_comparator        RD       RR       OR</span></span>
-<span><span class="co">#&gt; 1       -0.4053556         0.8024746 0.2904773 1.726146 3.346216</span></span>
-<span><span class="co">#&gt; 2       -0.4053556         0.8024746 0.2904773 1.726146 3.346216</span></span>
-<span><span class="co">#&gt; 3       -0.4053556         0.8024746 0.2904773 1.726146 3.346216</span></span>
-<span><span class="co">#&gt; 4       -0.4053556         0.8024746 0.2904773 1.726146 3.346216</span></span>
-<span><span class="co">#&gt; 5       -0.4053556         0.8024746 0.2904773 1.726146 3.346216</span></span>
-<span><span class="co">#&gt; 6       -0.4053556         0.8024746 0.2904773 1.726146 3.346216</span></span></code></pre></div>
+<span><span class="co">#&gt;   effect_reference effect_comparator         RD       RR       OR</span></span>
+<span><span class="co">#&gt; 1      0.462423258         0.6293681 0.03875729 1.063165 1.181689</span></span>
+<span><span class="co">#&gt; 2     -0.268335165         0.9382617 0.28543254 1.658717 3.342092</span></span>
+<span><span class="co">#&gt; 3     -0.099430283         0.9006639 0.23592303 1.496510 2.718538</span></span>
+<span><span class="co">#&gt; 4     -0.461826564         1.0180943 0.34804863 1.900391 4.392598</span></span>
+<span><span class="co">#&gt; 5     -0.467856705         1.1424686 0.37300893 1.968543 5.004439</span></span>
+<span><span class="co">#&gt; 6      0.006491154         0.7660774 0.18104897 1.360927 2.137392</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="visualization-functions-plot_ate-plot_apo-plot_est_box">Visualization functions: <code>plot_ATE</code>,
@@ -517,12 +518,12 @@ summary table of the model output from the function
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summary_bayesmsm.html">summary_bayesmsm</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                  mean sd       2.5%      97.5%</span></span>
-<span><span class="co">#&gt; Reference  -0.4053556  0 -0.4053556 -0.4053556</span></span>
-<span><span class="co">#&gt; Comparator  0.8024746  0  0.8024746  0.8024746</span></span>
-<span><span class="co">#&gt; RD          0.2904773  0  0.2904773  0.2904773</span></span>
-<span><span class="co">#&gt; RR          1.7261456  0  1.7261456  1.7261456</span></span>
-<span><span class="co">#&gt; OR          3.3462163  0  3.3462163  3.3462163</span></span></code></pre></div>
+<span><span class="co">#&gt;                  mean        sd        2.5%     97.5%</span></span>
+<span><span class="co">#&gt; Reference  -0.1760620 0.3274180 -0.75963321 0.4380595</span></span>
+<span><span class="co">#&gt; Comparator  0.7985806 0.2456904  0.36512879 1.1501634</span></span>
+<span><span class="co">#&gt; RD          0.2301848 0.1136792  0.01389312 0.4199952</span></span>
+<span><span class="co">#&gt; RR          1.5600476 0.3538751  1.02301493 2.3475914</span></span>
+<span><span class="co">#&gt; OR          2.9669176 1.4221489  1.06257769 6.1301699</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>

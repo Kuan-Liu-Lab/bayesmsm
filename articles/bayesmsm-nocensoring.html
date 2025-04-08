@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bayesmsm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
     <li><a class="dropdown-item" href="../articles/bayesmsm-nocensoring.html">`bayesmsm` for longitudinal data without right-censoring</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -378,21 +379,21 @@ computation (default is 4).</li>
 <span>                           family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
 <span>                           data <span class="op">=</span> <span class="va">testdata</span>,</span>
 <span>                           wmean <span class="op">=</span> <span class="va">weights</span><span class="op">$</span><span class="va">weights</span>,</span>
-<span>                           nboot <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>                           nboot <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>                           optim_method <span class="op">=</span> <span class="st">"BFGS"</span>,</span>
-<span>                           parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                           parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                           seed <span class="op">=</span> <span class="fl">890123</span>,</span>
 <span>                           ncore <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 6</span></span>
-<span><span class="co">#&gt;  $ RD_mean    : num -3.15</span></span>
-<span><span class="co">#&gt;  $ RD_sd      : num 0.0955</span></span>
-<span><span class="co">#&gt;  $ RD_quantile: Named num [1:2] -3.35 -2.98</span></span>
+<span><span class="co">#&gt;  $ RD_mean    : num -3.25</span></span>
+<span><span class="co">#&gt;  $ RD_sd      : num 0</span></span>
+<span><span class="co">#&gt;  $ RD_quantile: Named num [1:2] -3.25 -3.25</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:2] "2.5%" "97.5%"</span></span>
-<span><span class="co">#&gt;  $ bootdata   :'data.frame': 100 obs. of  3 variables:</span></span>
-<span><span class="co">#&gt;   ..$ effect_reference : num [1:100] 2.24 2.3 2.29 2.34 2.4 ...</span></span>
-<span><span class="co">#&gt;   ..$ effect_comparator: num [1:100] -0.69 -0.886 -0.802 -0.836 -0.767 ...</span></span>
-<span><span class="co">#&gt;   ..$ RD               : num [1:100] -2.94 -3.18 -3.09 -3.17 -3.17 ...</span></span>
+<span><span class="co">#&gt;  $ bootdata   :'data.frame': 50 obs. of  3 variables:</span></span>
+<span><span class="co">#&gt;   ..$ effect_reference : num [1:50] 2.36 2.36 2.36 2.36 2.36 ...</span></span>
+<span><span class="co">#&gt;   ..$ effect_comparator: num [1:50] -0.891 -0.891 -0.891 -0.891 -0.891 ...</span></span>
+<span><span class="co">#&gt;   ..$ RD               : num [1:50] -3.25 -3.25 -3.25 -3.25 -3.25 ...</span></span>
 <span><span class="co">#&gt;  $ reference  : num [1:2] 0 0</span></span>
 <span><span class="co">#&gt;  $ comparator : num [1:2] 1 1</span></span></code></pre></div>
 <ul>
