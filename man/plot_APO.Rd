@@ -7,7 +7,7 @@
 plot_APO(input, effect_type, ...)
 }
 \arguments{
-\item{input}{A data frame or model object containing boostrap results.}
+\item{input}{A data frame or model object containing bootstrap results.}
 
 \item{effect_type}{A character string specifying which effect to plot (e.g., comparator or reference treatment sequences).}
 
@@ -17,7 +17,7 @@ plot_APO(input, effect_type, ...)
 A ggplot object representing density plot showing the distribution of the specified average potential outcome (reference or comparison).
 }
 \description{
-This function plots the density of APO for a specified effect type from bayesmsms output.
+This function plots the density of APO for a specified effect type from bayesmsm output.
 }
 \examples{
 testdata <- read.csv(system.file("extdata",

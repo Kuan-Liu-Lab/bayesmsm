@@ -15,7 +15,7 @@ plot_est_box(input, ...)
 A ggplot object presenting error bar plot of the mean effects and their 95\% credible intervals for comparator level, reference level, and ATE.
 }
 \description{
-This function plots the point estimates and 95\% credible intervals of ATE and APO from bayesmsms output.
+This function plots the point estimates and 95\% credible intervals of ATE and APO from bayesmsm output.
 }
 \examples{
 testdata <- read.csv(system.file("extdata",
