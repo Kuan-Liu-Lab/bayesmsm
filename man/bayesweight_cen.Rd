@@ -61,6 +61,5 @@ weights_cen <- bayesweight_cen(
                 n.thin = 1,
                 seed = 890123,
                 parallel = FALSE)
-weights_cen$weights
-cat(weights_cen$model_string)
+summary(weights_cen)
 }

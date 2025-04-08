@@ -54,6 +54,5 @@ weights <- bayesweight(trtmodel.list = list(
                        n.thin = 1,
                        seed = 890123,
                        parallel = FALSE)
-weights$weights
-cat(weights$model_string)
+summary(weights)
 }
