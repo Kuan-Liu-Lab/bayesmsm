@@ -126,13 +126,10 @@ treatment effects.</li>
 <p>Installation</p>
 <ul>
 <li>To install the bayesmsm package, you can use the
-<code>devtools</code> package to install it directly from GitHub:</li>
+<code>devtools</code> package to install it directly from GitHub.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Kuan-Liu-Lab/bayesmsm"</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Kuan-Liu-Lab/bayesmsm" class="external-link">bayesmsm</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="simulated-observational-data-with-right-censoring">Simulated observational data with right-censoring<a class="anchor" aria-label="anchor" href="#simulated-observational-data-with-right-censoring"></a>
@@ -208,8 +205,8 @@ all records at or after visit 1 were censored.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># simulating causal data with censoring;</span></span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># example simulated causal data with censoring;</span></span>
 <span><span class="va">simdat_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sim_causal.csv"</span>, package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># look at the data;</span></span>
@@ -265,7 +262,7 @@ MCMC chains in parallel. Default is TRUE.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bayesweight_cen.html">bayesweight_cen</a></span><span class="op">(</span>trtmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">A1</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span>,</span>
 <span>                                                <span class="va">A2</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span>,</span>
 <span>                                                <span class="va">A3</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">L13</span> <span class="op">+</span> <span class="va">L23</span> <span class="op">+</span> <span class="va">A2</span><span class="op">)</span>,</span>
@@ -300,7 +297,7 @@ censoring effects as well as the JAGS model.</p>
 <li>We can print and view the JAGS model stored in
 <code>model_string</code> from the above function output:</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">weights_cen</span><span class="op">$</span><span class="va">model_string</span><span class="op">)</span></span>
 <span><span class="co">#&gt; model{</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -404,7 +401,7 @@ with respect to the causal effect using <code>bayesmsm</code><a class="anchor" a
 fit the Bayesian Marginal Structural Model and estimate the marginal
 treatment effects using the <code>bayesmsm</code> function as before. We
 specify the outcome model and other relevant parameters.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove all NAs (censored observations) from the original dataset and weights</span></span>
 <span><span class="va">simdat_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">simdat_cen</span><span class="op">)</span></span>
 <span><span class="va">weights_cen</span><span class="op">$</span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">weights_cen</span><span class="op">$</span><span class="va">weights</span><span class="op">)</span></span>
@@ -450,18 +447,22 @@ also includes a data frame containing the bootstrap samples for the
 reference effect, comparator effect, RD, RR, and OR, as well as the
 reference and comparator levels chosen by the user.</p>
 <ul>
-<li>We can extract and visualize the results as follows:</li>
+<li>Summary function to generate result table from <code>bayesmsm</code>
+<ul>
+<li>The <code>summary_bayesmsm</code> function automatically generates a
+summary table of the model output from the function
+<code>bayesmsm</code>.</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extract results</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">model</span><span class="op">$</span><span class="va">bootdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   effect_reference effect_comparator         RD       RR       OR</span></span>
-<span><span class="co">#&gt; 1      0.462423258         0.6293681 0.03875729 1.063165 1.181689</span></span>
-<span><span class="co">#&gt; 2     -0.268335165         0.9382617 0.28543254 1.658717 3.342092</span></span>
-<span><span class="co">#&gt; 3     -0.099430283         0.9006639 0.23592303 1.496510 2.718538</span></span>
-<span><span class="co">#&gt; 4     -0.461826564         1.0180943 0.34804863 1.900391 4.392598</span></span>
-<span><span class="co">#&gt; 5     -0.467856705         1.1424686 0.37300893 1.968543 5.004439</span></span>
-<span><span class="co">#&gt; 6      0.006491154         0.7660774 0.18104897 1.360927 2.137392</span></span></code></pre></div>
+</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/summary_bayesmsm.html">summary_bayesmsm</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                  mean        sd        2.5%     97.5%</span></span>
+<span><span class="co">#&gt; Reference  -0.1760620 0.3274180 -0.75963321 0.4380595</span></span>
+<span><span class="co">#&gt; Comparator  0.7985806 0.2456904  0.36512879 1.1501634</span></span>
+<span><span class="co">#&gt; RD          0.2301848 0.1136792  0.01389312 0.4199952</span></span>
+<span><span class="co">#&gt; RR          1.5600476 0.3538751  1.02301493 2.3475914</span></span>
+<span><span class="co">#&gt; OR          2.9669176 1.4221489  1.06257769 6.1301699</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="visualization-functions-plot_ate-plot_apo-plot_est_box">Visualization functions: <code>plot_ATE</code>,
@@ -478,7 +479,7 @@ ATE with its 95% credible interval.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_ATE.html">plot_ATE</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <p><img src="bayesmsm-censoring_files/figure-html/unnamed-chunk-8-1.png" width="864" style="display: block; margin: auto;"></p>
 <ul>
@@ -489,10 +490,10 @@ the reference and comparator level effects.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_APO.html">plot_APO</a></span><span class="op">(</span><span class="va">model</span>, effect_type <span class="op">=</span> <span class="st">"effect_comparator"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="bayesmsm-censoring_files/figure-html/unnamed-chunk-9-1.png" width="864" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_APO.html">plot_APO</a></span><span class="op">(</span><span class="va">model</span>, effect_type <span class="op">=</span> <span class="st">"effect_reference"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="bayesmsm-censoring_files/figure-html/unnamed-chunk-9-2.png" width="864" style="display: block; margin: auto;"></p>
 <ul>
@@ -504,34 +505,14 @@ samples.</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_est_box.html">plot_est_box</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <p><img src="bayesmsm-censoring_files/figure-html/unnamed-chunk-10-1.png" width="864" style="display: block; margin: auto;"></p>
-<ul>
-<li>Summary function to generate result table from <code>bayesmsm</code>
-<ul>
-<li>The <code>summary_bayesmsm</code> function automatically generates a
-summary table of the model output from the function
-<code>bayesmsm</code>.</li>
-</ul>
-</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/summary_bayesmsm.html">summary_bayesmsm</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                  mean        sd        2.5%     97.5%</span></span>
-<span><span class="co">#&gt; Reference  -0.1760620 0.3274180 -0.75963321 0.4380595</span></span>
-<span><span class="co">#&gt; Comparator  0.7985806 0.2456904  0.36512879 1.1501634</span></span>
-<span><span class="co">#&gt; RD          0.2301848 0.1136792  0.01389312 0.4199952</span></span>
-<span><span class="co">#&gt; RR          1.5600476 0.3538751  1.02301493 2.3475914</span></span>
-<span><span class="co">#&gt; OR          2.9669176 1.4221489  1.06257769 6.1301699</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
 </h2>
 <ul>
-<li>Liu, K. (2021). Bayesian causal inference with longitudinal data.
-Tspace.library.utoronto.ca. <a href="https://tspace.library.utoronto.ca/handle/1807/109330" class="external-link uri">https://tspace.library.utoronto.ca/handle/1807/109330</a>
-</li>
 <li>Saarela, O., Stephens, D. A., Moodie, E. E. M., &amp; Klein, M. B.
 (2015). On Bayesian estimation of marginal structural models.
 Biometrics, 71(2), 279–288. <a href="https://doi.org/10.1111/biom.12269" class="external-link uri">https://doi.org/10.1111/biom.12269</a>
