@@ -89,9 +89,8 @@ using posterior samples of the
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
 via fitting a series of logistic regressions in a Bayesian framework.
-The package incorporates both Inverse Probability of Treatment Weighting
-(IPTW) and Inverse Probability of Censoring Weighting (IPCW) to handle
-longitudinal data without and with right-censoring. For Step 2,
+The package is able to handle longitudinal data without and with
+right-censoring. For Step 2,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>n</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>v</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P_n(v_{ij})</annotation></semantics></math>
 is estimated via non-parametric Bayesian bootstrap with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mi>i</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Dir(1,...,1)</annotation></semantics></math>
@@ -126,7 +125,7 @@ treatment effects.</li>
 <p>Installation</p>
 <ul>
 <li>To install the bayesmsm package, you can use the
-<code>devtools</code> package to install it directly from GitHub</li>
+<code>devtools</code> package to install it directly from GitHub.</li>
 </ul>
 </li>
 </ul>
@@ -246,10 +245,10 @@ MCMC chains in parallel. Default is TRUE.</li>
 <span><span class="co">#&gt;    Total graph size: 21040</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Initializing model</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 2</span></span>
-<span><span class="co">#&gt;  $ weights     : num [1:1000] 1.234 1.191 1.045 0.824 0.798 ...</span></span>
-<span><span class="co">#&gt;  $ model_string: chr "model{\n#N = nobs\nfor(i in 1:N){\n\n# visit 1;\n# marginal treatment assignment model, visit 1;\na_1s[i] ~ dbe"| __truncated__</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span></span>
+<span><span class="co">#&gt;              Length Class  Mode     </span></span>
+<span><span class="co">#&gt; weights      1000   -none- numeric  </span></span>
+<span><span class="co">#&gt; model_string    1   -none- character</span></span></code></pre></div>
 <ul>
 <li>It returns a list containing:
 <ul>
@@ -338,6 +337,13 @@ no treatment (default is a vector of all zeros).</li>
 <code>comparator</code>: The comparison intervention across all
 visits, typically represented by a vector of ones indicating full
 treatment (default is a vector of all ones).</li>
+<li>
+<code>treatment_effect_type</code>: A character string specifying
+the type of treatment effect to estimate. Options are “sq” for
+sequential treatment effects, which estimates effects for specific
+treatment sequences across visits, and “cum” for cumulative treatment
+effects, which assumes a single cumulative treatment variable
+representing the total exposure. The default is “sq”.</li>
 <li>
 <code>family</code>: Specifies the outcome distribution family; use
 “gaussian” for continuous outcomes or “binomial” for binary outcomes

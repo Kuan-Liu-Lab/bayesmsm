@@ -89,9 +89,8 @@ using posterior samples of the
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
 via fitting a series of logistic regressions in a Bayesian framework.
-The package incorporates both Inverse Probability of Treatment Weighting
-(IPTW) and Inverse Probability of Censoring Weighting (IPCW) to handle
-longitudinal data without and with right-censoring. For Step 2,
+The package is able to handle longitudinal data without and with
+right-censoring. For Step 2,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>n</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>v</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P_n(v_{ij})</annotation></semantics></math>
 is estimated via non-parametric Bayesian bootstrap with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mi>i</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Dir(1,...,1)</annotation></semantics></math>
@@ -401,6 +400,58 @@ with respect to the causal effect using <code>bayesmsm</code><a class="anchor" a
 fit the Bayesian Marginal Structural Model and estimate the marginal
 treatment effects using the <code>bayesmsm</code> function as before. We
 specify the outcome model and other relevant parameters.</p>
+<ul>
+<li>Parameters Description:
+<ul>
+<li>
+<code>ymodel</code>: A formula representing the outcome model, which
+can include interactions and functions of covariates.</li>
+<li>
+<code>nvisit</code>: Specifies the number of visits or time points
+considered in the model.</li>
+<li>
+<code>reference</code>: The baseline or reference intervention
+across all visits, typically represented by a vector of zeros indicating
+no treatment (default is a vector of all zeros).</li>
+<li>
+<code>comparator</code>: The comparison intervention across all
+visits, typically represented by a vector of ones indicating full
+treatment (default is a vector of all ones).</li>
+<li>
+<code>treatment_effect_type</code>: A character string specifying
+the type of treatment effect to estimate. Options are “sq” for
+sequential treatment effects, which estimates effects for specific
+treatment sequences across visits, and “cum” for cumulative treatment
+effects, which assumes a single cumulative treatment variable
+representing the total exposure. The default is “sq”.</li>
+<li>
+<code>family</code>: Specifies the outcome distribution family; use
+“gaussian” for continuous outcomes or “binomial” for binary outcomes
+(default is “gaussian”).</li>
+<li>
+<code>data</code>: The dataset containing all variables required for
+the model.</li>
+<li>
+<code>wmean</code>: A vector of treatment assignment weights.
+Default is a vector of ones, implying equal weighting.</li>
+<li>
+<code>nboot</code>: The number of bootstrap iterations to perform
+for estimating the uncertainty around the causal estimates.</li>
+<li>
+<code>optim_method</code>: The optimization method used to find the
+best parameters in the model (default is ‘BFGS’).</li>
+<li>
+<code>seed</code>: A seed value to ensure reproducibility of
+results.</li>
+<li>
+<code>parallel</code>: A logical flag indicating whether to perform
+computations in parallel (default is TRUE).</li>
+<li>
+<code>ncore</code>: The number of cores to use for parallel
+computation (default is 4).</li>
+</ul>
+</li>
+</ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove all NAs (censored observations) from the original dataset and weights</span></span>
 <span><span class="va">simdat_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">simdat_cen</span><span class="op">)</span></span>
