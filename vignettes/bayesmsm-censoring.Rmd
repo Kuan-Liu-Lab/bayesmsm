@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
   - Step 1. Bayesian treatment effect weight estimation
   - Step 2. Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect
   
-- For Step 1, we estimate treatment weights $w_{ij}$ using posterior samples of the $\alpha$ and $\beta$ via fitting a series of logistic regressions in a Bayesian framework. The package incorporates both Inverse Probability of Treatment Weighting (IPTW) and Inverse Probability of Censoring Weighting (IPCW) to handle longitudinal data without and with right-censoring. For Step 2, $P_n(v_{ij})$ is estimated via non-parametric Bayesian bootstrap with $Dir(1,...,1)$ sampling weights.
+- For Step 1, we estimate treatment weights $w_{ij}$ using posterior samples of the $\alpha$ and $\beta$ via fitting a series of logistic regressions in a Bayesian framework. The package is able to handle longitudinal data without and with right-censoring. For Step 2, $P_n(v_{ij})$ is estimated via non-parametric Bayesian bootstrap with $Dir(1,...,1)$ sampling weights.
 
 - The main functions in this package include:
   
@@ -121,6 +121,21 @@ cat(weights_cen$model_string)
 # Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect using `bayesmsm`
 
 Using the weights estimated by `bayesweight_cen`, we now fit the Bayesian Marginal Structural Model and estimate the marginal treatment effects using the `bayesmsm` function as before. We specify the outcome model and other relevant parameters.
+
+- Parameters Description:
+  - `ymodel`: A formula representing the outcome model, which can include interactions and functions of covariates.
+  - `nvisit`: Specifies the number of visits or time points considered in the model.
+  - `reference`: The baseline or reference intervention across all visits, typically represented by a vector of zeros indicating no treatment (default is a vector of all zeros).
+  - `comparator`: The comparison intervention across all visits, typically represented by a vector of ones indicating full treatment (default is a vector of all ones).
+  - `treatment_effect_type`: A character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".
+  - `family`: Specifies the outcome distribution family; use "gaussian" for continuous outcomes or "binomial" for binary outcomes (default is "gaussian").
+  - `data`: The dataset containing all variables required for the model.
+  - `wmean`: A vector of treatment assignment weights. Default is a vector of ones, implying equal weighting.
+  - `nboot`: The number of bootstrap iterations to perform for estimating the uncertainty around the causal estimates.
+  - `optim_method`: The optimization method used to find the best parameters in the model (default is 'BFGS').
+  - `seed`: A seed value to ensure reproducibility of results.
+  - `parallel`: A logical flag indicating whether to perform computations in parallel (default is TRUE).
+  - `ncore`: The number of cores to use for parallel computation (default is 4).
 
 ```{r}
 # Remove all NAs (censored observations) from the original dataset and weights

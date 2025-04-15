@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
   - Step 1. Bayesian treatment effect weight estimation
   - Step 2. Bayesian non-parametric bootstrap to maximize the utility function with respect to the causal effect
   
-- For Step 1, we estimate treatment weights $w_{ij}$ using posterior samples of the $\alpha$ and $\beta$ via fitting a series of logistic regressions in a Bayesian framework. The package incorporates both Inverse Probability of Treatment Weighting (IPTW) and Inverse Probability of Censoring Weighting (IPCW) to handle longitudinal data without and with right-censoring. For Step 2, $P_n(v_{ij})$ is estimated via non-parametric Bayesian bootstrap with $Dir(1,...,1)$ sampling weights.
+- For Step 1, we estimate treatment weights $w_{ij}$ using posterior samples of the $\alpha$ and $\beta$ via fitting a series of logistic regressions in a Bayesian framework. The package is able to handle longitudinal data without and with right-censoring. For Step 2, $P_n(v_{ij})$ is estimated via non-parametric Bayesian bootstrap with $Dir(1,...,1)$ sampling weights.
 
 - The main functions in this package include:
 
@@ -41,7 +41,7 @@ knitr::opts_chunk$set(
 
 - Installation
 
-  - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub
+  - To install the bayesmsm package, you can use the `devtools` package to install it directly from GitHub.
 
 ```{r, warning = FALSE, results=FALSE, force=TRUE, include=FALSE}
 if (!requireNamespace("bayesmsm", quietly = TRUE)) {
@@ -110,7 +110,7 @@ weights <- bayesweight(trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
                         n.thin = 1,
                         seed = 890123,
                         parallel = FALSE)
-str(weights)
+summary(weights)
 ```
 
 - It returns a list containing:
@@ -133,6 +133,7 @@ The function `bayesmsm` estimates causal effect of time-varying treatments. It u
   - `nvisit`: Specifies the number of visits or time points considered in the model.
   - `reference`: The baseline or reference intervention across all visits, typically represented by a vector of zeros indicating no treatment (default is a vector of all zeros).
   - `comparator`: The comparison intervention across all visits, typically represented by a vector of ones indicating full treatment (default is a vector of all ones).
+  - `treatment_effect_type`: A character string specifying the type of treatment effect to estimate. Options are "sq" for sequential treatment effects, which estimates effects for specific treatment sequences across visits, and "cum" for cumulative treatment effects, which assumes a single cumulative treatment variable representing the total exposure. The default is "sq".
   - `family`: Specifies the outcome distribution family; use "gaussian" for continuous outcomes or "binomial" for binary outcomes (default is "gaussian").
   - `data`: The dataset containing all variables required for the model.
   - `wmean`: A vector of treatment assignment weights. Default is a vector of ones, implying equal weighting.
