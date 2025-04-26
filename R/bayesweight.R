@@ -196,7 +196,8 @@ bayesweight <- function(trtmodel.list,
       # Add bs parameters for marginal models
       all_parameters <- c(all_parameters, sprintf("bs%d0", v))
       if (v > 1) {
-        all_parameters <- c(all_parameters, sprintf("bs%d1", v))
+        extra_bs <- sapply(1:(v-1), function(j) sprintf("bs%d%d", v, j))
+        all_parameters <- c(all_parameters, extra_bs)
       }
 
       # Add b parameters for conditional models
@@ -343,7 +344,7 @@ bayesweight <- function(trtmodel.list,
                             parameter_map) # This produces the correct indices that corresponds to the predictors in the treatment models
 
     beta_indices_s <- match(c(sprintf("bs%d0", nvisit),
-                              if (nvisit > 1) sprintf("bs%d1", nvisit) else NULL),
+                              if (nvisit > 1) sapply(1:(nvisit-1), function(j) sprintf("bs%d%d", nvisit, j))),
                             parameter_map)
 
     for (j in 1:n_posterior) {
