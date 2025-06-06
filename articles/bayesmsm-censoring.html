@@ -168,13 +168,10 @@ at the third visit. The treatment variables are represented as
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>3</mn></mrow><annotation encoding="application/x-tex">A3</annotation></semantics></math>
 for the three visits. Right-censoring indicators are represented as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">C1</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">C2</annotation></semantics></math>,
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mn>3</mn></mrow><annotation encoding="application/x-tex">C3</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>.
 For example, for observations with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mn>1</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">C1 = 1</annotation></semantics></math>,
-all records at or after visit 1 were censored.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">C = 1</annotation></semantics></math>,
+all records at or after visit 3 were censored.</p>
 <table class="table">
 <caption>Description of Simulated Right-Censored Dataset</caption>
 <thead><tr class="header">
@@ -195,8 +192,8 @@ all records at or after visit 1 were censored.</p>
 <td>Treatment assignments (binary)</td>
 </tr>
 <tr class="even">
-<td>C1, C2, C3</td>
-<td>Right-censoring indicators</td>
+<td>C</td>
+<td>Right-censoring indicator</td>
 </tr>
 <tr class="odd">
 <td>Y</td>
@@ -205,18 +202,20 @@ all records at or after visit 1 were censored.</p>
 </tbody>
 </table>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># example simulated causal data with censoring;</span></span>
-<span><span class="va">simdat_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sim_causal.csv"</span>, package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Example simulated causal data with censoring</span></span>
+<span><span class="va">simdat_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span>
+<span>                                   <span class="st">"sim_causal_cen.csv"</span>,</span>
+<span>                                   package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># look at the data;</span></span>
+<span><span class="co"># Look at the data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">simdat_cen</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   L11         L21 A1 L12        L22 A2 L13        L23 A3 C1 C2 C3  Y</span></span>
-<span><span class="co">#&gt; 1   0 -0.37560287 NA  NA         NA NA  NA         NA NA  1 NA NA NA</span></span>
-<span><span class="co">#&gt; 2   1 -0.56187636 NA  NA         NA NA  NA         NA NA  1 NA NA NA</span></span>
-<span><span class="co">#&gt; 3   0 -0.34391723  1   1 -0.8053290  1   1 -2.5508298  1  0  0  0  0</span></span>
-<span><span class="co">#&gt; 4   1  0.09049665  1   1 -1.7754302  1   1 -2.2849997  0  0  0  0  0</span></span>
-<span><span class="co">#&gt; 5   1  1.59850877  1   1  0.5604468  1   0  2.1787137  0  0  0  0  1</span></span>
-<span><span class="co">#&gt; 6   0 -0.08856511  0   0  1.4798603  0   1  0.7025151  0  0  0  0  1</span></span></code></pre></div>
+<span><span class="co">#&gt;   L11         L21 A1 L12        L22 A2 L13         L23 A3 C Y</span></span>
+<span><span class="co">#&gt; 1   0 -0.37560287  0   1  0.8638998  1   1 -0.94685770  1 0 0</span></span>
+<span><span class="co">#&gt; 2   1 -0.56187636  0   1  0.1419673  1   1 -0.05470362  1 0 0</span></span>
+<span><span class="co">#&gt; 3   0 -0.34391723  1   1 -0.2383382  0   1 -1.02368364  1 0 1</span></span>
+<span><span class="co">#&gt; 4   1  0.09049665  1   1 -0.2686672  1   1 -1.36831768  1 0 1</span></span>
+<span><span class="co">#&gt; 5   1  1.59850877  0   1  1.8905777  1   1  1.01967345  1 0 0</span></span>
+<span><span class="co">#&gt; 6   0 -0.08856511  0   0 -1.0465424  0   1 -0.99889261  0 0 1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="bayesian-treatment-effect-weight-estimation-using-bayesweight_cen">Bayesian treatment effect weight estimation using
@@ -262,31 +261,35 @@ MCMC chains in parallel. Default is TRUE.</li>
 </li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">weights_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bayesweight_cen.html">bayesweight_cen</a></span><span class="op">(</span>trtmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">A1</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span>,</span>
-<span>                                                <span class="va">A2</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span>,</span>
-<span>                                                <span class="va">A3</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">L13</span> <span class="op">+</span> <span class="va">L23</span> <span class="op">+</span> <span class="va">A2</span><span class="op">)</span>,</span>
-<span>                           cenmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">C1</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span>,</span>
-<span>                                                <span class="va">C2</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">A1</span>,</span>
-<span>                                                <span class="va">C3</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A2</span><span class="op">)</span>,</span>
-<span>                           data <span class="op">=</span> <span class="va">simdat_cen</span>,</span>
-<span>                           n.chains <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                           n.iter <span class="op">=</span> <span class="fl">200</span>,</span>
-<span>                           n.burnin <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>                           n.thin <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                           seed <span class="op">=</span> <span class="fl">890123</span>,</span>
-<span>                           parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">weights_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bayesweight_cen.html">bayesweight_cen</a></span><span class="op">(</span></span>
+<span>  trtmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    <span class="va">A1</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span>,</span>
+<span>    <span class="va">A2</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span>,</span>
+<span>    <span class="va">A3</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">L13</span> <span class="op">+</span> <span class="va">L23</span> <span class="op">+</span> <span class="va">A2</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  cenmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    <span class="va">C</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">A2</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">simdat_cen</span>,</span>
+<span>  n.chains <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  n.iter <span class="op">=</span> <span class="fl">250</span>,</span>
+<span>  n.burnin <span class="op">=</span> <span class="fl">150</span>,</span>
+<span>  n.thin <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Compiling model graph</span></span>
 <span><span class="co">#&gt;    Resolving undeclared variables</span></span>
 <span><span class="co">#&gt;    Allocating nodes</span></span>
 <span><span class="co">#&gt; Graph information:</span></span>
-<span><span class="co">#&gt;    Observed stochastic nodes: 4836</span></span>
-<span><span class="co">#&gt;    Unobserved stochastic nodes: 44</span></span>
-<span><span class="co">#&gt;    Total graph size: 16501</span></span>
+<span><span class="co">#&gt;    Observed stochastic nodes: 3808</span></span>
+<span><span class="co">#&gt;    Unobserved stochastic nodes: 34</span></span>
+<span><span class="co">#&gt;    Total graph size: 14472</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Initializing model</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights_cen</span><span class="op">$</span><span class="va">weights</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span></span>
-<span><span class="co">#&gt;  0.3966  1.0348  1.7860  2.7652  3.5724 21.8808     136</span></span></code></pre></div>
+<span><span class="co">#&gt;  0.4738  1.0155  1.3540  1.5012  1.8578  6.1523      48</span></span></code></pre></div>
 <p>Similarly, the function will automatically run MCMC with JAGS based
 on the specified treatment and censoring model inputs, generating a JAGS
 model string as part of the function output. The function returns a list
@@ -305,14 +308,10 @@ censoring effects as well as the JAGS model.</p>
 <span><span class="co">#&gt; # conditional model;</span></span>
 <span><span class="co">#&gt; A1[i] ~ dbern(p1[i])</span></span>
 <span><span class="co">#&gt; logit(p1[i]) &lt;- b10 + b11*L11[i] + b12*L21[i]</span></span>
-<span><span class="co">#&gt; C1[i] ~ dbern(cp1[i])</span></span>
-<span><span class="co">#&gt; logit(cp1[i]) &lt;- s10 + s11*L11[i] + s12*L21[i]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # marginal model;</span></span>
 <span><span class="co">#&gt; A1s[i] ~ dbern(p1s[i])</span></span>
 <span><span class="co">#&gt; logit(p1s[i]) &lt;- bs10</span></span>
-<span><span class="co">#&gt; C1s[i] ~ dbern(cp1s[i])</span></span>
-<span><span class="co">#&gt; logit(cp1s[i]) &lt;- ts10</span></span>
 <span><span class="co">#&gt; }</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; for (i in 1:N2) {</span></span>
@@ -320,14 +319,10 @@ censoring effects as well as the JAGS model.</p>
 <span><span class="co">#&gt; # conditional model;</span></span>
 <span><span class="co">#&gt; A2[i] ~ dbern(p2[i])</span></span>
 <span><span class="co">#&gt; logit(p2[i]) &lt;- b20 + b21*L11[i] + b22*L21[i] + b23*L12[i] + b24*L22[i] + b25*A1[i]</span></span>
-<span><span class="co">#&gt; C2[i] ~ dbern(cp2[i])</span></span>
-<span><span class="co">#&gt; logit(cp2[i]) &lt;- s20 + s21*L11[i] + s22*L21[i] + s23*A1[i]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # marginal model;</span></span>
 <span><span class="co">#&gt; A2s[i] ~ dbern(p2s[i])</span></span>
 <span><span class="co">#&gt; logit(p2s[i]) &lt;- bs20 + bs21*A1s[i]</span></span>
-<span><span class="co">#&gt; C2s[i] ~ dbern(cp2s[i])</span></span>
-<span><span class="co">#&gt; logit(cp2s[i]) &lt;- ts20 + ts21*A1s[i]</span></span>
 <span><span class="co">#&gt; }</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; for (i in 1:N3) {</span></span>
@@ -335,13 +330,13 @@ censoring effects as well as the JAGS model.</p>
 <span><span class="co">#&gt; # conditional model;</span></span>
 <span><span class="co">#&gt; A3[i] ~ dbern(p3[i])</span></span>
 <span><span class="co">#&gt; logit(p3[i]) &lt;- b30 + b31*L11[i] + b32*L21[i] + b33*L12[i] + b34*L22[i] + b35*A1[i] + b36*L13[i] + b37*L23[i] + b38*A2[i]</span></span>
-<span><span class="co">#&gt; C3[i] ~ dbern(cp3[i])</span></span>
-<span><span class="co">#&gt; logit(cp3[i]) &lt;- s30 + s31*L11[i] + s32*L21[i] + s33*A1[i] + s34*L12[i] + s35*L22[i] + s36*A2[i]</span></span>
+<span><span class="co">#&gt; C[i] ~ dbern(cp3[i])</span></span>
+<span><span class="co">#&gt; logit(cp3[i]) &lt;- s30 + s31*L11[i] + s32*L21[i] + s33*L12[i] + s34*L22[i] + s35*A1[i] + s36*A2[i]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # marginal model;</span></span>
 <span><span class="co">#&gt; A3s[i] ~ dbern(p3s[i])</span></span>
 <span><span class="co">#&gt; logit(p3s[i]) &lt;- bs30 + bs31*A1s[i] + bs32*A2s[i]</span></span>
-<span><span class="co">#&gt; C3s[i] ~ dbern(cp3s[i])</span></span>
+<span><span class="co">#&gt; Cs[i] ~ dbern(cp3s[i])</span></span>
 <span><span class="co">#&gt; logit(cp3s[i]) &lt;- ts30 + ts31*A1s[i] + ts32*A2s[i]</span></span>
 <span><span class="co">#&gt; }</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -349,25 +344,15 @@ censoring effects as well as the JAGS model.</p>
 <span><span class="co">#&gt; b10 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b11 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b12 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; s10 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; s11 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; s12 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; bs10 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; ts10 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b20 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b21 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b22 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b23 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b24 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b25 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; s20 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; s21 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; s22 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; s23 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; bs20 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; bs21 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; ts20 ~ dunif(-10, 10)</span></span>
-<span><span class="co">#&gt; ts21 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b30 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b31 ~ dunif(-10, 10)</span></span>
 <span><span class="co">#&gt; b32 ~ dunif(-10, 10)</span></span>
@@ -457,38 +442,38 @@ computation (default is 4).</li>
 <span><span class="va">simdat_cen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">simdat_cen</span><span class="op">)</span></span>
 <span><span class="va">weights_cen</span><span class="op">$</span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">weights_cen</span><span class="op">$</span><span class="va">weights</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bayesmsm.html">bayesmsm</a></span><span class="op">(</span>ymodel <span class="op">=</span> <span class="va">Y</span> <span class="op">~</span> <span class="va">A1</span><span class="op">+</span><span class="va">A2</span><span class="op">+</span><span class="va">A3</span>,</span>
-<span>                  nvisit <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>                  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                  comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                  family <span class="op">=</span> <span class="st">"binomial"</span>,</span>
-<span>                  data <span class="op">=</span> <span class="va">simdat_cen</span>,</span>
-<span>                  wmean <span class="op">=</span> <span class="va">weights_cen</span><span class="op">$</span><span class="va">weights</span>,</span>
-<span>                  nboot <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>                  optim_method <span class="op">=</span> <span class="st">"BFGS"</span>,</span>
-<span>                  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
-<span>                  ncore <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bayesmsm.html">bayesmsm</a></span><span class="op">(</span>ymodel <span class="op">=</span> <span class="va">Y</span> <span class="op">~</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">A2</span> <span class="op">+</span> <span class="va">A3</span>,</span>
+<span>  nvisit <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"binomial"</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">simdat_cen</span>,</span>
+<span>  wmean <span class="op">=</span> <span class="va">weights_cen</span><span class="op">$</span><span class="va">weights</span>,</span>
+<span>  nboot <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  optim_method <span class="op">=</span> <span class="st">"BFGS"</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
+<span>  ncore <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 12</span></span>
-<span><span class="co">#&gt;  $ RD_mean    : num 0.23</span></span>
-<span><span class="co">#&gt;  $ RR_mean    : num 1.56</span></span>
-<span><span class="co">#&gt;  $ OR_mean    : num 2.97</span></span>
-<span><span class="co">#&gt;  $ RD_sd      : num 0.114</span></span>
-<span><span class="co">#&gt;  $ RR_sd      : num 0.354</span></span>
-<span><span class="co">#&gt;  $ OR_sd      : num 1.42</span></span>
-<span><span class="co">#&gt;  $ RD_quantile: Named num [1:2] 0.0139 0.42</span></span>
+<span><span class="co">#&gt;  $ RD_mean    : num 0.316</span></span>
+<span><span class="co">#&gt;  $ RR_mean    : num 1.93</span></span>
+<span><span class="co">#&gt;  $ OR_mean    : num 4.12</span></span>
+<span><span class="co">#&gt;  $ RD_sd      : num 0.0902</span></span>
+<span><span class="co">#&gt;  $ RR_sd      : num 0.423</span></span>
+<span><span class="co">#&gt;  $ OR_sd      : num 1.87</span></span>
+<span><span class="co">#&gt;  $ RD_quantile: Named num [1:2] 0.142 0.479</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:2] "2.5%" "97.5%"</span></span>
-<span><span class="co">#&gt;  $ RR_quantile: Named num [1:2] 1.02 2.35</span></span>
+<span><span class="co">#&gt;  $ RR_quantile: Named num [1:2] 1.3 2.91</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:2] "2.5%" "97.5%"</span></span>
-<span><span class="co">#&gt;  $ OR_quantile: Named num [1:2] 1.06 6.13</span></span>
+<span><span class="co">#&gt;  $ OR_quantile: Named num [1:2] 1.78 8.18</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:2] "2.5%" "97.5%"</span></span>
 <span><span class="co">#&gt;  $ bootdata   :'data.frame': 50 obs. of  5 variables:</span></span>
-<span><span class="co">#&gt;   ..$ effect_reference : num [1:50] 0.4624 -0.2683 -0.0994 -0.4618 -0.4679 ...</span></span>
-<span><span class="co">#&gt;   ..$ effect_comparator: num [1:50] 0.629 0.938 0.901 1.018 1.142 ...</span></span>
-<span><span class="co">#&gt;   ..$ RD               : num [1:50] 0.0388 0.2854 0.2359 0.348 0.373 ...</span></span>
-<span><span class="co">#&gt;   ..$ RR               : num [1:50] 1.06 1.66 1.5 1.9 1.97 ...</span></span>
-<span><span class="co">#&gt;   ..$ OR               : num [1:50] 1.18 3.34 2.72 4.39 5 ...</span></span>
+<span><span class="co">#&gt;   ..$ effect_reference : num [1:50] -0.675 -0.855 -0.302 -0.37 -0.247 ...</span></span>
+<span><span class="co">#&gt;   ..$ effect_comparator: num [1:50] 0.959 0.874 0.451 0.624 0.471 ...</span></span>
+<span><span class="co">#&gt;   ..$ RD               : num [1:50] 0.385 0.407 0.186 0.243 0.177 ...</span></span>
+<span><span class="co">#&gt;   ..$ RR               : num [1:50] 2.14 2.36 1.44 1.59 1.4 ...</span></span>
+<span><span class="co">#&gt;   ..$ OR               : num [1:50] 5.12 5.63 2.12 2.7 2.05 ...</span></span>
 <span><span class="co">#&gt;  $ reference  : num [1:3] 0 0 0</span></span>
 <span><span class="co">#&gt;  $ comparator : num [1:3] 1 1 1</span></span></code></pre></div>
 <p>The <code>bayesmsm</code> function returns a model object containing
@@ -508,12 +493,12 @@ summary table of the model output from the function
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summary_bayesmsm.html">summary_bayesmsm</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                  mean        sd        2.5%     97.5%</span></span>
-<span><span class="co">#&gt; Reference  -0.1760620 0.3274180 -0.75963321 0.4380595</span></span>
-<span><span class="co">#&gt; Comparator  0.7985806 0.2456904  0.36512879 1.1501634</span></span>
-<span><span class="co">#&gt; RD          0.2301848 0.1136792  0.01389312 0.4199952</span></span>
-<span><span class="co">#&gt; RR          1.5600476 0.3538751  1.02301493 2.3475914</span></span>
-<span><span class="co">#&gt; OR          2.9669176 1.4221489  1.06257769 6.1301699</span></span></code></pre></div>
+<span><span class="co">#&gt;                  mean         sd       2.5%      97.5%</span></span>
+<span><span class="co">#&gt; Reference  -0.5672743 0.25079116 -1.1264718 -0.1564958</span></span>
+<span><span class="co">#&gt; Comparator  0.7625100 0.20650542  0.4237904  1.2249920</span></span>
+<span><span class="co">#&gt; RD          0.3163870 0.09023622  0.1420488  0.4791069</span></span>
+<span><span class="co">#&gt; RR          1.9306984 0.42325567  1.3024641  2.9117071</span></span>
+<span><span class="co">#&gt; OR          4.1174413 1.87272296  1.7781551  8.1830959</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="visualization-functions-plot_ate-plot_apo-plot_est_box">Visualization functions: <code>plot_ATE</code>,

@@ -99,28 +99,35 @@
 <code class="sourceCode R"><span><span class="co"># Load example data without right-censoring</span></span>
 <span><span class="va">testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"continuous_outcome_data.csv"</span>, package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Load example data without right-censoring</span></span>
+<span><span class="va">testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span>
+<span>                                 <span class="st">"sim_causal.csv"</span>,</span>
+<span>                                 package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Calculate Bayesian weights</span></span>
 <span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bayesweight.html">bayesweight</a></span><span class="op">(</span></span>
 <span>  trtmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="va">a_1</span> <span class="op">~</span> <span class="va">w1</span> <span class="op">+</span> <span class="va">w2</span> <span class="op">+</span> <span class="va">L1_1</span> <span class="op">+</span> <span class="va">L2_1</span>,</span>
-<span>    <span class="va">a_2</span> <span class="op">~</span> <span class="va">w1</span> <span class="op">+</span> <span class="va">w2</span> <span class="op">+</span> <span class="va">L1_1</span> <span class="op">+</span> <span class="va">L2_1</span> <span class="op">+</span> <span class="va">L1_2</span> <span class="op">+</span> <span class="va">L2_2</span> <span class="op">+</span> <span class="va">a_1</span></span>
+<span>    <span class="va">A1</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span>,</span>
+<span>    <span class="va">A2</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span>,</span>
+<span>    <span class="va">A3</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">L13</span> <span class="op">+</span> <span class="va">L23</span> <span class="op">+</span> <span class="va">A2</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">testdata</span>,</span>
+<span>  n.chains <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  n.iter <span class="op">=</span> <span class="fl">250</span>,</span>
 <span>  n.burnin <span class="op">=</span> <span class="fl">150</span>,</span>
 <span>  n.thin <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  n.chains <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Perform Bayesian non-parametric bootstrap</span></span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bayesmsm.html">bayesmsm</a></span><span class="op">(</span></span>
-<span>  ymodel <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">a_1</span> <span class="op">+</span> <span class="va">a_2</span>,</span>
-<span>  nvisit <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>  ymodel <span class="op">=</span> <span class="va">Y</span> <span class="op">~</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">A2</span> <span class="op">+</span> <span class="va">A3</span>,</span>
+<span>  nvisit <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  treatment_effect_type <span class="op">=</span> <span class="st">"sq"</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"binomial"</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">testdata</span>,</span>
 <span>  wmean <span class="op">=</span> <span class="va">weights</span><span class="op">$</span><span class="va">weights</span>,</span>
 <span>  nboot <span class="op">=</span> <span class="fl">1000</span>,</span>
