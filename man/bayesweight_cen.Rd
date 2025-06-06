@@ -43,17 +43,14 @@ This function estimates Bayesian importance sampling weights for treatment model
 }
 \examples{
 simdat_cen <- read.csv(system.file("extdata",
-                       "sim_causal.csv",
+                       "sim_causal_cen.csv",
                        package = "bayesmsm"))
 weights_cen <- bayesweight_cen(
                 trtmodel.list = list(
                 A1 ~ L11 + L21,
                 A2 ~ L11 + L21 + L12 + L22 + A1,
                 A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
-                cenmodel.list = list(
-                C1 ~ L11 + L21,
-                C2 ~ L11 + L21 + A1,
-                C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
+                cenmodel.list = list(C ~ L11 + L21 + A1 + L12 + L22 + A2),
                 data = simdat_cen,
                 n.chains = 1,
                 n.iter = 20,

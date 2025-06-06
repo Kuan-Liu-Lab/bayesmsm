@@ -59,30 +59,34 @@ Here are some examples demonstrating how to use the `bayesmsm` package:
 
 ```{r echo=TRUE, eval=FALSE}
 # Load example data without right-censoring
-testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+testdata <- read.csv(system.file("extdata",
+                                 "sim_causal.csv",
+                                 package = "bayesmsm"))
 
 # Calculate Bayesian weights
 weights <- bayesweight(
   trtmodel.list = list(
-    a_1 ~ w1 + w2 + L1_1 + L2_1,
-    a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1
+    A1 ~ L11 + L21,
+    A2 ~ L11 + L21 + L12 + L22 + A1,
+    A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2
   ),
   data = testdata,
+  n.chains = 2,
   n.iter = 250,
   n.burnin = 150,
   n.thin = 5,
-  n.chains = 2,
   seed = 890123,
   parallel = TRUE
 )
 
 # Perform Bayesian non-parametric bootstrap
 model <- bayesmsm(
-  ymodel = y ~ a_1 + a_2,
-  nvisit = 2,
-  reference = c(rep(0, 2)),
-  comparator = c(rep(1, 2)),
-  family = "gaussian",
+  ymodel = Y ~ A1 + A2 + A3,
+  nvisit = 3,
+  reference = c(rep(0,3)),
+  comparator = c(rep(1,3)),
+  treatment_effect_type = "sq",
+  family = "binomial",
   data = testdata,
   wmean = weights$weights,
   nboot = 1000,

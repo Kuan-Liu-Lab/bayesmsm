@@ -25,30 +25,14 @@
 #'
 #' @examples
 #' simdat_cen <- read.csv(system.file("extdata",
-#'                        "sim_causal.csv",
+#'                        "sim_causal_cen.csv",
 #'                        package = "bayesmsm"))
 #' weights_cen <- bayesweight_cen(
 #'                 trtmodel.list = list(
 #'                 A1 ~ L11 + L21,
 #'                 A2 ~ L11 + L21 + L12 + L22 + A1,
 #'                 A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
-#'                 cenmodel.list = list(
-#'                 C1 ~ L11 + L21,
-#'                 C2 ~ L11 + L21 + A1,
-#'                 C3 ~ L11 + L21 + A1 + L12 + L22 + A2),
-#'                 data = simdat_cen,
-#'                 n.chains = 1,
-#'                 n.iter = 20,
-#'                 n.burnin = 10,
-#'                 n.thin = 1,
-#'                 seed = 890123,
-#'                 parallel = FALSE)
-#' summary(weights_cen)
-#' simdat_cen <- read.csv("censoring_data.csv", header = TRUE, fileEncoding="UTF-8-BOM")
-#' weights_cen <- bayesweight_cen(
-#'                 trtmodel.list = list(a_1 ~ w1 + w2 + L1_1 + L2_1,
-#'                 a_2 ~ w1 + w2 + L1_1 + L2_1 + L1_2 + L2_2 + a_1),
-#'                 cenmodel.list = list(c ~ w1 + w2 + L1_1 + L2_1 + a_1),
+#'                 cenmodel.list = list(C ~ L11 + L21 + A1 + L12 + L22 + A2),
 #'                 data = simdat_cen,
 #'                 n.chains = 1,
 #'                 n.iter = 20,
@@ -120,12 +104,12 @@ bayesweight_cen <- function(trtmodel.list,
   cenmodel <- extract_variables_list(cenmodel.list)
   cenmodel_s <- extract_variables_list(cenmodel.list_s)
 
+  n_trt <- length(trtmodel.list)
+  n_cen <- length(cenmodel.list)
+  shift <- n_trt - n_cen      # how many early visits have no cen-model
+
   # Define JAGS model for treatment and censoring
   write_jags_model <- function(trtmodel.list, cenmodel.list) {
-
-    n_trt <- length(trtmodel.list)
-    n_cen <- length(cenmodel.list)
-    shift <- n_trt - n_cen      # how many early visits have no cen-model
 
     var_info_trt <- lapply(trtmodel.list, extract_variables_list)
     var_info_cen <- lapply(cenmodel.list, extract_variables_list)
@@ -134,16 +118,14 @@ bayesweight_cen <- function(trtmodel.list,
 
     for (v in seq_along(var_info_trt)) {
 
-      cen_idx <- v - shift
-      has_cen <- cen_idx >= 1 && cen_idx <= n_cen
+      ## ─── which censoring model (if any) belongs to this visit ─────
+      cen_idx <- v - shift                   # mapped index into cen-list
+      has_cen <- cen_idx >= 1 && cen_idx <= n_cen # TRUE if censoring exists
 
       visit_trt <- var_info_trt[[v]]
       response_trt <- visit_trt$response
       predictors_trt <- visit_trt$predictors
 
-      # visit_cen <- var_info_cen[[v]]
-      # response_cen <- visit_cen$response
-      # predictors_cen <- visit_cen$predictors
       if (has_cen) {
         visit_cen    <- var_info_cen[[cen_idx]]
         response_cen <- visit_cen$response
@@ -163,13 +145,6 @@ bayesweight_cen <- function(trtmodel.list,
       model_string <- paste0(model_string, "\n")
 
       # Censoring model
-      # model_string <- paste0(model_string,
-      #                        response_cen, "[i] ~ dbern(cp", v, "[i])\n",
-      #                        "logit(cp", v, "[i]) <- s", v, "0")
-      # for (p in seq_along(predictors_cen)) {
-      #   model_string <- paste0(model_string, " + s", v, p, "*", predictors_cen[p], "[i]")
-      # }
-      # model_string <- paste0(model_string, "\n")
       if (has_cen) {
         model_string <- paste0(model_string,
                                response_cen,"[i] ~ dbern(cp",v,"[i])\n",
@@ -193,16 +168,6 @@ bayesweight_cen <- function(trtmodel.list,
       model_string <- paste0(model_string, "\n")
 
       # Marginal censoring model
-      # model_string <- paste0(model_string,
-      #                        response_cen, "s[i] ~ dbern(cp", v, "s[i])\n",
-      #                        "logit(cp", v, "s[i]) <- ts", v, "0")
-      # if (v > 1) {
-      #   for (j in 1:(v - 1)) {
-      #     prev_response_trt <- var_info_trt[[j]]$response
-      #     model_string <- paste0(model_string, " + ts", v, j, "*", prev_response_trt, "s[i]")
-      #   }
-      # }
-      # model_string <- paste0(model_string, "\n}\n")
       if (has_cen) {
         model_string <- paste0(model_string,
                                response_cen,"s[i] ~ dbern(cp",v,"s[i])\n",
@@ -224,8 +189,9 @@ bayesweight_cen <- function(trtmodel.list,
     model_string <- paste0(model_string, "\n# Priors\n")
     for (v in seq_along(var_info_trt)) {
 
-      cen_idx <- v - shift
-      has_cen <- cen_idx >= 1 && cen_idx <= n_cen
+      ## ─── which censoring model (if any) belongs to this visit ─────
+      cen_idx <- v - shift                   # mapped index into cen-list
+      has_cen <- cen_idx >= 1 && cen_idx <= n_cen # TRUE if censoring exists
 
       num_preds_trt <- length(var_info_trt[[v]]$predictors)
       if (has_cen) {
@@ -238,9 +204,6 @@ bayesweight_cen <- function(trtmodel.list,
       }
 
       # Censoring priors
-      # for (p in 0:num_preds_cen) {
-      #   model_string <- paste0(model_string, "s", v, p, " ~ dunif(-10, 10)\n")
-      # }
       if (has_cen) {
         for (p in 0:num_preds_cen)
           model_string <- paste0(model_string,"s", v, p," ~ dunif(-10, 10)\n")
@@ -255,12 +218,6 @@ bayesweight_cen <- function(trtmodel.list,
       }
 
       # Marginal censoring priors
-      # model_string <- paste0(model_string, "ts", v, "0 ~ dunif(-10, 10)\n")
-      # if (v > 1) {
-      #   for (j in 1:(v - 1)) {
-      #     model_string <- paste0(model_string, "ts", v, j, " ~ dunif(-10, 10)\n")
-      #   }
-      # }
       if (has_cen) {
         model_string <- paste0(model_string,"ts", v, "0 ~ dunif(-10, 10)\n")
         if (v > 1) {
@@ -281,18 +238,15 @@ bayesweight_cen <- function(trtmodel.list,
   jags_model_parameter <- function(trtmodel.list,
                                    cenmodel.list){
 
-    n_trt <- length(trtmodel.list)
-    n_cen <- length(cenmodel.list)
-    shift <- n_trt - n_cen
-
     all_parameters <- c()
     var_info_trt <- lapply(trtmodel.list, extract_variables_list)
     var_info_cen <- lapply(cenmodel.list, extract_variables_list)
 
     for (v in seq_along(var_info_trt)) {
 
-      cen_idx <- v - shift
-      has_cen <- cen_idx >= 1 && cen_idx <= n_cen
+      ## ─── which censoring model (if any) belongs to this visit ─────
+      cen_idx <- v - shift                   # mapped index into cen-list
+      has_cen <- cen_idx >= 1 && cen_idx <= n_cen # TRUE if censoring exists
 
       visit_trt <- var_info_trt[[v]]
       response_trt <- visit_trt$response
@@ -339,8 +293,9 @@ bayesweight_cen <- function(trtmodel.list,
     # Priors section
     for (v in seq_along(var_info_trt)) {
 
-      cen_idx <- v - shift
-      has_cen <- cen_idx >= 1 && cen_idx <= n_cen
+      ## ─── which censoring model (if any) belongs to this visit ─────
+      cen_idx <- v - shift                   # mapped index into cen-list
+      has_cen <- cen_idx >= 1 && cen_idx <= n_cen # TRUE if censoring exists
 
       num_preds_trt <- length(var_info_trt[[v]]$predictors)
       if (has_cen) {
@@ -384,10 +339,6 @@ bayesweight_cen <- function(trtmodel.list,
   # Prepare data for JAGS
   prepare_jags_data <- function(data, trtmodel.list, cenmodel.list) {
 
-    n_trt  <- length(trtmodel.list)
-    n_cen  <- length(cenmodel.list)
-    shift  <- n_trt - n_cen
-
     variable_info_trt <- lapply(trtmodel.list, extract_variables_list)
     variable_info_cen <- lapply(cenmodel.list, extract_variables_list)
 
@@ -420,9 +371,10 @@ bayesweight_cen <- function(trtmodel.list,
       jags.data[[paste0(response_trt, "s")]] <- data[[response_trt]][!is.na(data[[response_trt]])] # Remove the NAs
 
       # Marginal Censoring History
-      # jags.data[[paste0("C", v, "s")]] <- data[[paste0("C", v)]][!is.na(data[[paste0("C", v)]])]
-      cen_idx <- v - shift
-      has_cen <- cen_idx >= 1 && cen_idx <= n_cen
+      ## ─── which censoring model (if any) belongs to this visit ─────
+      cen_idx <- v - shift                   # mapped index into cen-list
+      has_cen <- cen_idx >= 1 && cen_idx <= n_cen # TRUE if censoring exists
+
       if (has_cen) {
         response_cen <- variable_info_cen[[cen_idx]]$response
         jags.data[[paste0(response_cen, "s")]] <-
@@ -458,8 +410,6 @@ bayesweight_cen <- function(trtmodel.list,
     # Run JAGS model in parallel
     cl <- parallel::makeCluster(n.chains)
     doParallel::registerDoParallel(cl)
-
-    # jags.model.wd <- paste(getwd(), '/censoring_model.txt',sep='')
 
     posterior <- foreach::foreach(chain_idx=1:n.chains, .packages=c('R2jags'),
                                   .combine='rbind') %dopar%{
@@ -524,10 +474,6 @@ bayesweight_cen <- function(trtmodel.list,
   # Calculate the number of observations for the last visit (i.e. complete data)
   n_obs <- dim(data)[1]
 
-  # psc <- array(dim = c(n_visits, n_posterior, n_obs))
-  # psm <- array(dim = c(n_visits, n_posterior, n_obs))
-  # csc <- array(dim = c(n_visits, n_posterior, n_obs))
-  # csm <- array(dim = c(n_visits, n_posterior, n_obs))
   psc <- array(NA_real_, dim = c(n_visits, n_posterior, n_obs))
   psm <- array(NA_real_, dim = c(n_visits, n_posterior, n_obs))
   csc <- array(1,        dim = c(n_visits, n_posterior, n_obs))  # ← 1 by default
@@ -539,21 +485,14 @@ bayesweight_cen <- function(trtmodel.list,
   for (nvisit in 1:n_visits) {
 
     ## ─── which censoring model (if any) belongs to this visit ─────
-    n_trt <- length(trtmodel.list)
-    n_cen <- length(cenmodel.list)
-    shift <- n_trt - n_cen
     cen_idx <- nvisit - shift                   # mapped index into cen-list
     has_cen <- cen_idx >= 1 && cen_idx <= n_cen # TRUE if censoring exists
 
     predictors_c <- trtmodel[[nvisit]]$predictors
     predictors_s <- trtmodel_s[[nvisit]]$predictors
-    # predictors_cen_c <- cenmodel[[nvisit]]$predictors
-    # predictors_cen_s <- cenmodel_s[[nvisit]]$predictors
 
     design_matrix_c <- cbind(1, data[predictors_c])
     design_matrix_s <- cbind(1, data[predictors_s])
-    # design_matrix_cen_c <- cbind(1, data[predictors_cen_c])
-    # design_matrix_cen_s <- cbind(1, data[predictors_cen_s])
 
     beta_indices_c <- match(c(sprintf("b%d0", nvisit),
                               sapply(1:length(predictors_c), function(p) sprintf("b%d%d", nvisit, p))),
@@ -563,14 +502,6 @@ bayesweight_cen <- function(trtmodel.list,
                               if (nvisit > 1) sapply(1:length(predictors_s), function(p) sprintf("bs%d%d", nvisit, p)) else NULL),
                             parameter_map)
 
-    # beta_indices_cen_c <- match(c(sprintf("s%d0", nvisit),
-    #                               sapply(1:length(predictors_cen_c), function(p) sprintf("s%d%d", nvisit, p))),
-    #                             parameter_map)
-    #
-    # beta_indices_cen_s <- match(c(sprintf("ts%d0", nvisit),
-    #                               if (nvisit > 1) sapply(1:length(predictors_cen_s), function(p) sprintf("ts%d%d", nvisit, p)) else NULL),
-    #                             parameter_map)
-
     if (has_cen) {
       predictors_cen_c <- cenmodel[[cen_idx]]$predictors
       predictors_cen_s <- cenmodel_s[[cen_idx]]$predictors
@@ -578,18 +509,12 @@ bayesweight_cen <- function(trtmodel.list,
       design_matrix_cen_c <- cbind(1, data[predictors_cen_c])
       design_matrix_cen_s <- cbind(1, data[predictors_cen_s])
 
-      # beta_indices_cen_c <- match(c(sprintf("s%d0", nvisit),
-      #                               sapply(1:length(predictors_cen_c), function(p) sprintf("s%d%d", nvisit, p))),
-      #                             parameter_map)
       beta_indices_cen_c <- match(c(sprintf("s%d0", nvisit),
                         if (length(predictors_cen_c))
                           sprintf("s%d%d",  nvisit,
                                   seq_along(predictors_cen_c))),
                       parameter_map)
 
-      # beta_indices_cen_s <- match(c(sprintf("ts%d0", nvisit),
-      #                               if (nvisit > 1) sapply(1:length(predictors_cen_s), function(p) sprintf("ts%d%d", nvisit, p)) else NULL),
-      #                             parameter_map)
       beta_indices_cen_s <- match(c(sprintf("ts%d0", nvisit),
                         if (nvisit > 1 && length(predictors_cen_s))
                           sprintf("ts%d%d", nvisit,

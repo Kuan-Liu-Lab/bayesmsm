@@ -16,18 +16,17 @@ A summary table of the results from bayesmsm.
 This function generates a ready to use result table that contents the estimated APO and ATE and their 95\% credible intervals
 }
 \examples{
-# Continuous outcome
 testdata <- read.csv(system.file("extdata",
-                     "continuous_outcome_data.csv",
+                     "sim_causal.csv",
                      package = "bayesmsm"))
-model <- bayesmsm(ymodel = y ~ a_1+a_2,
-                  nvisit = 2,
-                  reference = c(rep(0,2)),
-                  comparator = c(rep(1,2)),
+model <- bayesmsm(ymodel = Y ~ A1 + A2 + A3,
+                  nvisit = 3,
+                  reference = c(rep(0,3)),
+                  comparator = c(rep(1,3)),
                   treatment_effect_type = "sq",
-                  family = "gaussian",
+                  family = "binomial",
                   data = testdata,
-                  wmean = rep(1, 1000),
+                  wmean = rep(1,500),
                   nboot = 10,
                   optim_method = "BFGS",
                   seed = 890123,

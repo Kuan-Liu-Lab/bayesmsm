@@ -39,15 +39,14 @@ A list of the calculated weights and the JAGS model, where `weights` is a vector
 This function estimates Bayesian importance sampling weights for time-varying treatment effects using specified models for each treatment time point via JAGS
 }
 \examples{
-# Continuous outcome
-testdata <- read.csv(system.file("extdata",
-                     "continuous_outcome_data.csv",
+simdat <- read.csv(system.file("extdata",
+                     "sim_causal.csv",
                      package = "bayesmsm"))
 weights <- bayesweight(trtmodel.list = list(
-                       a_1 ~ w1 + w2 + L1_1 + L2_1,
-                       a_2 ~ w1 + w2 + L1_1 + L2_1 +
-                             L1_2 + L2_2 + a_1),
-                       data = testdata,
+                       A1 ~ L11 + L21,
+                       A2 ~ L11 + L21 + L12 + L22 + A1,
+                       A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
+                       data = simdat,
                        n.chains = 1,
                        n.iter = 20,
                        n.burnin = 10,
