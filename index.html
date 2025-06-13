@@ -96,49 +96,66 @@
 </h1>
 <p>Here are some examples demonstrating how to use the <code>bayesmsm</code> package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load example data without right-censoring</span></span>
-<span><span class="va">testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"continuous_outcome_data.csv"</span>, package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Simulating longitudinal causal data without right-censoring</span></span>
+<span><span class="co"># 1) Define coefficient lists for 2 visits</span></span>
+<span><span class="va">amodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="co"># Visit 1: logit P(A1=1) = -0.3 + 0.4*L1_1 - 0.2*L2_1</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"(Intercept)"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">0.3</span>, <span class="st">"L1_1"</span> <span class="op">=</span> <span class="fl">0.4</span>, <span class="st">"L2_1"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span><span class="op">)</span>,</span>
+<span>  <span class="co"># Visit 2: logit P(A2=1) = -0.1 + 0.3*L1_2 - 0.1*L2_2 + 0.5*A_prev</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"(Intercept)"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, <span class="st">"L1_2"</span> <span class="op">=</span> <span class="fl">0.3</span>, <span class="st">"L2_2"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, <span class="st">"A_prev"</span> <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Load example data without right-censoring</span></span>
-<span><span class="va">testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span>
-<span>                                 <span class="st">"sim_causal.csv"</span>,</span>
-<span>                                 package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># 2) Define binary outcome model: logistic on treatments and last covariates</span></span>
+<span><span class="va">ymodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"(Intercept)"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">0.8</span>,</span>
+<span>  <span class="st">"A1"</span>          <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  <span class="st">"A2"</span>          <span class="op">=</span> <span class="fl">0.4</span>,</span>
+<span>  <span class="st">"L1_2"</span>        <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>  <span class="st">"L2_2"</span>        <span class="op">=</span> <span class="op">-</span><span class="fl">0.3</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3) Load package and simulate data without censoring</span></span>
+<span><span class="va">testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simData.html">simData</a></span><span class="op">(</span></span>
+<span>  n                <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  n_visits         <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  covariate_counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  amodel           <span class="op">=</span> <span class="va">amodel</span>,</span>
+<span>  ymodel           <span class="op">=</span> <span class="va">ymodel</span>,</span>
+<span>  y_type           <span class="op">=</span> <span class="st">"binary"</span>,</span>
+<span>  right_censor     <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  seed             <span class="op">=</span> <span class="fl">123</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span></span>
 <span><span class="co"># Calculate Bayesian weights</span></span>
 <span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bayesweight.html">bayesweight</a></span><span class="op">(</span></span>
 <span>  trtmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="va">A1</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span>,</span>
-<span>    <span class="va">A2</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span>,</span>
-<span>    <span class="va">A3</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">L13</span> <span class="op">+</span> <span class="va">L23</span> <span class="op">+</span> <span class="va">A2</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">testdata</span>,</span>
-<span>  n.chains <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  n.iter <span class="op">=</span> <span class="fl">250</span>,</span>
-<span>  n.burnin <span class="op">=</span> <span class="fl">150</span>,</span>
-<span>  n.thin <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>    <span class="va">A1</span> <span class="op">~</span> <span class="va">L1_1</span> <span class="op">+</span> <span class="va">L2_1</span>,</span>
+<span>    <span class="va">A2</span> <span class="op">~</span> <span class="va">L1_2</span> <span class="op">+</span> <span class="va">L2_2</span> <span class="op">+</span> <span class="va">A1</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">simdat</span>,</span>
+<span>  n.chains <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  n.iter <span class="op">=</span> <span class="fl">200</span>,</span>
+<span>  n.burnin <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  n.thin <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
-<span>  parallel <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Perform Bayesian non-parametric bootstrap</span></span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bayesmsm.html">bayesmsm</a></span><span class="op">(</span></span>
-<span>  ymodel <span class="op">=</span> <span class="va">Y</span> <span class="op">~</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">A2</span> <span class="op">+</span> <span class="va">A3</span>,</span>
-<span>  nvisit <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  treatment_effect_type <span class="op">=</span> <span class="st">"sq"</span>,</span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bayesmsm.html">bayesmsm</a></span><span class="op">(</span>ymodel <span class="op">=</span> <span class="va">Y</span> <span class="op">~</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">A2</span>,</span>
+<span>  nvisit <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"binomial"</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">testdata</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">simdat</span>,</span>
 <span>  wmean <span class="op">=</span> <span class="va">weights</span><span class="op">$</span><span class="va">weights</span>,</span>
-<span>  nboot <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  nboot <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  optim_method <span class="op">=</span> <span class="st">"BFGS"</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  ncore <span class="op">=</span> <span class="fl">2</span></span>
-<span><span class="op">)</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">890123</span>,</span>
+<span>  ncore <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View model summary</span></span>
-<span><span class="fu">summary.bayesmsm</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/summary_bayesmsm.html">summary_bayesmsm</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
@@ -152,7 +169,7 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="sc">@</span>Manual{,</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  title <span class="ot">=</span> {bayesmsm<span class="sc">:</span> An R package <span class="cf">for</span> longitudinal causal analysis using Bayesian Marginal Structural Models},</span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  author <span class="ot">=</span> {Xiao Yan and Martin Urner and Kuan Liu},</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2024</span>},</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2025</span>},</span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  note <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>Kuan<span class="sc">-</span>Liu<span class="sc">-</span>Lab<span class="sc">/</span>bayesmsm},</span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>kuan<span class="sc">-</span>liu<span class="sc">-</span>lab.github.io<span class="sc">/</span>bayesmsm<span class="sc">/</span>},</span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>}</span></code></pre></div>
