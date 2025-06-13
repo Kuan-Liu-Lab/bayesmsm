@@ -56,49 +56,66 @@ This package depends on the following R packages:
 Here are some examples demonstrating how to use the `bayesmsm` package:
 
 ``` r
-# Load example data without right-censoring
-testdata <- read.csv(system.file("extdata", "continuous_outcome_data.csv", package = "bayesmsm"))
+# Simulating longitudinal causal data without right-censoring
+# 1) Define coefficient lists for 2 visits
+amodel <- list(
+  # Visit 1: logit P(A1=1) = -0.3 + 0.4*L1_1 - 0.2*L2_1
+  c("(Intercept)" = -0.3, "L1_1" = 0.4, "L2_1" = -0.2),
+  # Visit 2: logit P(A2=1) = -0.1 + 0.3*L1_2 - 0.1*L2_2 + 0.5*A_prev
+  c("(Intercept)" = -0.1, "L1_2" = 0.3, "L2_2" = -0.1, "A_prev" = 0.5)
+)
 
-# Load example data without right-censoring
-testdata <- read.csv(system.file("extdata",
-                                 "sim_causal.csv",
-                                 package = "bayesmsm"))
+# 2) Define binary outcome model: logistic on treatments and last covariates
+ymodel <- c(
+  "(Intercept)" = -0.8,
+  "A1"          = 0.2,
+  "A2"          = 0.4,
+  "L1_2"        = 0.3,
+  "L2_2"        = -0.3
+)
+
+# 3) Load package and simulate data without censoring
+testdata <- simData(
+  n                = 100,
+  n_visits         = 2,
+  covariate_counts = c(2, 2),
+  amodel           = amodel,
+  ymodel           = ymodel,
+  y_type           = "binary",
+  right_censor     = FALSE,
+  seed             = 123
+)
+
 
 # Calculate Bayesian weights
 weights <- bayesweight(
   trtmodel.list = list(
-    A1 ~ L11 + L21,
-    A2 ~ L11 + L21 + L12 + L22 + A1,
-    A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2
-  ),
-  data = testdata,
-  n.chains = 2,
-  n.iter = 250,
-  n.burnin = 150,
-  n.thin = 5,
+    A1 ~ L1_1 + L2_1,
+    A2 ~ L1_2 + L2_2 + A1),
+  data = simdat,
+  n.chains = 1,
+  n.iter = 200,
+  n.burnin = 100,
+  n.thin = 1,
   seed = 890123,
-  parallel = TRUE
-)
+  parallel = FALSE)
 
 # Perform Bayesian non-parametric bootstrap
-model <- bayesmsm(
-  ymodel = Y ~ A1 + A2 + A3,
-  nvisit = 3,
-  reference = c(rep(0,3)),
-  comparator = c(rep(1,3)),
-  treatment_effect_type = "sq",
+model <- bayesmsm(ymodel = Y ~ A1 + A2,
+  nvisit = 2,
+  reference = c(rep(0,2)),
+  comparator = c(rep(1,2)),
   family = "binomial",
-  data = testdata,
+  data = simdat,
   wmean = weights$weights,
-  nboot = 1000,
+  nboot = 50,
   optim_method = "BFGS",
-  seed = 890123,
   parallel = TRUE,
-  ncore = 2
-)
+  seed = 890123,
+  ncore = 2)
 
 # View model summary
-summary.bayesmsm(model)
+summary_bayesmsm(model)
 ```
 
 # License
@@ -113,7 +130,7 @@ Please cite our software using:
     @Manual{,
       title = {bayesmsm: An R package for longitudinal causal analysis using Bayesian Marginal Structural Models},
       author = {Xiao Yan and Martin Urner and Kuan Liu},
-      year = {2024},
+      year = {2025},
       note = {https://github.com/Kuan-Liu-Lab/bayesmsm},
       url = {https://kuan-liu-lab.github.io/bayesmsm/},
     }
