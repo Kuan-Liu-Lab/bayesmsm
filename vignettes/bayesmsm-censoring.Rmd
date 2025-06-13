@@ -38,6 +38,7 @@ knitr::opts_chunk$set(
   - `plot_APO`: Plots the estimated Average Potential Outcome (APO).
   - `plot_est_box`: Plots the distribution of estimated treatment effects.
   - `summary_bayesmsm`: Summarizes the model results from `bayesmsm`.
+  - `simData`: Generates synthetic longitudinal data with optional right-censoring
 
 - Installation
 
@@ -52,31 +53,58 @@ if (!requireNamespace("bayesmsm", quietly = TRUE)) {
 }
 ```
 
-# Simulated observational data with right-censoring
+# Simulated longitudinal observational data with right-censoring
 
-We illustrate the implementation of the `bayesmsm` package using a simulated dataset. The simulated dataset contains right-censoring with a binary end-of-study outcome. This example will provide a comprehensive understanding of how to apply the package to real-world data.
+In this vignette, we demonstrate how to simulate a longitudinal dataset that replicates features of real-world clinical studies with right-censoring using `simData()`. Here, we generate data for **200** individuals observed over **2** visits. At each visit, two normally distributed covariates (`L1_j`, `L2_j`) and a binary treatment assignment (`A_j`) are created. Right-censoring is induced at each visit via a logistic model (`C_j`), and once an individual is censored at visit *j*, all subsequent covariates, treatments, and the end-of-study outcome *Y* are set to `NA`. The outcome *Y* is binary, drawn from a logistic regression on the full covariate and treatment history.
 
-# Dataset Introduction
-
-In this simulation study, we use a simulated longitudinal dataset to mimic complex real-world clinical data with right-censoring. This dataset consists of 500 patients observed over 3 visits. The binary outcome variable represents the end-of-study status of the patients. The dataset includes baseline covariates $L11$ and $L21$, with $L11$ being binary and $L21$ continuous. Time-dependent covariates $L12$ and $L22$ are observed at the second visit, and $L13$ and $L23$ at the third visit. The treatment variables are represented as $A1$, $A2$, and $A3$ for the three visits. Right-censoring indicators are represented as $C$. For example, for observations with $C = 1$, all records at or after visit 3 were censored.
-
-| Variable   | Description                        |
-|------------|------------------------------------|
-| L11        | Baseline covariate (binary)        |
-| L21        | Baseline covariate (continuous)    |
-| A1, A2, A3 | Treatment assignments (binary)     |
-| C          | Right-censoring indicator          |
-| Y          | End-of-study outcome (binary)      |
-
-Table: Description of Simulated Right-Censored Dataset
+| Variable        | Description                             |
+| --------------- | --------------------------------------- |
+| `L1_1`, `L2_1`  | Baseline covariates (continuous)        |
+| `L1_2`, `L2_2`  | Time-varying covariates at visit 2      |
+| `A1`, `A2`      | Binary treatments at visits 1 and 2     |
+| `C1`, `C2`      | Right-censoring indicators at each visit|
+| `Y`             | Binary end-of-study outcome (1 = event) |
 
 ```{r}
-# Example simulated causal data with censoring
-simdat_cen <- read.csv(system.file("extdata",
-                                   "sim_causal_cen.csv",
-                                   package = "bayesmsm"))
+# 1) Define coefficient lists for 2 visits
+amodel <- list(
+  # Visit 1: logit P(A1=1) = -0.3 + 0.4*L1_1 - 0.2*L2_1
+  c("(Intercept)" = -0.3, "L1_1" = 0.4, "L2_1" = -0.2),
+  # Visit 2: logit P(A2=1) = -0.1 + 0.3*L1_2 - 0.1*L2_2 + 0.5*A_prev
+  c("(Intercept)" = -0.1, "L1_2" = 0.3, "L2_2" = -0.1, "A_prev" = 0.5)
+)
 
-# Look at the data
+# 2) Define outcome model: logistic on treatments and last covariates
+ymodel <- c(
+  "(Intercept)" = -0.8,
+  "A1"          = 0.2,
+  "A2"          = 0.4,
+  "L1_2"        = 0.3,
+  "L2_2"        = -0.3
+)
+
+# 3) Define right-censoring models at each visit
+cmodel <- list(
+  # Censor at visit 1 based on baseline covariates and A1
+  c("(Intercept)" = -1.5, "L1_1" = 0.2, "L2_1" = -0.2, "A" = 0.2),
+  # Censor at visit 2 based on visit-2 covariates and A2
+  c("(Intercept)" = -1.5, "L1_2" = 0.1, "L2_2" = -0.1, "A" = 0.3)
+)
+
+# 4) Load package and simulate data
+simdat_cen <- simData(
+  n                = 100,
+  n_visits         = 2,
+  covariate_counts = c(2, 2),
+  amodel           = amodel,
+  ymodel           = ymodel,
+  y_type           = "binary",
+  right_censor     = TRUE,
+  cmodel           = cmodel,
+  seed             = 123
+)
+
+# 5) Inspect first rows
 head(simdat_cen)
 ```
 
@@ -98,18 +126,16 @@ Next, we use the `bayesweight_cen` function to estimate the weights with censori
 ```{r}
 weights_cen <- bayesweight_cen(
   trtmodel.list = list(
-    A1 ~ L11 + L21,
-    A2 ~ L11 + L21 + L12 + L22 + A1,
-    A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2
-  ),
+    A1 ~ L1_1 + L2_1,
+    A2 ~ L1_2 + L2_2 + A1),
   cenmodel.list = list(
-    C ~ L11 + L21 + L12 + L22 + A1 + A2
-  ),
+    C1 ~ L1_1 + L2_1 + A1,
+    C2 ~ L1_2 + L2_2 + A2),
   data = simdat_cen,
   n.chains = 1,
-  n.iter = 250,
-  n.burnin = 150,
-  n.thin = 5,
+  n.iter = 200,
+  n.burnin = 100,
+  n.thin = 1,
   seed = 890123,
   parallel = FALSE)
 
@@ -145,16 +171,16 @@ Using the weights estimated by `bayesweight_cen`, we now fit the Bayesian Margin
 
 ```{r}
 # Remove all NAs (censored observations) from the original dataset and weights
-simdat_cen <- na.omit(simdat_cen)
-weights_cen$weights <- na.omit(weights_cen$weights)
+simdat_cen$weights <- weights_cen$weights
+simdat_cen2 <- na.omit(simdat_cen)
 
-model <- bayesmsm(ymodel = Y ~ A1 + A2 + A3,
-  nvisit = 3,
-  reference = c(rep(0,3)),
-  comparator = c(rep(1,3)),
+model <- bayesmsm(ymodel = Y ~ A1 + A2,
+  nvisit = 2,
+  reference = c(rep(0,2)),
+  comparator = c(rep(1,2)),
   family = "binomial",
-  data = simdat_cen,
-  wmean = weights_cen$weights,
+  data = simdat_cen2,
+  wmean = simdat_cen2$weights,
   nboot = 50,
   optim_method = "BFGS",
   parallel = TRUE,

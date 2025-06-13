@@ -38,6 +38,7 @@ knitr::opts_chunk$set(
   - `plot_APO`: Plots the estimated Average Potential Outcome (APO).
   - `plot_est_box`: Plots the distribution of estimated treatment effects.
   - `summary_bayesmsm`: Summarizes the model results from `bayesmsm`.
+  - `simData`: Generates synthetic longitudinal data with optional right-censoring
 
 - Installation
 
@@ -52,44 +53,55 @@ if (!requireNamespace("bayesmsm", quietly = TRUE)) {
 }
 ```
 
-# Simulated observational data with a time-dependent treatment
+# Simulated longitudinal observational data without right-censoring
 
-We illustrate the implementation of the `bayesmsm` package using a simulated dataset. The simulated dataset contains right-censoring with a binary end-of-study outcome. This example will provide a comprehensive understanding of how to apply the package to real-world data.
+In this vignette, we demonstrate how to simulate a clean longitudinal dataset without censoring using `simData()`. We generate data for **200** individuals observed over **2** visits. At each visit, two normally distributed covariates (`L1_j`, `L2_j`) and a binary treatment assignment (`A_j`) are created. No censoring is applied, so all covariates, treatments, and the final outcome *Y* are fully observed. The outcome *Y* is continuous, generated from a linear model on the covariate and treatment history.
 
-# Dataset Introduction
-
-In this simulation study, we use a simulated longitudinal dataset to mimic complex real-world clinical data without right-censoring. This dataset consists of 500 patients observed over 3 visits. The binary outcome variable represents the end-of-study status of the patients. The dataset includes baseline covariates $L11$ and $L21$, with $L11$ being binary and $L21$ continuous. Time-dependent covariates $L12$ and $L22$ are observed at the second visit, and $L13$ and $L23$ at the third visit. The treatment variables are represented as $A1$, $A2$, and $A3$ for the three visits.
-
-| Variable   | Description                        |
-|------------|------------------------------------|
-| L11        | Baseline covariate (binary)        |
-| L21        | Baseline covariate (continuous)    |
-| A1, A2, A3 | Treatment assignments (binary)     |
-| Y          | End-of-study outcome (binary)      |
-
-Table: Description of Simulated Dataset
+| Variable        | Description                             |
+| --------------- | --------------------------------------- |
+| `L1_1`, `L2_1`  | Baseline covariates (continuous)        |
+| `L1_2`, `L2_2`  | Time-varying covariates at visit 2      |
+| `A1`, `A2`      | Binary treatments at visits 1 and 2     |
+| `Y`             | Continuous end-of-study outcome         |
 
 ```{r}
-# Example simulated causal data without censoring
-simdat <- read.csv(system.file("extdata",
-                               "sim_causal.csv",
-                               package = "bayesmsm"))
+# 1) Define coefficient lists for 2 visits
+amodel <- list(
+  # Visit 1: logit P(A1=1) = -0.3 + 0.4*L1_1 - 0.2*L2_1
+  c("(Intercept)" = -0.3, "L1_1" = 0.4, "L2_1" = -0.2),
+  # Visit 2: logit P(A2=1) = -0.1 + 0.3*L1_2 - 0.1*L2_2 + 0.5*A_prev
+  c("(Intercept)" = -0.1, "L1_2" = 0.3, "L2_2" = -0.1, "A_prev" = 0.5)
+)
 
-# Look at the data
+# 2) Define binary outcome model: logistic on treatments and last covariates
+ymodel <- c(
+  "(Intercept)" = -0.8,
+  "A1"          = 0.2,
+  "A2"          = 0.4,
+  "L1_2"        = 0.3,
+  "L2_2"        = -0.3
+)
+
+# 3) Load package and simulate data without censoring
+simdat <- simData(
+  n                = 100,
+  n_visits         = 2,
+  covariate_counts = c(2, 2),
+  amodel           = amodel,
+  ymodel           = ymodel,
+  y_type           = "binary",
+  right_censor     = FALSE,
+  seed             = 123
+)
+
+# 4) Inspect first rows
 head(simdat)
-```
-
-- Frequency Counts by Treatment Combinations
-
-```{r}
-# frequency counts by treatment combinations;
-table(simdat$A1, simdat$A2, simdat$A3)
 ```
 
 - Suppose the causal parameter of interest is the average treatment effect between always treated and never treated,
 
 $$
-ATE = E(Y \mid A_1 = 1, A_2 = 1, A_3 = 1) - E(Y \mid A_1 = 0, A_2 = 0, A_3 = 0)
+ATE = E(Y \mid A_1 = 1, A_2 = 1) - E(Y \mid A_1 = 0, A_2 = 0)
 $$
 
 # Bayesian treatment effect weight estimation using `bayesweight`
@@ -111,15 +123,13 @@ $$
 ```{r}
 weights <- bayesweight(
   trtmodel.list = list(
-    A1 ~ L11 + L21,
-    A2 ~ L11 + L21 + L12 + L22 + A1,
-    A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2
-  ),
+    A1 ~ L1_1 + L2_1,
+    A2 ~ L1_2 + L2_2 + A1),
   data = simdat,
   n.chains = 1,
-  n.iter = 250,
-  n.burnin = 150,
-  n.thin = 5,
+  n.iter = 200,
+  n.burnin = 100,
+  n.thin = 1,
   seed = 890123,
   parallel = FALSE)
 
@@ -157,10 +167,10 @@ The function `bayesmsm` estimates causal effect of time-varying treatments. It u
   - `ncore`: The number of cores to use for parallel computation (default is 4).
 
 ```{r}
-model <- bayesmsm(ymodel = Y ~ A1 + A2 + A3,
-  nvisit = 3,
-  reference = c(rep(0,3)),
-  comparator = c(rep(1,3)),
+model <- bayesmsm(ymodel = Y ~ A1 + A2,
+  nvisit = 2,
+  reference = c(rep(0,2)),
+  comparator = c(rep(1,2)),
   family = "binomial",
   data = simdat,
   wmean = weights$weights,

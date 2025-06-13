@@ -23,14 +23,31 @@
 #' @export
 #'
 #' @examples
-#' simdat <- read.csv(system.file("extdata",
-#'                      "sim_causal.csv",
-#'                      package = "bayesmsm"))
+#' # 1) Specify simple treatment‐assignment models
+#' amodel <- list(
+#'   c("(Intercept)" =  0, "L1_1" =  0.5, "L2_1" = -0.5),
+#'   c("(Intercept)" =  0, "L1_2" =  0.5, "L2_2" = -0.5, "A_prev" = 0.3)
+#' )
+#' # 2) Specify a continuous‐outcome model
+#' ymodel <- c("(Intercept)" = 0,
+#'             "A1"         = 0.2,
+#'             "A2"         = 0.3,
+#'             "L1_2"       = 0.1,
+#'             "L2_2"       = -0.1)
+#' # 3) Simulate without right‐censoring
+#' testdata <- simData(
+#'   n                = 200,
+#'   n_visits         = 2,
+#'   covariate_counts = c(2, 2),
+#'   amodel           = amodel,
+#'   ymodel           = ymodel,
+#'   y_type           = "continuous",
+#'   right_censor     = FALSE,
+#'   seed             = 123)
 #' weights <- bayesweight(trtmodel.list = list(
-#'                        A1 ~ L11 + L21,
-#'                        A2 ~ L11 + L21 + L12 + L22 + A1,
-#'                        A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
-#'                        data = simdat,
+#'                        A1 ~ L1_1 + L2_1,
+#'                        A2 ~ L2_2 + L2_2 + A1),
+#'                        data = testdata,
 #'                        n.chains = 1,
 #'                        n.iter = 20,
 #'                        n.burnin = 10,

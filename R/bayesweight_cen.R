@@ -24,16 +24,37 @@
 #' @export
 #'
 #' @examples
-#' simdat_cen <- read.csv(system.file("extdata",
-#'                        "sim_causal_cen.csv",
-#'                        package = "bayesmsm"))
+#' amodel <- list(
+#'  c("(Intercept)" = -0.3, "L1_1" = 0.4, "L2_1" = -0.2),
+#'  c("(Intercept)" = -0.1, "L1_2" = 0.3, "L2_2" = -0.1, "A_prev" = 0.5))
+#' ymodel <- c(
+#' "(Intercept)" = -0.8,
+#' "A1"          = 0.2,
+#' "A2"          = 0.4,
+#' "L1_2"        = 0.3,
+#' "L2_2"        = -0.3)
+#' cmodel <- list(
+#'  c("(Intercept)" = -1.5, "L1_1" = 0.2, "L2_1" = -0.2, "A" = 0.2),
+#'  c("(Intercept)" = -1.5, "L1_2" = 0.1, "L2_2" = -0.1, "A" = 0.3))
+#'testdata <- simData(
+#'  n                = 50,
+#'  n_visits         = 2,
+#'  covariate_counts = c(2, 2),
+#'  amodel           = amodel,
+#'  ymodel           = ymodel,
+#'  y_type           = "binary",
+#'  right_censor     = TRUE,
+#'  cmodel           = cmodel,
+#'  seed             = 123
+#')
 #' weights_cen <- bayesweight_cen(
 #'                 trtmodel.list = list(
-#'                 A1 ~ L11 + L21,
-#'                 A2 ~ L11 + L21 + L12 + L22 + A1,
-#'                 A3 ~ L11 + L21 + L12 + L22 + A1 + L13 + L23 + A2),
-#'                 cenmodel.list = list(C ~ L11 + L21 + A1 + L12 + L22 + A2),
-#'                 data = simdat_cen,
+#'                        A1 ~ L1_1 + L2_1,
+#'                        A2 ~ L2_2 + L2_2 + A1),
+#'                 cenmodel.list = list(
+#'                 C1 ~ L1_1 + L2_1 + A1,
+#'                 C2 ~ L1_2 + L2_2 + A2),
+#'                 data = testdata,
 #'                 n.chains = 1,
 #'                 n.iter = 20,
 #'                 n.burnin = 10,
