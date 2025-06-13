@@ -99,14 +99,31 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">simdat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span></span>
-<span class="r-in"><span>                     <span class="st">"sim_causal.csv"</span>,</span></span>
-<span class="r-in"><span>                     package <span class="op">=</span> <span class="st">"bayesmsm"</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># 1) Specify simple treatment‐assignment models</span></span></span>
+<span class="r-in"><span><span class="va">amodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"(Intercept)"</span> <span class="op">=</span>  <span class="fl">0</span>, <span class="st">"L1_1"</span> <span class="op">=</span>  <span class="fl">0.5</span>, <span class="st">"L2_1"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"(Intercept)"</span> <span class="op">=</span>  <span class="fl">0</span>, <span class="st">"L1_2"</span> <span class="op">=</span>  <span class="fl">0.5</span>, <span class="st">"L2_2"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, <span class="st">"A_prev"</span> <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># 2) Specify a continuous‐outcome model</span></span></span>
+<span class="r-in"><span><span class="va">ymodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"(Intercept)"</span> <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"A1"</span>         <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"A2"</span>         <span class="op">=</span> <span class="fl">0.3</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"L1_2"</span>       <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"L2_2"</span>       <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># 3) Simulate without right‐censoring</span></span></span>
+<span class="r-in"><span><span class="va">testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="simData.html">simData</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  n                <span class="op">=</span> <span class="fl">200</span>,</span></span>
+<span class="r-in"><span>  n_visits         <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  covariate_counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  amodel           <span class="op">=</span> <span class="va">amodel</span>,</span></span>
+<span class="r-in"><span>  ymodel           <span class="op">=</span> <span class="va">ymodel</span>,</span></span>
+<span class="r-in"><span>  y_type           <span class="op">=</span> <span class="st">"continuous"</span>,</span></span>
+<span class="r-in"><span>  right_censor     <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  seed             <span class="op">=</span> <span class="fl">123</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu">bayesweight</span><span class="op">(</span>trtmodel.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>                       <span class="va">A1</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span>,</span></span>
-<span class="r-in"><span>                       <span class="va">A2</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span>,</span></span>
-<span class="r-in"><span>                       <span class="va">A3</span> <span class="op">~</span> <span class="va">L11</span> <span class="op">+</span> <span class="va">L21</span> <span class="op">+</span> <span class="va">L12</span> <span class="op">+</span> <span class="va">L22</span> <span class="op">+</span> <span class="va">A1</span> <span class="op">+</span> <span class="va">L13</span> <span class="op">+</span> <span class="va">L23</span> <span class="op">+</span> <span class="va">A2</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                       data <span class="op">=</span> <span class="va">simdat</span>,</span></span>
+<span class="r-in"><span>                       <span class="va">A1</span> <span class="op">~</span> <span class="va">L1_1</span> <span class="op">+</span> <span class="va">L2_1</span>,</span></span>
+<span class="r-in"><span>                       <span class="va">A2</span> <span class="op">~</span> <span class="va">L2_2</span> <span class="op">+</span> <span class="va">L2_2</span> <span class="op">+</span> <span class="va">A1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       data <span class="op">=</span> <span class="va">testdata</span>,</span></span>
 <span class="r-in"><span>                       n.chains <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                       n.iter <span class="op">=</span> <span class="fl">20</span>,</span></span>
 <span class="r-in"><span>                       n.burnin <span class="op">=</span> <span class="fl">10</span>,</span></span>
@@ -118,16 +135,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Resolving undeclared variables</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Allocating nodes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Graph information:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 3000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 13068</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Observed stochastic nodes: 800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Unobserved stochastic nodes: 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Total graph size: 3223</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initializing model</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some parameters have not converged with Geweke index &gt; 1.96. More iterations may be needed.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Length Class  Mode     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> weights      500    -none- numeric  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> weights      200    -none- numeric  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> model_string   1    -none- character</span>
 </code></pre></div>
     </div>
