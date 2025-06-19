@@ -39,7 +39,7 @@ at each visit, regressing `Cj` on covariates and current `Aj`.}
 \item{seed}{Integer. Optional random seed.}
 }
 \value{
-A `data.frame` with columns `L{k}_{j}`, `Aj`, optional `Cj`, and `Y`.
+A `data.frame` with columns `Lk_j`, `Aj`, optional `Cj`, and `Y`.
 }
 \description{
 This function simulates repeated measurements of normally-distributed covariates,

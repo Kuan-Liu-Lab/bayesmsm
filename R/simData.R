@@ -18,7 +18,7 @@
 #'   at each visit, regressing `Cj` on covariates and current `Aj`.
 #' @param seed Integer. Optional random seed.
 #' @importFrom stats rnorm rbinom model.matrix
-#' @return A `data.frame` with columns `L{k}_{j}`, `Aj`, optional `Cj`, and `Y`.
+#' @return A `data.frame` with columns `Lk_j`, `Aj`, optional `Cj`, and `Y`.
 #' @export
 simData <- function(n,
                     n_visits,

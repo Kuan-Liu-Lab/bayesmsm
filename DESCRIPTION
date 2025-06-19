@@ -12,9 +12,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-1133-4885"))
   )
 Maintainer: Kuan Liu <kuan.liu@utoronto.ca>
-Description: Implements Bayesian marginal structural models for causal effect estimation in longitudinal observational studies
-             with longitudinal treatments. It includes an extension to handle informative right censoring. The Bayesian importance sampling weights are estimated using JAGS 
-             and the Bayesian non-parametric bootstrap is implemented using optimation with Dirichlet sampling weights. See Saarela et al. (2015) <doi:10.1111/biom.12269> for methodological details. 
+Description: Implements Bayesian marginal structural models for causal effect estimation with time-varying treatment and confounding.
+             It includes an extension to handle informative right censoring. The Bayesian importance sampling weights are estimated using JAGS. See Saarela (2015) <doi:10.1111/biom.12269> for methodological details. 
 License: MIT + file LICENSE
 URL: https://github.com/Kuan-Liu-Lab/bayesmsm
 BugReports: https://github.com/Kuan-Liu-Lab/bayesmsm/issues
